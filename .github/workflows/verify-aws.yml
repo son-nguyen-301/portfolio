@@ -11,6 +11,6 @@ jobs:
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: <github_terraform_role_arn from Step 6>
+          role-to-assume: arn:aws:iam::441353787478:role/github-terraform
           aws-region: ap-southeast-1
       - run: aws sts get-caller-identity
