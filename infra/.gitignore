@@ -1,0 +1,16 @@
+# Terraform working files
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+tfplan
+*.tfplan
+
+# Local-only variables and secrets
+*.tfvars
+*.tfvars.json
+.envrc
+
+# Build artefact from app.tf's stub package
+.stub.zip
