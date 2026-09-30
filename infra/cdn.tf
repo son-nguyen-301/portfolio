@@ -21,55 +21,6 @@ locals {
   lambda_url_host       = trimsuffix(trimprefix(aws_lambda_function_url.ssr.function_url, "https://"), "/")
 }
 
-# --- WAF (optional: delete this resource and the web_acl_id line to skip) --
-resource "aws_wafv2_web_acl" "site" {
-  provider = aws.us_east_1   # CLOUDFRONT-scoped ACLs must live in us-east-1
-  name     = "${local.name}-waf"
-  scope    = "CLOUDFRONT"
-
-  default_action { allow {} }
-
-  rule {
-    name     = "aws-common"
-    priority = 1
-    override_action { none {} }
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesCommonRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "aws-common"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "rate-limit"
-    priority = 2
-    action { block {} }
-    statement {
-      rate_based_statement {
-        limit              = 1000   # requests per 5 min per IP
-        aggregate_key_type = "IP"
-      }
-    }
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "rate-limit"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "${local.name}-waf"
-    sampled_requests_enabled   = true
-  }
-}
-
 # --- Distribution ------------------------------------------------------------
 resource "aws_cloudfront_distribution" "site" {
   enabled             = true
@@ -78,7 +29,6 @@ resource "aws_cloudfront_distribution" "site" {
   price_class         = "PriceClass_200"   # excludes South America; covers Asia/EU/NA
   http_version        = "http2and3"
   is_ipv6_enabled     = true
-  web_acl_id          = aws_wafv2_web_acl.site.arn
 
   origin {
     origin_id                = "lambda"
