@@ -37,3 +37,12 @@ resource "aws_acm_certificate_validation" "site" {
   certificate_arn         = aws_acm_certificate.site.arn
   validation_record_fqdns = [for r in cloudflare_dns_record.acm_validation : r.name]
 }
+
+resource "cloudflare_dns_record" "site" {
+  zone_id = local.zone_id
+  name    = var.domain                     # me.haisonnguyen.dev
+  type    = "CNAME"
+  content = aws_cloudfront_distribution.site.domain_name
+  ttl     = 1                              # 1 = auto
+  proxied = false                          # DNS-only: CloudFront is the CDN, not Cloudflare
+}
