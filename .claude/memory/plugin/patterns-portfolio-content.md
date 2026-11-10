@@ -44,3 +44,14 @@ freshness: 365d
 **Why:** Son's answers on 2026-11-10, plus the rule that only sourced claims are published.
 
 ---
+
+## What may the site say about Paymentwall?
+type: qa
+answer: Name it "Paymentwall" (Outcubator is only its Vietnamese legal name; don't use it). One case study: the Terminal3 website (a paywall for games), built from scratch in Vue 2 + Composition API + TypeScript with a Strapi content model Son designed; first version in 2 months; team of 1 PM, 1 backend, 2 frontend. Site is offline. No other numbers.
+captured: 2026-11-10
+status: active
+freshness: 365d
+
+**Why:** Son's answers on 2026-11-10.
+
+---
