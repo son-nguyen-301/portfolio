@@ -1,0 +1,9 @@
+name: Looper
+summary: "A web app that takes one builder from idea to live app and keeps fixing it after launch: spec, board, build, deploy, watch, fix. Claude Code does the building, and risk levels decide what it may do alone."
+status: "Design done, build in progress"
+stack: [Nuxt 4, Nitro, Nuxt UI, PostgreSQL, Drizzle, Claude Code]
+link: null
+order: 3
+media:
+  type: image
+  alt: "TODO: screenshot of the Looper UI"

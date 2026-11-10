@@ -1,0 +1,69 @@
+name: Hai Son Nguyen
+title: Senior Frontend Engineer
+location: Hanoi, Vietnam
+timezone: Asia/Ho_Chi_Minh
+utcOffset: 7
+hours:
+  start: 8
+  end: 22
+  label: "08:00 to 22:00 Hanoi time (UTC+7)"
+replyPromise: "I reply within 12 hours."
+languages:
+  - "Vietnamese (native)"
+  - "English (professional)"
+openTo:
+  - "Full-time remote roles"
+  - "Contract and freelance projects"
+roles:
+  - "Senior Frontend Engineer (Vue and Nuxt)"
+  - "Frontend Lead"
+  - "Full-stack Engineer (frontend-heavy, Nuxt and Node)"
+
+# Contact. Hidden in Upwork mode, except the Upwork link.
+email: haison143@gmail.com
+booking:
+  url: https://cal.com/hai-son-nguyen-xijls2/30min
+  label: "Book a 30-minute call"
+links:
+  linkedin: https://www.linkedin.com/in/hai-son-nguyen-23a16118a
+  github: https://github.com/son-nguyen-301
+  upwork: https://www.upwork.com/freelancers/~010a5da72f7f0ba777
+
+hero:
+  label: "Senior Frontend Engineer · Vue & Nuxt · Hanoi, UTC+7"
+  headline: "I build fast, clear web apps for fintech and e-commerce teams."
+  subline: "Vue 3, Nuxt and TypeScript. Past frontend team lead. I also build the server side of my apps, and AI workflows that turn tickets into tested code."
+  paths:
+    - label: "Hire me for a project"
+      to: /services
+    - label: "Hire me full-time"
+      to: /cv
+
+proofStrip:
+  - value: "379 PRs"
+    label: "Merged on a live shop, plus 235 reviews"
+  - value: "−65%"
+    label: "UI library CSS on that shop"
+  - value: "Fintech, e-commerce"
+    label: "Business cards and budgets, online shops"
+  - value: "7 PRs"
+    label: "Built by my AI pipeline and merged at work"
+
+about: |
+  I have built web apps with Vue since 2019. I started as a frontend developer, then led a frontend team at XTEL, where I trained 10 engineers in Vue and Nuxt.
+
+  Since then I built the website for Terminal3, a game payments product at Paymentwall. I worked on cards, budgets and bills at Aspire, a Singapore fintech. I also set up a large online shop for a New Zealand company, and I lead the developers who build on it.
+
+  I care about code that the next person can pick up, about catching the edge cases before they reach users, and about saying early when something will be late. I work in English every day with teams in Singapore and New Zealand.
+
+howIWork:
+  - "A 30-minute call to understand the problem."
+  - "A written plan with a fixed price."
+  - "A demo every week, and a short written update every day."
+  - "Tests before big changes."
+  - "A handover with docs, so your team can carry on without me."
+aiRules:
+  - "Tests come first."
+  - "A person approves every merge."
+  - "No client secrets are sent to AI tools."
+pricing: "No hourly rates here. You get a fixed price after a 30-minute call."

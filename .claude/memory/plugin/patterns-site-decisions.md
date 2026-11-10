@@ -79,7 +79,7 @@ freshness: 180d
 
 ## Which side projects go on the public Lab page?
 type: qa
-answer: hydra-claude (link to public repo), the GitHub task runner (diagram only, no repo link), Looper, Homereel (TV and phone app screens only, never the download or indexer parts). Leave out Idea to Video, the photo editor, Hydrakit, the trading bot and the homelab monitor.
+answer: hydra-claude (link to public repo), the GitHub task runner (diagram only, no repo link), Looper, Homereel (TV and phone app screens only, never the download or indexer parts). Leave out Idea to Video, the photo editor, the private work-agent project, the trading bot and the homelab monitor.
 captured: 2026-11-10
 status: active
 freshness: 180d
@@ -96,5 +96,16 @@ status: active
 freshness: 180d
 
 **Why:** Easier to raise rates later, and full-time recruiters don't anchor on a freelance rate.
+
+---
+
+## Where is the site hosted?
+type: qa
+answer: Cloudflare Workers static assets, custom domain me.haisonnguyen.dev (zone haisonnguyen.dev is on Cloudflare), deployed by Workers Builds from main. Fully static Nuxt (nuxt generate). The old AWS stack in infra/ is removed only after the Cloudflare site is live and Son agrees.
+captured: 2026-11-10
+status: active
+freshness: 180d
+
+**Why:** Son decided on 2026-11-10 to deploy on Cloudflare because the domain is there. This replaces the earlier AWS plan.
 
 ---

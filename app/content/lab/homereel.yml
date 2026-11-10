@@ -1,0 +1,10 @@
+name: Homereel
+summary: "My own TV and phone app for watching movies and shows from my home server, on Google TV and Android."
+status: "Live"
+stack: [Kotlin, Jetpack Compose, Android TV]
+link: null
+order: 4
+# Show app screens only. Never show download, indexer or source parts.
+media:
+  type: image
+  alt: "TODO: screenshot of the TV home screen"

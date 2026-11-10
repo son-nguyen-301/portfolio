@@ -1,0 +1,11 @@
+groups:
+  - name: Frontend
+    items: [Vue 3, Vue 2, Nuxt 4, TypeScript, JavaScript, Quasar, Nuxt UI, Tailwind CSS, Pinia, React, Svelte, HTML, CSS, SCSS]
+  - name: Testing and quality
+    items: [Playwright, Vitest, Coverage gates in CI, ESLint, Code review]
+  - name: Server side
+    items: [Nitro, Node.js, Express, NestJS, REST APIs, Strapi, Docker, GitHub Actions, Small Django REST fixes]
+  - name: AI
+    items: [Claude Code, Plugins, skills and subagents, AI review in CI, MCP, Agent workflows with human checks]
+  - name: Ways of working
+    items: [Leading small teams, Mentoring, Figma handoff, Agile and Scrum, Written updates]

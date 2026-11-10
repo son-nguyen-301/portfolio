@@ -1,0 +1,10 @@
+name: GitHub task runner
+summary: "A chain of Claude Code cloud sessions that works through a repo's GitHub issues one at a time: build, review by a second agent, merge, then start the next run."
+status: "Running on my own projects"
+stack: [Claude Code cloud sessions, Subagents, GitHub API]
+link: null
+order: 2
+media:
+  type: diagram
+  src: DiagramTaskRunner
+  alt: "Issue → claim → build → pull request → second-agent review (up to 3 rounds) → merge → label starts the next run"

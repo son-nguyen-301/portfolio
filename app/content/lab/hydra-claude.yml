@@ -1,0 +1,9 @@
+name: hydra-claude
+summary: "A Claude Code plugin that gives Claude a memory for each repo. It saves corrections, rules and decisions, and brings them back when they matter."
+status: "Public, in use"
+stack: [Claude Code plugin, Hooks, Skills, Bash]
+link: https://github.com/son-nguyen-301/hydra-claude
+order: 1
+media:
+  type: image
+  alt: "TODO: screenshot or short video of a saved rule being applied"
