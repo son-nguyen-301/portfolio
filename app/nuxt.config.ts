@@ -30,6 +30,11 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2026-09-30',
 
+  typescript: {
+    // Type check content.config.ts with the other build-time files.
+    nodeTsConfig: { include: ['../content.config.ts'] },
+  },
+
   eslint: {
     config: {
       stylistic: true,
