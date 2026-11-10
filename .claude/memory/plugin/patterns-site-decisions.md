@@ -109,3 +109,14 @@ freshness: 180d
 **Why:** Son decided on 2026-11-10 to deploy on Cloudflare because the domain is there. This replaces the earlier AWS plan.
 
 ---
+
+## How is the build work planned and run?
+type: qa
+answer: Scrum on GitHub. Sprints are milestones 1 to 5, epics hold stories, stories hold tasks (sub-issues), tasks PF-001 to PF-034 sized S/M/L; `manual` tasks are Son's. The Portfolio task runner (head/LOOP.md, scheduled task triggered by the loop-go label) builds one task per run, only from the current sprint, and stops at each sprint end for Son's review. Details in docs/scrum.md.
+captured: 2026-11-10
+status: active
+freshness: 180d
+
+**Why:** Son asked on 2026-11-10 for an agile Scrum setup on GitHub with the event-driven task runner loop.
+
+---

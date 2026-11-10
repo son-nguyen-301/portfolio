@@ -1,5 +1,7 @@
 # Open items
 
+Most of these are now `manual` tasks on the board (PF-025 to PF-030 and PF-032 to PF-034). Close them there.
+
 Things that wait on Son. The build goes ahead with placeholders: a quote is `null` and hidden, an image has a `TODO` caption and shows a neutral placeholder.
 
 ## Proof

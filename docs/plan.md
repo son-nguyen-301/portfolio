@@ -1,6 +1,6 @@
 # Build plan
 
-Do the tasks in order. Each one is a pull request into `main` with its "done when" checks passing. Read `CLAUDE.md` and the docs it lists before starting.
+This is the original outline. The live plan is on GitHub: 5 sprints (milestones), 7 epics, 17 stories and 34 tasks (`PF-001` to `PF-034`). See `docs/scrum.md`. The Portfolio task runner builds the tasks one by one (`head/LOOP.md`).
 
 ## 1. Clean setup
 

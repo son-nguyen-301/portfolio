@@ -13,6 +13,8 @@ This repo holds Son's portfolio site at https://me.haisonnguyen.dev. People reac
 | `docs/plan.md` | Build tasks in order, each with "done when" checks |
 | `docs/open-items.md` | Things still waiting on Son. Use placeholders for these. |
 | `docs/writing-style.md` | How every word on the site is written |
+| `docs/scrum.md` | How the work is run: epics, stories, tasks, sprints, sizes, Definition of Done |
+| `head/LOOP.md` | The task runner's runbook, with `head/QUEUE.md`, `head/STATUS.md` and `head/DECISIONS.md` |
 
 The design proposal (with research and mockups) is a private page: https://claude.ai/artifact/P2Sn4zS5bKD5VxTusb9iqt. The docs above are the source of truth when they differ.
 
@@ -25,6 +27,14 @@ The design proposal (with research and mockups) is a private page: https://claud
 5. **No prices on the site.**
 6. **No photo of Son for now.**
 7. **Write in plain English.** Follow `docs/writing-style.md` for all site copy, docs, commit messages and pull requests.
+
+## How work gets done
+
+- The work is planned on GitHub as sprints (milestones), epics, stories and tasks. See `docs/scrum.md`.
+- Every change goes through a pull request. Nobody pushes to `main`.
+- Son merges pull requests, or asks a session to merge one.
+
+Exception: the Portfolio task runner. A cloud session started by the scheduled task "Portfolio task runner" runs `head/LOOP.md`. It may review, merge, open backlog issues and close issues exactly as that file says, and nothing more. Any other session follows the rules above.
 
 ## Project layout
 
