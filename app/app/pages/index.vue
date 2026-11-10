@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data: profile } = await useProfile()
+const { data: profile } = await useProfile('name')
 </script>
 
 <template>

@@ -1,8 +1,13 @@
 // Read the content collections (see content.config.ts and docs/content-model.md).
 // Pages and components read content only through these.
+import type { ProfileCollectionItem } from '@nuxt/content'
 
-export function useProfile() {
-  return useAsyncData('content:profile', () => queryCollection('profile').first())
+// Only the profile fields you name. A page's data is written into its built
+// files, and profile.yml holds the email and the booking link, which must never
+// reach a page opened from Upwork (CLAUDE.md hard rule 4). So name only the
+// fields the page shows, and leave contact fields to the contact block.
+export function useProfile<const Field extends keyof ProfileCollectionItem>(...fields: [Field, ...Field[]]) {
+  return useAsyncData(`content:profile:${fields.join(',')}`, () => queryCollection('profile').select(...fields).first())
 }
 
 export function useServices() {

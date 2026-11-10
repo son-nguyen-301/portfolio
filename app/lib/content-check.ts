@@ -174,3 +174,13 @@ export function caseStudies(report: ContentReport): Array<CaseStudyMeta & { slug
 export function formatIssues(issues: ContentIssue[]): string {
   return issues.map(issue => `  content/${issue.file}: ${issue.message}`).join('\n')
 }
+
+// What modules/content-check.ts runs when Nuxt starts. A build throws on any
+// problem; the dev server only logs them, so it keeps running.
+export function checkOnStart(dir: string, options: { dev: boolean, log: (message: string) => void }): void {
+  const { issues } = checkContent(dir)
+  if (!issues.length) return
+  const message = `${issues.length} problem(s) in content/:\n${formatIssues(issues)}`
+  if (!options.dev) throw new Error(message)
+  options.log(message)
+}

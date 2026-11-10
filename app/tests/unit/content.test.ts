@@ -9,6 +9,7 @@ import {
   caseStudies,
   checkContent,
   checkFile,
+  checkOnStart,
   collectionFor,
   formatIssues,
   headingsOf,
@@ -125,6 +126,38 @@ describe('a broken content folder', () => {
     cpSync(contentDir, dir, { recursive: true })
     unlinkSync(join(dir, 'earlier.yml'))
     expect(formatIssues(checkContent(dir).issues)).toContain('content/earlier.yml: Missing: the earlier collection has no file')
+  })
+})
+
+describe('checkOnStart', () => {
+  let dir = ''
+  afterEach(() => {
+    if (dir) rmSync(dir, { recursive: true, force: true })
+    dir = ''
+  })
+
+  function brokenCopy() {
+    dir = mkdtempSync(join(tmpdir(), 'content-'))
+    cpSync(contentDir, dir, { recursive: true })
+    writeFileSync(join(dir, 'skills.yml'), 'groups: []\n')
+    return dir
+  }
+
+  it('stays quiet on good content', () => {
+    const log: string[] = []
+    expect(() => checkOnStart(contentDir, { dev: false, log: message => log.push(message) })).not.toThrow()
+    expect(log).toEqual([])
+  })
+
+  it('stops a build on broken content', () => {
+    expect(() => checkOnStart(brokenCopy(), { dev: false, log: () => {} }))
+      .toThrow('1 problem(s) in content/:\n  content/skills.yml: groups:')
+  })
+
+  it('only logs in the dev server', () => {
+    const log: string[] = []
+    expect(() => checkOnStart(brokenCopy(), { dev: true, log: message => log.push(message) })).not.toThrow()
+    expect(log[0]).toContain('content/skills.yml: groups:')
   })
 })
 
