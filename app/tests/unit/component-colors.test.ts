@@ -15,9 +15,24 @@ function vueFiles(dir: string): string[] {
   })
 }
 
-// Color keywords a person might type. `transparent`, `currentColor` and
-// `inherit` are allowed: they carry no color of their own.
-const namedColors = ['white', 'black', 'red', 'green', 'blue', 'gray', 'grey', 'silver', 'yellow', 'orange', 'purple', 'pink', 'teal', 'navy', 'maroon', 'olive', 'lime', 'aqua', 'fuchsia', 'brown', 'gold']
+// Every CSS color name. `transparent`, `currentColor` and `inherit` are
+// allowed: they carry no color of their own.
+const namedColors = (
+  'aliceblue antiquewhite aqua aquamarine azure beige bisque black blanchedalmond blue blueviolet brown burlywood '
+  + 'cadetblue chartreuse chocolate coral cornflowerblue cornsilk crimson cyan darkblue darkcyan darkgoldenrod darkgray '
+  + 'darkgreen darkgrey darkkhaki darkmagenta darkolivegreen darkorange darkorchid darkred darksalmon darkseagreen '
+  + 'darkslateblue darkslategray darkslategrey darkturquoise darkviolet deeppink deepskyblue dimgray dimgrey dodgerblue '
+  + 'firebrick floralwhite forestgreen fuchsia gainsboro ghostwhite gold goldenrod gray green greenyellow grey honeydew '
+  + 'hotpink indianred indigo ivory khaki lavender lavenderblush lawngreen lemonchiffon lightblue lightcoral lightcyan '
+  + 'lightgoldenrodyellow lightgray lightgreen lightgrey lightpink lightsalmon lightseagreen lightskyblue lightslategray '
+  + 'lightslategrey lightsteelblue lightyellow lime limegreen linen magenta maroon mediumaquamarine mediumblue '
+  + 'mediumorchid mediumpurple mediumseagreen mediumslateblue mediumspringgreen mediumturquoise mediumvioletred '
+  + 'midnightblue mintcream mistyrose moccasin navajowhite navy oldlace olive olivedrab orange orangered orchid '
+  + 'palegoldenrod palegreen paleturquoise palevioletred papayawhip peachpuff peru pink plum powderblue purple '
+  + 'rebeccapurple red rosybrown royalblue saddlebrown salmon sandybrown seagreen seashell sienna silver skyblue '
+  + 'slateblue slategray slategrey snow springgreen steelblue tan teal thistle tomato turquoise violet wheat white '
+  + 'whitesmoke yellow yellowgreen'
+).split(' ')
 const colorPattern = new RegExp(
   [
     '#[0-9a-f]{3,8}\\b',
@@ -27,7 +42,11 @@ const colorPattern = new RegExp(
   'i',
 )
 
-// The colors set in a file: <style> blocks and inline style attributes.
+// SVG and HTML attributes that take a color, plain or bound (`:fill`).
+const colorAttributes = /(?:^|\s):?(?:fill|stroke|stop-color|flood-color|lighting-color|color|bgcolor)="([^"]*)"/g
+
+// The colors set in a file: <style> blocks, inline style attributes and
+// color attributes such as an SVG `fill`.
 function hardCodedColors(source: string): string[] {
   const styles = [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(match => match[1]!)
   const inline = [...source.matchAll(/\bstyle="([^"]*)"/g)].map(match => match[1]!)
@@ -40,6 +59,11 @@ function hardCodedColors(source: string): string[] {
       if (colorPattern.test(value)) found.push(value)
     }
   }
+  const template = source.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '').replace(/<script[^>]*>[\s\S]*?<\/script>/g, '')
+  for (const match of template.matchAll(colorAttributes)) {
+    const value = match[1]!.trim()
+    if (colorPattern.test(value)) found.push(value)
+  }
   return found
 }
 
@@ -49,7 +73,11 @@ describe('component colors', () => {
     expect(hardCodedColors('<style>.a { border: 1px solid rgb(0 0 0); }</style>')).toHaveLength(1)
     expect(hardCodedColors('<style>.a { background: white; }</style>')).toEqual(['white'])
     expect(hardCodedColors('<template><p style="color: red">x</p></template>')).toEqual(['red'])
+    expect(hardCodedColors('<style>.a { color: crimson; }</style>')).toEqual(['crimson'])
+    expect(hardCodedColors('<template><path fill="#0D7663" stroke="black" /></template>')).toEqual(['#0D7663', 'black'])
+    expect(hardCodedColors('<template><stop :stop-color="\'red\'" /></template>')).toEqual(['\'red\''])
     expect(hardCodedColors('<style>.a { color: var(--ink); white-space: nowrap; background: transparent; }</style>')).toEqual([])
+    expect(hardCodedColors('<template><path fill="var(--jade)" stroke="currentColor" /></template>')).toEqual([])
   })
 
   const files = vueFiles(appDir)

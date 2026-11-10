@@ -12,7 +12,7 @@ defineProps<{
   <ul class="proof-strip">
     <li
       v-for="item in items"
-      :key="item.value"
+      :key="`${item.value}-${item.label}`"
       class="proof-strip__item"
     >
       <MetricTile
