@@ -1,7 +1,17 @@
 <script setup lang="ts">
-// Dev-only gallery of tokens, type and base styles (modules/dev-gallery.ts).
-// Never built: `nuxt generate` has no /_gallery route.
+// Dev-only gallery of tokens, type, base styles and base components
+// (modules/dev-gallery.ts). Never built: `nuxt generate` has no /_gallery route.
+// Use the theme switch at the top to see every part in light and dark.
+// Facts come from app/content through the composables, as on real pages.
 useSeoMeta({ title: 'Gallery', robots: 'noindex, nofollow' })
+
+const { data: profile } = await useProfile('proofStrip')
+const { data: caseStudies } = await useCaseStudies()
+const { data: timeline } = await useTimeline()
+const cards = computed(() => (caseStudies.value ?? []).slice(0, 2))
+
+// No case study has a quote yet, so this one is only to show the look.
+const sampleQuote = { text: 'Sample quote. Real quotes come from app/content/work when Son has them.', role: 'Sample role' }
 
 const colors = ['paper', 'surface', 'ink', 'muted', 'line', 'jade', 'jade-soft', 'amber', 'amber-soft', 'on-jade']
 const scale = [
@@ -105,10 +115,135 @@ const scale = [
         Text on amber soft
       </p>
     </section>
+
+    <section>
+      <h2 class="label">
+        AppButton
+      </h2>
+      <div class="row">
+        <AppButton variant="primary">
+          Primary
+        </AppButton>
+        <AppButton variant="action">
+          Action
+        </AppButton>
+        <AppButton variant="ghost">
+          Ghost
+        </AppButton>
+        <AppButton
+          variant="action"
+          to="/"
+        >
+          Action link
+        </AppButton>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="label">
+        MetricTile
+      </h2>
+      <div
+        v-if="profile?.proofStrip?.[0]"
+        class="row"
+      >
+        <MetricTile
+          :value="profile.proofStrip[0].value"
+          :label="profile.proofStrip[0].label"
+        />
+      </div>
+    </section>
+
+    <section>
+      <h2 class="label">
+        ProofStrip
+      </h2>
+      <ProofStrip
+        v-if="profile?.proofStrip"
+        :items="profile.proofStrip"
+      />
+    </section>
+
+    <section>
+      <h2 class="label">
+        TagList
+      </h2>
+      <TagList
+        v-if="cards[0]"
+        :tags="cards[0].stack"
+        label="Stack"
+      />
+    </section>
+
+    <section>
+      <h2 class="label">
+        WorkCard
+      </h2>
+      <div class="cards">
+        <WorkCard
+          v-for="card in cards"
+          :key="card.path"
+          :to="card.path"
+          :title="card.title"
+          :summary="card.summary"
+          :stack="card.stack"
+          :metric="card.cardMetric"
+        >
+          <template
+            v-if="card === cards[0]"
+            #media
+          >
+            <div class="media-placeholder small">
+              Media slot (image or diagram)
+            </div>
+          </template>
+        </WorkCard>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="label">
+        QuoteBlock
+      </h2>
+      <QuoteBlock :quote="sampleQuote" />
+      <p class="small">
+        With <code>quote: null</code> nothing renders:
+      </p>
+      <QuoteBlock :quote="null" />
+    </section>
+
+    <section>
+      <h2 class="label">
+        Timeline
+      </h2>
+      <Timeline
+        v-if="timeline"
+        :jobs="timeline.jobs.slice(0, 2)"
+      />
+    </section>
   </div>
 </template>
 
 <style scoped>
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+}
+
+.media-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  color: var(--muted);
+}
+
 .gallery {
   display: flex;
   flex-direction: column;
