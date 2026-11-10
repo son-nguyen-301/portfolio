@@ -1,0 +1,6 @@
+patterns-portfolio-content.md	path	app/content/**	directive
+patterns-portfolio-content.md	path	app/app/pages/**	directive
+patterns-portfolio-content.md	path	app/app/components/**	directive
+patterns-portfolio-content.md	keyword	case study	directive
+patterns-portfolio-content.md	keyword	portfolio content	directive
+patterns-portfolio-content.md	keyword	employer	directive
