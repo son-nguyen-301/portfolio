@@ -1,0 +1,31 @@
+items:
+  - id: speed
+    group: Frontend
+    title: "Speed audit and fixes"
+    summary: "I find out why your Vue or Nuxt site is slow, fix the biggest causes, and show you the numbers before and after."
+    proof: [nz-storefront-speed-ui-swap]
+  - id: upgrades
+    group: Frontend
+    title: "Upgrades and migrations"
+    summary: "Vue 2 to Vue 3, Nuxt to version 4, UI library swaps, Tailwind 3 to 4. I add tests first, so nothing breaks on the way."
+    proof: [nz-storefront-speed-ui-swap, nz-storefront-from-zero]
+  - id: build
+    group: Frontend
+    title: "Build or extend a Vue or Nuxt app"
+    summary: "Shops, dashboards, admin panels and payment flows, including the server side of a Nuxt app: API routes, caching, Docker and CI."
+    proof: [nz-storefront-from-zero, aspire-multi-currency, paymentwall-terminal3]
+  - id: tests
+    group: Frontend
+    title: "Test safety net"
+    summary: "Playwright and Vitest tests, with a coverage gate in CI, so your team can change code without fear."
+    proof: [nz-storefront-from-zero]
+  - id: ai
+    group: AI
+    title: "AI dev workflows for your team"
+    summary: "Claude Code set up for your repo, AI review on every pull request, and agents that take a ticket to a tested pull request. A person approves each key step."
+    proof: [nz-ai-dev-team]
+  - id: lead
+    group: Lead
+    title: "Frontend lead and mentoring, part-time"
+    summary: "Code review, clear frontend rules, and getting new developers up to speed in Vue and Nuxt."
+    proof: [nz-storefront-from-zero]

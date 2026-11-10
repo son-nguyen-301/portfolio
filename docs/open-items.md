@@ -1,0 +1,31 @@
+# Open items
+
+Things that wait on Son. The build goes ahead with placeholders: a quote is `null` and hidden, an image has a `TODO` caption and shows a neutral placeholder.
+
+## Proof
+
+- [ ] **Quotes from the NZ company:** the IT team leader and the project lead. Son has a ready message to send.
+- [ ] **LinkedIn recommendations from Aspire.** Son has asked his former teammates. Use a quote only after it is written.
+- [ ] **Paymentwall / Terminal3:** is there someone (PM or the other frontend developer) Son could ask for a recommendation?
+- [ ] **Terminal3 screenshots:** Son opens the Internet Archive copies (Nov 2021 and Apr 2022) and takes 2 or 3 screenshots, or we keep the diagram.
+- [ ] **NZ storefront screenshots** from staging with a test account: room home page with hero, UI kit gallery, Favourites page, CI test results comment. Blur the company name, logo, prices, customer and coworker names, repo and pull request numbers.
+- [ ] **Lab media:** short screen videos or screenshots of hydra-claude and the task runner (no company data), a Looper screenshot, a Homereel TV home screen (app screens only).
+
+## Facts to check
+
+- [ ] Son checks the Aspire case studies (`aspire-multi-currency`, `aspire-redesign`) and the Paymentwall one (`paymentwall-terminal3`), then sets `status: ready`.
+
+## Hosting
+
+- [ ] Connect the repo in Cloudflare Workers Builds (root `app`, build `pnpm install --frozen-lockfile && pnpm generate`, deploy `npx wrangler deploy`).
+- [ ] Remove the old `me.haisonnguyen.dev` CNAME that points at CloudFront, then add the Worker custom domain.
+- [ ] Turn on Cloudflare Web Analytics for the site.
+- [ ] Decide when to remove the AWS stack (`terraform destroy`, then delete `infra/`). Tell the build session how Terraform is run today (on your computer or in CI).
+
+## Outside the site (Son)
+
+- [ ] Upwork: new title, overview, skills (add PostgreSQL, Docker, AI agent development, Claude, workflow automation), profile visibility set to public, ID verification, English level, rate.
+- [ ] Upwork: rename the portfolio item that names the current employer.
+- [ ] Upwork and CV PDF: add the NZ role and set the Aspire end date to Jul 2026.
+- [ ] GitHub: pin `portfolio` and `hydra-claude`, add the site link to the bio.
+- [ ] Optional: rename the Cal.com link to something shorter. If it changes, update `app/content/profile.yml`.
