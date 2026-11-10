@@ -2,7 +2,9 @@ import { defineConfig, devices } from '@playwright/test'
 
 // Browser tests run against the generated site in .output/public, served by
 // sirv on this machine. Run `pnpm generate` first. No network at test time.
-const port = 4173
+// Set E2E_PORT to run two test runs at once. A busy port fails the run, so a
+// run never tests another run's server.
+const port = Number(process.env.E2E_PORT ?? 4173)
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -21,6 +23,6 @@ export default defineConfig({
     url: `http://127.0.0.1:${port}`,
     // sirv reads HOST and PORT from the environment before its flags.
     env: { HOST: '127.0.0.1', PORT: String(port) },
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
   },
 })

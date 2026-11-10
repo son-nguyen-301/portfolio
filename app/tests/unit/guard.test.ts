@@ -1,8 +1,9 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { gzipSync } from 'node:zlib'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
-import { scanFiles, scanText, sha256, textFiles, words } from '../guard'
+import { normalize, readText, scanFiles, scanText, sha256, textFiles, words } from '../guard'
 
 // A made-up name that stands in for a banned word in these tests.
 const SAMPLE = 'examplecorp'
@@ -23,6 +24,15 @@ describe('words', () => {
     expect(words('see Example.co.nz now')).toEqual(['see', 'example', 'co', 'nz', 'now', 'example.co.nz', 'co.nz'])
   })
 
+  it('gives the pieces of camelCase names and of words glued to digits', () => {
+    expect(words('myExampleCorpLogo')).toEqual(expect.arrayContaining(['example', 'corp', 'examplecorp', 'logo']))
+    expect(words('examplecorp2026')).toContain('examplecorp')
+  })
+
+  it('gives a domain glued to other words with a dash', () => {
+    expect(words('example.co.nz-logo.png')).toContain('example.co.nz')
+  })
+
   it('gives the domain inside a longer host name or an email address', () => {
     expect(words('www.example.co.nz')).toContain('example.co.nz')
     expect(words('me@example.co.nz')).toContain('example.co.nz')
@@ -30,6 +40,21 @@ describe('words', () => {
 
   it('keeps letters with Vietnamese marks', () => {
     expect(words('Nguyễn Hải Sơn')).toEqual(['nguyễn', 'hải', 'sơn'])
+  })
+})
+
+describe('normalize', () => {
+  it('decodes HTML entities and %-codes', () => {
+    expect(normalize('&#69;xample &#x43;orp &amp; %2B84')).toBe('Example Corp & +84')
+  })
+
+  it('folds fullwidth letters and drops invisible characters', () => {
+    expect(normalize('\uFF25xample')).toBe('Example')
+    expect(normalize('ex\u200Bam\u00ADple\u2060corp')).toBe('examplecorp')
+  })
+
+  it('leaves broken codes alone', () => {
+    expect(normalize('100% sure, %E0%A4%A and &bogus;')).toBe('100% sure, %E0%A4%A and &bogus;')
   })
 })
 
@@ -51,6 +76,16 @@ describe('scanText', () => {
     expect(scanText('const company = "EXAMPLECORP"', banned)).toHaveLength(1)
   })
 
+  it.each([
+    ['an invisible character', 'Example\u200BCorp'],
+    ['fullwidth letters', '\uFF45\uFF58\uFF41\uFF4D\uFF50\uFF4C\uFF45\uFF43\uFF4F\uFF52\uFF50'],
+    ['HTML entities', '&#69;xample&#x43;orp'],
+    ['%-codes', 'https://x.test/?q=%45xampleCorp'],
+    ['a camelCase name', 'const exampleCorpUrl = 1'],
+  ])('fails on a banned word hidden by %s', (_, text) => {
+    expect(scanText(text, banned).map(hit => hit.detail)).toContain(sha256(SAMPLE))
+  })
+
   it('passes clean text and words that only contain a banned word', () => {
     expect(scanText('A New Zealand e-commerce company', banned)).toEqual([])
     expect(scanText('examplecorporation', banned)).toEqual([])
@@ -60,8 +95,13 @@ describe('scanText', () => {
     '+84 912 345 678',
     '+84912345678',
     'tel:+84-912-345-678',
-    '(+84) 28 3822 1234',
+    '(+84) 28 0000 0000',
     '"+84.912.345.678"',
+    '0084 912 345 678',
+    '+ 84 912 345 678',
+    '&#43;84912345678',
+    'tel:%2B84912345678',
+    'https://wa.me/84912345678',
   ])('fails on the Vietnamese phone number %s', (text) => {
     const hits = scanText(text, banned)
     expect(hits).toHaveLength(1)
@@ -74,6 +114,7 @@ describe('scanText', () => {
     '+64 21 123 4567',
     'x=a+840000000',
     'f(1)+841234567',
+    'id=1008412345678',
   ])('passes %s', (text) => {
     expect(scanText(text, banned)).toEqual([])
   })
@@ -92,8 +133,23 @@ describe('scanFiles', () => {
     const files = textFiles([dir, join(dir, 'missing')])
     expect(files.map(file => file.replace(dir, ''))).toEqual(['/clean.md', '/nested/dirty.yml'])
 
-    const hits = scanFiles(files, banned)
+    const hits = scanFiles(files, banned, dir)
     expect(hits).toHaveLength(1)
     expect(hits[0]?.file).toBe(join(dir, 'nested', 'dirty.yml'))
+  })
+
+  it('checks file and folder names', () => {
+    const named = join(dir, 'examplecorp-logo.svg')
+    writeFileSync(named, '<svg></svg>')
+    expect(scanFiles([named], banned, dir)).toEqual([{ file: named, line: 0, kind: 'banned-word', detail: sha256(SAMPLE) }])
+    rmSync(named)
+  })
+
+  it('unpacks a base64 gzip file, like the Nuxt Content dump', () => {
+    const dump = join(dir, 'sql_dump.txt')
+    writeFileSync(dump, gzipSync('INSERT INTO work VALUES (\'ExampleCorp\');').toString('base64'))
+    expect(readText(dump)).toContain('ExampleCorp')
+    expect(scanFiles([dump], banned, dir)).toHaveLength(1)
+    rmSync(dump)
   })
 })

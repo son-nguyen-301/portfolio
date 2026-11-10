@@ -6,6 +6,6 @@ The Nuxt 4 app for Hai Son Nguyen's portfolio at https://me.haisonnguyen.dev. It
 - `pnpm generate` builds the static site into `.output/public`.
 - `pnpm lint` runs ESLint. `pnpm typecheck` checks the TypeScript.
 - `pnpm test` runs the unit tests with Vitest, including the banned-words guard. `pnpm test:guard` runs only the guard.
-- `pnpm test:e2e` runs the browser tests with Playwright against `.output/public`. Run `pnpm generate` first.
+- `pnpm test:e2e` runs the browser tests with Playwright against `.output/public`, on port 4173. Run `pnpm generate` first. Set `E2E_PORT` to run two at once; a busy port fails the run.
 
-The banned-words guard (`tests/guard.ts`) reads `content/`, `app/`, `public/` and, once built, `.output/public`. It fails on any word whose SHA-256 hash is in `tests/banned-words.json`, and on Vietnamese phone numbers (`+84`). The list holds hashes only, so the blocked words are never written in this public repo. To block a new word, add the SHA-256 hash of the lowercase word.
+The banned-words guard (`tests/guard.ts`) reads `content/`, `app/`, `public/`, every file tracked by git and, once built, `.output/public`, including file names. It fails on any word whose SHA-256 hash is in `tests/banned-words.json`, and on Vietnamese phone numbers (`+84`, `0084`, `wa.me/84`). It first decodes HTML entities and %-codes, folds fullwidth letters and drops invisible characters, and it checks the pieces of camelCase names. The list holds hashes only, so the blocked words are never written in this public repo. To block a new word, add the SHA-256 hash of the lowercase word.
