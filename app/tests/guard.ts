@@ -3,7 +3,7 @@
 // (head/DECISIONS.md D-004). Reports name the file, the line and the hash,
 // never the plain word, so CI logs don't leak it either.
 import { createHash } from 'node:crypto'
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { extname, join, relative } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 
@@ -14,8 +14,9 @@ export interface Hit {
   detail: string
 }
 
-// A plain word: letters and digits only.
-const WORD = /[\p{L}\p{N}]+/gu
+// A plain word: letters, digits and the marks on them (a strikethrough mark
+// doesn't split a word).
+const WORD = /[\p{L}\p{M}\p{N}]+/gu
 // A joined word kept whole, like `name-with.dots` or an email address.
 const JOINED = /[\p{L}\p{N}]+(?:[.\-_@][\p{L}\p{N}]+)+/gu
 // A dotted word, like a domain. Each of its endings is checked too.
@@ -27,11 +28,12 @@ const PIECE_BREAK = /(?<=\p{Ll})(?=\p{Lu})|(?<=\p{Lu})(?=\p{Lu}\p{Ll})|(?<=\p{L}
 // spaces, dots, dashes, slashes, underscores or brackets between them. The lookbehind skips sums in
 // minified code, like `a+84000000`. Runs after entities and %-codes are decoded,
 // so `&#43;84` and `%2B84` are caught too.
-const VN_PHONE = /(?<![\p{L}\p{N}_)\]])(?:\+|00)\s?84(?:[\s.\-()/_]*\d){8,10}/gu
+const VN_PHONE = /(?<![\p{L}\p{N}_)\]])(?:\+|00)\s?84(?:[\s.\-\u2010-\u2015()/_]*\d){8,10}/gu
 // A WhatsApp link to a Vietnamese number: `wa.me/84…` or `phone=84…`.
 const VN_WHATSAPP = /(?:wa\.me\/|phone=)84\d{8,10}/gu
-// Invisible characters, like a zero-width space, a soft hyphen or a Hangul filler.
-const INVISIBLE = /[\p{Cf}\u034F\uFE00-\uFE0F\u115F\u1160\u3164\uFFA0\u2800]/gu
+// Invisible characters, like a zero-width space, a soft hyphen, a variation
+// selector or a Hangul filler, plus the blank Braille pattern.
+const INVISIBLE = /[\p{Default_Ignorable_Code_Point}\u2800]/gu
 
 const NAMED_ENTITIES: Record<string, string> = {
   amp: '&', lt: '<', gt: '>', quot: '"', apos: '\'', nbsp: ' ', shy: '\u00AD', plus: '+', period: '.', commat: '@',
@@ -117,18 +119,31 @@ export function scanText(text: string, banned: ReadonlySet<string>, file = '<tex
   return hits
 }
 
-/** Every file under the given folders, binary or not. Folders that don't exist are skipped. */
+/**
+ * Every file under the given folders, binary or not. Folders that don't exist
+ * are skipped. A symlink counts as a file and is not followed.
+ */
 export function allFiles(dirs: string[]): string[] {
   const files: string[] = []
   const walk = (dir: string) => {
     for (const name of readdirSync(dir)) {
       const path = join(dir, name)
-      if (statSync(path).isDirectory()) walk(path)
+      if (lstatSync(path).isDirectory()) walk(path)
       else files.push(path)
     }
   }
   for (const dir of dirs) if (existsSync(dir)) walk(dir)
   return files
+}
+
+/** A regular file, or a symlink to one. A broken symlink is not readable. */
+function isReadable(path: string): boolean {
+  try {
+    return statSync(path).isFile()
+  }
+  catch {
+    return false
+  }
 }
 
 export function isText(path: string): boolean {
@@ -160,7 +175,7 @@ export function readText(file: string): string {
 export function scanFiles(files: string[], banned: ReadonlySet<string>, root = '/'): Hit[] {
   return files.flatMap(file => [
     ...scanText(relative(root, file), banned, file, 0),
-    ...(isText(file) ? scanText(readText(file), banned, file) : []),
+    ...(isText(file) && isReadable(file) ? scanText(readText(file), banned, file) : []),
   ])
 }
 

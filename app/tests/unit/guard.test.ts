@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { gzipSync } from 'node:zlib'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -91,6 +91,9 @@ describe('scanText', () => {
     ['a combining accent', 'e\u0301xamplecorp'],
     ['a grapheme joiner', 'example\u034Fcorp'],
     ['a Hangul filler', 'example\u3164corp'],
+    ['a supplement variation selector', 'example\u{E0100}corp'],
+    ['a Mongolian variation selector', 'example\u180Bcorp'],
+    ['a strikethrough mark', 'examplec\u0336orp'],
   ])('fails on a banned word hidden by %s', (_, text) => {
     expect(scanText(text, banned).map(hit => hit.detail)).toContain(sha256(SAMPLE))
   })
@@ -114,6 +117,7 @@ describe('scanText', () => {
     'https://api.whatsapp.com/send?phone=84900000000',
     '+84/900/000/000',
     '+84_900_000_000',
+    '+84\u2013900\u2013000\u2013000',
   ])('fails on the Vietnamese phone number %s', (text) => {
     const hits = scanText(text, banned)
     expect(hits).toHaveLength(1)
@@ -159,6 +163,15 @@ describe('scanFiles', () => {
     expect(formatHits(hits, dir, banned).toLowerCase()).not.toContain(SAMPLE)
     expect(formatHits(hits, dir, banned)).toContain('<hidden>')
     rmSync(named)
+  })
+
+  it('checks the name of a broken symlink without following it', () => {
+    const link = join(dir, 'examplecorp-logo.png')
+    symlinkSync(join(dir, 'missing-target.png'), link)
+    expect(allFiles([dir])).toContain(link)
+    const hits = scanFiles([link], banned, dir)
+    expect(hits).toEqual([{ file: link, line: 0, kind: 'banned-word', detail: sha256(SAMPLE) }])
+    rmSync(link)
   })
 
   it('unpacks a base64 gzip file, like the Nuxt Content dump', () => {
