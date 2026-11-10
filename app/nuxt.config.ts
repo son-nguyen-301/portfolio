@@ -24,7 +24,7 @@ export default defineNuxtConfig({
   },
 
   content: {
-    // Node 22.5+ has SQLite built in, so no native package has to be compiled.
+    // Node 22.13+ has SQLite built in (no flag), so no native package has to be compiled.
     experimental: { sqliteConnector: 'native' },
   },
 
