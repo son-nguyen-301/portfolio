@@ -76,3 +76,25 @@ freshness: 180d
 **Why:** Son's answer on 2026-11-10. Matches the "both audiences equally" decision for the home page.
 
 ---
+
+## Which side projects go on the public Lab page?
+type: qa
+answer: hydra-claude (link to public repo), the GitHub task runner (diagram only, no repo link), Looper, Homereel (TV and phone app screens only, never the download or indexer parts). Leave out Idea to Video, the photo editor, Hydrakit, the trading bot and the homelab monitor.
+captured: 2026-11-10
+status: active
+freshness: 180d
+
+**Why:** Son's picks on 2026-11-10.
+
+---
+
+## Does the site show prices?
+type: qa
+answer: No. The site says "fixed price after a 20-minute call". Rates live on Upwork only.
+captured: 2026-11-10
+status: active
+freshness: 180d
+
+**Why:** Easier to raise rates later, and full-time recruiters don't anchor on a freelance rate.
+
+---
