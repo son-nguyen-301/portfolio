@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>About</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+.pf{--paper:#F5F7F8;--surface:#FFFFFF;--ink:#141A22;--muted:#5A6472;--line:#DCE1E6;--jade:#0D7663;--jade-soft:#DCEFEA;--amber:#A86A12;--amber-soft:#F6EBD9;--on-jade:#FFFFFF;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.6}
+.pf.dark{--paper:#0E1216;--surface:#151B21;--ink:#E6EBF0;--muted:#9AA5B1;--line:#27303A;--jade:#43C2A8;--jade-soft:#15302A;--amber:#E2A64C;--amber-soft:#33270F;--on-jade:#0E1216}
+.pf h1,.pf h2,.pf h3{font-family:"Bricolage Grotesque",Inter,system-ui,sans-serif;margin:0;line-height:1.12;text-wrap:balance}
+.pf p{margin:0}
+.pf a{color:var(--jade);text-underline-offset:3px}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.label{font:600 12px/1.3 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:24px;padding-right:24px;box-sizing:border-box}
+.tag{font:500 12px/1 "JetBrains Mono",monospace;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--surface)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+dl{margin:0}dt{margin:0}dd{margin:0}
+@media (max-width:760px){.cols-sm-1{grid-template-columns:minmax(0,1fr)!important}}
+</style>
+</helmet>
+<div class="pf {{themeClass}}" style="min-height: 100vh">
+<dc-import name="SiteHeader" theme="{{theme}}" upwork="{{upwork}}" active="about" hint-size="100%,72px"></dc-import>
+<main class="wrap" style="padding-top: 64px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 72px">
+
+<section class="cols-sm-1" style="display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 56px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<p class="label">About</p>
+<h1 style="font-size: 46px; letter-spacing: -0.02em">I have built web apps with Vue since 2019</h1>
+<div style="display: flex; flex-direction: column; gap: 14px; font-size: 18px; max-width: 64ch">
+<p>I started as a frontend developer, then led a frontend team at XTEL, where I trained 10 engineers in Vue and Nuxt.</p>
+<p>Since then I built the website for Terminal3, a game payments product at Paymentwall. I worked on cards, budgets and bills at Aspire, a Singapore fintech. I also set up a large online shop for a New Zealand company, and I lead the developers who build on it.</p>
+<p>I care about code that the next person can pick up, about catching the edge cases before they reach users, and about saying early when something will be late. I work in English every day with teams in Singapore and New Zealand.</p>
+</div>
+</div>
+<dl class="card" style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<div><dt class="label">Based in</dt><dd>Hanoi, Vietnam (UTC+7)</dd></div>
+<div><dt class="label">Working hours</dt><dd>08:00 to 22:00 Hanoi time</dd></div>
+<div><dt class="label">Languages</dt><dd>Vietnamese (native), English (professional)</dd></div>
+<div><dt class="label">Open to</dt><dd>Full-time remote roles, and contract and freelance projects</dd></div>
+<div><dt class="label">Roles</dt><dd>Senior Frontend Engineer (Vue and Nuxt), Frontend Lead, Full-stack Engineer (frontend-heavy)</dd></div>
+</dl>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap"><h2 style="font-size: 34px">Career</h2><a href="CV.dc.html" style="font-weight: 600">See it as a CV →</a></div>
+<ol style="margin: 0; padding: 0; list-style: none">
+<sc-for list="{{jobs}}" as="j" hint-placeholder-count="4">
+<li class="cols-sm-1" style="display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 24px; padding: 24px 0; border-top: 1px solid var(--line)">
+<div style="display: flex; flex-direction: column; gap: 4px"><span class="mono" style="font-size: 14px; font-weight: 600">{{j.when}}</span><span style="font-size: 13px; color: var(--muted)">{{j.where}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="font-size: 22px">{{j.role}} · {{j.company}}</h3>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; color: var(--muted)">
+<sc-for list="{{j.points}}" as="p" hint-placeholder-count="2"><li>{{p}}</li></sc-for>
+</ul>
+</div>
+</li>
+</sc-for>
+</ol>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 20px">
+<h2 style="font-size: 34px">Skills</h2>
+<div class="cols-sm-1" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+<sc-for list="{{skills}}" as="g" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 10px"><p class="label">{{g.name}}</p><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{g.items}}" as="i" hint-placeholder-count="6"><span class="tag">{{i}}</span></sc-for></div></div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 6px"><h2 style="font-size: 34px">Earlier projects</h2><p style="color: var(--muted)">Client work I led or built at XTEL, 2019 to 2021.</p></div>
+<div class="cols-sm-1" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{earlier}}" as="e" hint-placeholder-count="8">
+<div class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 6px"><h3 style="font-size: 18px">{{e.name}}</h3><p style="font-size: 14px; color: var(--muted)">{{e.summary}}</p></div>
+</sc-for>
+</div>
+</section>
+</main>
+<dc-import name="SiteFooter" theme="{{theme}}" upwork="{{upwork}}" hint-size="100%,220px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"upwork":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":2900}}'>
+class Component extends DCLogic {
+renderVals() {
+const theme = this.props.theme ?? 'light';
+return {
+theme, upwork: !!this.props.upwork, themeClass: theme === 'dark' ? 'dark' : '',
+jobs: [
+{ when: 'Sep 2024 to now', where: 'Remote', role: 'Senior Frontend Developer', company: 'A New Zealand e-commerce company', points: ['Set up the new Nuxt storefront and led 3 vendor developers onto Nuxt 4 and Vue 3.', 'Wrote 53% of the commits, merged 379 pull requests and reviewed 235.', 'Built the test system and the team’s AI dev pipeline.'] },
+{ when: 'May 2022 to Jul 2026', where: 'Singapore, remote', role: 'Senior Frontend Developer', company: 'Aspire', points: ['The only frontend developer on Cards and Budgets: multi-currency budgets and cards, then the redesign with dark mode.', 'Premium subscription, bills and claims with OCR bill scanning.', 'Acting engineering manager for one 3-week sprint.'] },
+{ when: 'Jul 2021 to May 2022', where: 'Hanoi', role: 'Frontend Developer', company: 'Paymentwall', points: ['Built the Terminal3 website from scratch with Vue 2, TypeScript and Strapi. Live in 2 months.'] },
+{ when: 'Apr 2019 to Jul 2021', where: 'Hanoi', role: 'Team Lead, Frontend Developer', company: 'XTEL', points: ['Trained 10 engineers in Vue and Nuxt.', 'Built an internal Base UI library for back-office apps.'] }
+],
+skills: [
+{ name: 'Frontend', items: ['Vue 3', 'Vue 2', 'Nuxt 4', 'TypeScript', 'Quasar', 'Nuxt UI', 'Tailwind CSS', 'Pinia', 'React', 'Svelte'] },
+{ name: 'Testing and quality', items: ['Playwright', 'Vitest', 'Coverage gates in CI', 'ESLint', 'Code review'] },
+{ name: 'Server side', items: ['Nitro', 'Node.js', 'Express', 'NestJS', 'REST APIs', 'Strapi', 'Docker', 'GitHub Actions'] },
+{ name: 'AI', items: ['Claude Code', 'Plugins, skills and subagents', 'AI review in CI', 'MCP', 'Agent workflows with human checks'] },
+{ name: 'Ways of working', items: ['Leading small teams', 'Mentoring', 'Figma handoff', 'Agile and Scrum', 'Written updates'] }
+],
+earlier: [
+{ name: 'Base UI library', summary: 'Login, role-based permissions, user and group management, data tables and notifications for back-office apps.' },
+{ name: 'Luckybest Webview', summary: 'Ticket buying with payments through Momo, ZaloPay, GPay, 9Pay, SGB and Appota. Team lead, team of 4.' },
+{ name: 'Keno CMS', summary: 'Admin tool for orders, revenue checks, results approval and reports. Team lead, team of 4.' },
+{ name: 'RFID Portal', summary: 'Warehouse app that talks to RFID scanners. For a Singapore client. Team of 2.' },
+{ name: 'Smart IOC', summary: 'Web screen for an AI smart-home system. Team lead, team of 2.' },
+{ name: 'Airtables', summary: 'Restaurant booking site for the Golden Gate group. Solo.' },
+{ name: 'Big Lottery', summary: 'Quick ticket buying with Momo e-wallet payments. Team lead, team of 2.' },
+{ name: 'Phố Hoa', summary: 'Online flower shop with filters and seller tools, built for search engines. Solo.' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

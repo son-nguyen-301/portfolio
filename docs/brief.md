@@ -71,6 +71,7 @@ Upwork bans contact details (email, phone, chat IDs, booking links) on pages lin
 
 - A visit with `?from=upwork` turns on Upwork mode. Keep it on for the rest of the visit (session storage), on every page.
 - In Upwork mode: hide the email, the booking link, the contact page link and any "Email me" or "Book a call" button. Show "Message me on Upwork" (links to the Upwork profile) instead.
+- In Upwork mode also hide the LinkedIn link. GitHub and the Upwork link stay.
 - Links that Son puts on Upwork always carry `?from=upwork`.
 - The CV PDF is hidden in Upwork mode (it holds contact details).
 - If JavaScript is off, render the safe version: no contact details on pages that are reached with `?from=upwork`. Because pages are static, the simplest safe approach is to render contact blocks only on the client after the mode check, with a visible fallback that links to the Upwork profile.

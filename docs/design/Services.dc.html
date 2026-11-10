@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Services</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+.pf{--paper:#F5F7F8;--surface:#FFFFFF;--ink:#141A22;--muted:#5A6472;--line:#DCE1E6;--jade:#0D7663;--jade-soft:#DCEFEA;--amber:#A86A12;--amber-soft:#F6EBD9;--on-jade:#FFFFFF;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.6}
+.pf.dark{--paper:#0E1216;--surface:#151B21;--ink:#E6EBF0;--muted:#9AA5B1;--line:#27303A;--jade:#43C2A8;--jade-soft:#15302A;--amber:#E2A64C;--amber-soft:#33270F;--on-jade:#0E1216}
+.pf h1,.pf h2,.pf h3{font-family:"Bricolage Grotesque",Inter,system-ui,sans-serif;margin:0;line-height:1.12;text-wrap:balance}
+.pf p{margin:0}
+.pf a{color:var(--jade);text-underline-offset:3px}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.label{font:600 12px/1.3 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:24px;padding-right:24px;box-sizing:border-box}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:8px;font:600 15px/1 Inter,system-ui,sans-serif;text-decoration:none;border:1px solid transparent;box-sizing:border-box}
+.btn-primary{background:var(--ink);color:var(--paper)!important}
+.btn-action{background:var(--jade);color:var(--on-jade)!important}
+.btn-ghost{background:transparent;color:var(--ink)!important;border-color:var(--line)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+@media (max-width:760px){.cols-sm-1{grid-template-columns:minmax(0,1fr)!important}}
+</style>
+</helmet>
+<div class="pf {{themeClass}}" style="min-height: 100vh">
+<dc-import name="SiteHeader" theme="{{theme}}" upwork="{{upwork}}" active="services" hint-size="100%,72px"></dc-import>
+<main class="wrap" style="padding-top: 64px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 64px">
+<div style="display: flex; flex-direction: column; gap: 14px; max-width: 700px">
+<p class="label">Services</p>
+<h1 style="font-size: 48px; letter-spacing: -0.02em">Vue and Nuxt work, from a fix to a full app</h1>
+<p style="font-size: 18px; color: var(--muted)">I lead with frontend. I also build the server side of my apps, and AI workflows for your team. No hourly rates here: you get a fixed price after a 30-minute call.</p>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 0">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+<div class="cols-sm-1" style="display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 24px; padding: 28px 0; border-top: 1px solid var(--line)">
+<div style="display: flex; flex-direction: column; gap: 6px"><p class="label" style="color: var(--jade)">{{g.name}}</p><p style="font-size: 14px; color: var(--muted)">{{g.note}}</p></div>
+<div style="display: flex; flex-direction: column; gap: 24px">
+<sc-for list="{{g.items}}" as="s" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h2 style="font-size: 24px">{{s.title}}</h2>
+<p style="color: var(--muted); max-width: 62ch">{{s.summary}}</p>
+<p style="font-size: 14px"><span class="mono" style="color: var(--muted)">Proof:</span> <a href="CaseStudy.dc.html">{{s.proof}}</a></p>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px"><p class="label">How a project starts</p><h2 style="font-size: 34px">Five steps, all in writing</h2></div>
+<ol class="cols-sm-1" style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{steps}}" as="st" hint-placeholder-count="5">
+<li class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 10px"><span class="mono" style="color: var(--jade); font-weight: 600">{{st.n}}</span><span style="font-size: 15px">{{st.text}}</span></li>
+</sc-for>
+</ol>
+</section>
+
+<section class="cols-sm-1" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px">
+<div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 12px; background: var(--jade-soft); border-color: transparent">
+<p class="label" style="color: var(--jade)">My AI rules</p>
+<h2 style="font-size: 24px">AI speeds me up. It never ships alone.</h2>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px"><li>Tests come first.</li><li>A person approves every merge.</li><li>No client secrets are sent to AI tools.</li></ul>
+</div>
+<div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<p class="label">Hiring full-time?</p>
+<h2 style="font-size: 24px">I am open to remote roles too</h2>
+<p style="color: var(--muted)">Senior Frontend Engineer (Vue and Nuxt), Frontend Lead, or Full-stack Engineer (frontend-heavy, Nuxt and Node). Remote, from UTC+7.</p>
+<div><a class="btn btn-ghost" href="CV.dc.html">See my CV</a></div>
+</div>
+</section>
+
+<section class="card" style="padding: 36px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap">
+<div style="display: flex; flex-direction: column; gap: 6px"><h2 style="font-size: 28px">Get a fixed price</h2><p style="color: var(--muted)">08:00 to 22:00 Hanoi time (UTC+7). I reply within 12 hours.</p></div>
+<sc-if value="{{notUpwork}}" hint-placeholder-val="{{ true }}"><a class="btn btn-action" href="Contact.dc.html">Book a 30-minute call</a></sc-if>
+<sc-if value="{{upwork}}" hint-placeholder-val="{{ false }}"><a class="btn btn-action" href="https://www.upwork.com/freelancers/~010a5da72f7f0ba777">Message me on Upwork</a></sc-if>
+</section>
+</main>
+<dc-import name="SiteFooter" theme="{{theme}}" upwork="{{upwork}}" hint-size="100%,220px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"upwork":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":2100}}'>
+class Component extends DCLogic {
+renderVals() {
+const theme = this.props.theme ?? 'light';
+const upwork = !!this.props.upwork;
+return {
+theme, upwork, notUpwork: !upwork, themeClass: theme === 'dark' ? 'dark' : '',
+groups: [
+{ name: 'Frontend', note: 'My main work. Senior level.', items: [
+{ title: 'Speed audit and fixes', summary: 'I find out why your Vue or Nuxt site is slow, fix the biggest causes, and show you the numbers before and after.', proof: 'Faster pages and a safe UI library swap' },
+{ title: 'Upgrades and migrations', summary: 'Vue 2 to Vue 3, Nuxt to version 4, UI library swaps, Tailwind 3 to 4. I add tests first, so nothing breaks on the way.', proof: 'Faster pages and a safe UI library swap' },
+{ title: 'Build or extend a Vue or Nuxt app', summary: 'Shops, dashboards, admin panels and payment flows, including the server side of a Nuxt app: API routes, caching, Docker and CI.', proof: 'Building a live storefront from zero' },
+{ title: 'Test safety net', summary: 'Playwright and Vitest tests, with a coverage gate in CI, so your team can change code without fear.', proof: 'Building a live storefront from zero' }
+] },
+{ name: 'AI', note: 'For teams that want AI help with guard rails.', items: [
+{ title: 'AI dev workflows for your team', summary: 'Claude Code set up for your repo, AI review on every pull request, and agents that take a ticket to a tested pull request. A person approves each key step.', proof: 'An AI dev team that takes a ticket to a reviewed pull request' }
+] },
+{ name: 'Lead', note: 'Part-time, next to your team.', items: [
+{ title: 'Frontend lead and mentoring', summary: 'Code review, clear frontend rules, and getting new developers up to speed in Vue and Nuxt.', proof: 'Building a live storefront from zero' }
+] }
+],
+steps: [
+{ n: '01', text: 'A 30-minute call to understand the problem.' },
+{ n: '02', text: 'A written plan with a fixed price.' },
+{ n: '03', text: 'A demo every week, and a short written update every day.' },
+{ n: '04', text: 'Tests before big changes.' },
+{ n: '05', text: 'A handover with docs, so your team can carry on without me.' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

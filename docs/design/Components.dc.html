@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Components and states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+.pf{--paper:#F5F7F8;--surface:#FFFFFF;--ink:#141A22;--muted:#5A6472;--line:#DCE1E6;--jade:#0D7663;--jade-soft:#DCEFEA;--amber:#A86A12;--amber-soft:#F6EBD9;--on-jade:#FFFFFF;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.6}
+.pf.dark{--paper:#0E1216;--surface:#151B21;--ink:#E6EBF0;--muted:#9AA5B1;--line:#27303A;--jade:#43C2A8;--jade-soft:#15302A;--amber:#E2A64C;--amber-soft:#33270F;--on-jade:#0E1216}
+.pf h1,.pf h2,.pf h3{font-family:"Bricolage Grotesque",Inter,system-ui,sans-serif;margin:0;line-height:1.15}
+.pf p{margin:0}
+.pf a{color:var(--jade)}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.label{font:600 12px/1.3 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:8px;font:600 15px/1 Inter,system-ui,sans-serif;text-decoration:none;border:1px solid transparent;box-sizing:border-box;cursor:pointer}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-action{background:var(--jade);color:var(--on-jade)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.is-hover{filter:brightness(1.12)}
+.btn-ghost.is-hover{background:var(--surface);filter:none;border-color:var(--muted)}
+.is-focus{outline:2px solid var(--jade);outline-offset:2px}
+.is-disabled{opacity:.45;cursor:not-allowed}
+.tag{font:500 12px/1 "JetBrains Mono",monospace;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.shot{background:repeating-linear-gradient(135deg,var(--paper) 0 12px,var(--line) 12px 13px);border-bottom:1px solid var(--line)}
+.sec{display:flex;flex-direction:column;gap:16px;padding:32px 0;border-top:1px solid var(--line)}
+.sw{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.chip{height:56px;border-radius:8px;border:1px solid rgba(128,128,128,.3)}
+.seg{min-height:36px;padding:0 14px;border:0;background:transparent;color:var(--muted);font:500 13px/1 Inter,sans-serif;border-radius:6px;cursor:pointer}
+.seg.on{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.bar{position:relative;height:24px;border-radius:6px;border:1px solid var(--line);background:var(--paper);overflow:hidden}
+.bar span{position:absolute;top:0;bottom:0}
+.me{background:var(--jade-soft)}
+.you{border-left:2px solid var(--amber);border-right:2px solid var(--amber);background:repeating-linear-gradient(45deg,transparent 0 5px,var(--amber-soft) 5px 10px)}
+</style>
+</helmet>
+<div class="pf {{themeClass}}" style="width: 1280px; height: 2200px; box-sizing: border-box; padding: 48px 64px; overflow: hidden">
+<h1 style="font-size: 36px">Components and states</h1>
+<p style="color: var(--muted); padding-top: 6px">Direction A. Every color comes from a token, so each part works in light and dark. Try the Copy email button and the theme switch.</p>
+
+<section class="sec" style="margin-top: 24px">
+<h2 class="label">Color tokens · light / dark</h2>
+<div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{tokens}}" as="t" hint-placeholder-count="9">
+<div class="sw"><div style="display: flex; gap: 4px"><div class="chip" style="flex: 1; background: {{t.light}}"></div><div class="chip" style="flex: 1; background: {{t.dark}}"></div></div><strong>{{t.name}}</strong><span class="mono" style="font-size: 11px; color: var(--muted)">{{t.light}} / {{t.dark}}</span></div>
+</sc-for>
+</div>
+</section>
+
+<section class="sec">
+<h2 class="label">Type</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: end">
+<div><p class="label">H1 · Bricolage 700 · 54</p><p style="font: 700 54px/1.05 'Bricolage Grotesque', sans-serif">Fast, clear</p></div>
+<div><p class="label">H2 · Bricolage 700 · 36</p><p style="font: 700 36px/1.1 'Bricolage Grotesque', sans-serif">What I can do</p></div>
+<div><p class="label">Numbers · JetBrains Mono 600</p><p class="mono" style="font-size: 32px; font-weight: 600; color: var(--jade)">419,729 → 145,215</p></div>
+<div><p class="label">Body · Inter 400 · 16 / 1.6</p><p>Short sentences. One idea per sentence. About 68 characters wide.</p></div>
+<div><p class="label">Lead · Inter 400 · 18</p><p style="font-size: 18px; color: var(--muted)">Secondary text in the muted token.</p></div>
+<div><p class="label">Label · Mono 600 · 12 · caps</p><p class="label">Selected work</p></div>
+</div>
+</section>
+
+<section class="sec">
+<h2 class="label">Buttons · default, hover, focus, disabled</h2>
+<div style="display: grid; grid-template-columns: 120px repeat(4, minmax(0, 1fr)); gap: 12px; align-items: center; font-size: 13px; color: var(--muted)">
+<span></span><span>Default</span><span>Hover</span><span>Keyboard focus</span><span>Disabled</span>
+<span>Primary</span><button type="button" class="btn btn-primary">Hire me for a project</button><button type="button" class="btn btn-primary is-hover">Hire me for a project</button><button type="button" class="btn btn-primary is-focus">Hire me for a project</button><button type="button" class="btn btn-primary is-disabled" disabled>Hire me for a project</button>
+<span>Action</span><button type="button" class="btn btn-action">Book a 30-minute call</button><button type="button" class="btn btn-action is-hover">Book a 30-minute call</button><button type="button" class="btn btn-action is-focus">Book a 30-minute call</button><button type="button" class="btn btn-action is-disabled" disabled>Book a 30-minute call</button>
+<span>Ghost</span><button type="button" class="btn btn-ghost">See my work</button><button type="button" class="btn btn-ghost is-hover">See my work</button><button type="button" class="btn btn-ghost is-focus">See my work</button><button type="button" class="btn btn-ghost is-disabled" disabled>See my work</button>
+</div>
+</section>
+
+<section class="sec">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 class="label">Copy email (live)</h2>
+<div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
+<span class="mono" style="padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: var(--surface)">haison143@gmail.com</span>
+<button type="button" class="btn btn-ghost" onClick="{{copy}}" aria-live="polite" style="min-width: 120px">{{copyLabel}}</button>
+</div>
+<p style="font-size: 13px; color: var(--muted)">Shows "Copied" for 2 seconds. If the clipboard is blocked, it selects the text instead.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 class="label">Theme switch (live)</h2>
+<div role="group" aria-label="Theme" style="display: inline-flex; gap: 2px; padding: 3px; border-radius: 8px; background: var(--paper); border: 1px solid var(--line); align-self: start">
+<sc-for list="{{themes}}" as="t" hint-placeholder-count="3"><button type="button" class="seg {{t.cls}}" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+</div>
+<p style="font-size: 13px; color: var(--muted)">Light, dark or follow the system. Remembered in this browser.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 class="label">Tags and metric tiles</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><span class="tag">Nuxt 4</span><span class="tag">Vue 3</span><span class="tag">Playwright</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div class="card" style="padding: 14px"><p class="mono" style="font-size: 20px; font-weight: 600; color: var(--jade)">−65%</p><p style="font-size: 12px; color: var(--muted)">UI library CSS</p></div>
+<div class="card" style="padding: 14px"><p class="mono" style="font-size: 20px; font-weight: 600; color: var(--jade)">93%</p><p style="font-size: 12px; color: var(--muted)">Coverage kept</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sec">
+<h2 class="label">Work card · default and hover · quote block</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start">
+<a class="card" href="CaseStudy.dc.html" style="display: flex; flex-direction: column; overflow: hidden; text-decoration: none; color: var(--ink)"><div class="shot" style="height: 140px"></div><div style="padding: 16px; display: flex; flex-direction: column; gap: 6px"><span class="mono" style="font-size: 12px; font-weight: 600; color: var(--jade)">UI library CSS −65%</span><h3 style="font-size: 18px">Faster pages and a safe UI library swap</h3><p style="font-size: 13px; color: var(--muted)">A New Zealand e-commerce company</p></div></a>
+<a class="card" href="CaseStudy.dc.html" style="display: flex; flex-direction: column; overflow: hidden; text-decoration: none; color: var(--ink); border-color: var(--jade); box-shadow: 0 8px 24px rgba(13, 118, 99, 0.12)"><div class="shot" style="height: 140px"></div><div style="padding: 16px; display: flex; flex-direction: column; gap: 6px"><span class="mono" style="font-size: 12px; font-weight: 600; color: var(--jade)">UI library CSS −65%</span><h3 style="font-size: 18px; text-decoration: underline; text-decoration-color: var(--jade)">Faster pages and a safe UI library swap</h3><p style="font-size: 13px; color: var(--muted)">Hover: jade border, title underline</p></div></a>
+<figure style="margin: 0; border-left: 3px solid var(--jade); padding: 4px 0 4px 18px; display: flex; flex-direction: column; gap: 8px">
+<blockquote style="margin: 0; font: 600 20px/1.4 'Bricolage Grotesque', sans-serif">[Written quote, word for word]</blockquote>
+<figcaption style="font-size: 13px; color: var(--muted)">[Role], [company type]</figcaption>
+<p style="font-size: 12px; color: var(--muted)">Renders nothing while the quote is null.</p>
+</figure>
+</div>
+</section>
+
+<section class="sec">
+<h2 class="label">Time overlap clock · every state</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px"><p class="label">Overlap · London</p><div class="bar"><span class="me" style="left: 4.17%; width: 58.33%"></span><span class="you" style="left: 37.5%; width: 33.33%"></span></div><p style="font-size: 14px">We share 6 work hours each weekday: 09:00 to 15:00 your time.</p></div>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px"><p class="label">Short · New York</p><div class="bar"><span class="me" style="left: 0; width: 41.67%"></span><span class="me" style="left: 83.33%; width: 16.67%"></span><span class="you" style="left: 37.5%; width: 33.33%"></span></div><p style="font-size: 14px">We share 1 work hour each weekday: 09:00 to 10:00 your time.</p></div>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px"><p class="label">None · Los Angeles</p><div class="bar"><span class="me" style="left: 0; width: 29.17%"></span><span class="me" style="left: 70.83%; width: 29.17%"></span><span class="you" style="left: 37.5%; width: 33.33%"></span></div><p style="font-size: 14px">Our work days don't overlap. I send a written update before your day starts, and I can take calls at 06:00 your time.</p></div>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px"><p class="label">Same time zone · Hanoi</p><div class="bar"><span class="me" style="left: 33.33%; width: 58.33%"></span><span class="you" style="left: 37.5%; width: 33.33%"></span></div><p style="font-size: 14px">We are in the same time zone.</p></div>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px"><p class="label">Before the page loads (server HTML)</p><div class="bar"><span class="me" style="left: 33.33%; width: 58.33%"></span></div><p style="font-size: 14px">Hanoi, UTC+7 · 08:00 to 22:00</p></div>
+<div class="card" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; align-self: start"><div><p class="label">Phone · one line</p><p class="mono" style="font-weight: 600">6 h · 09:00 to 15:00</p></div><span class="mono" style="font-size: 12px; color: var(--muted)">Hanoi 21:47</span></div>
+</div>
+</section>
+
+<section class="sec">
+<h2 class="label">Header · normal and Upwork mode</h2>
+<div style="display: flex; flex-direction: column; gap: 12px; border: 1px dashed var(--line); border-radius: 8px; overflow: hidden">
+<dc-import name="SiteHeader" theme="{{theme}}" upwork="{{ false }}" active="work" hint-size="100%,72px"></dc-import>
+<dc-import name="SiteHeader" theme="{{theme}}" upwork="{{ true }}" active="work" hint-size="100%,72px"></dc-import>
+</div>
+<p style="font-size: 13px; color: var(--muted)">Upwork mode: no Contact link, and the action button becomes "Message me on Upwork". Nothing on the page shows the email, booking link or phone number.</p>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":2200}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { copied: false, themePick: 'light' };
+}
+renderVals() {
+const theme = this.props.theme ?? 'light';
+const themes = ['Light', 'Dark', 'System'].map(l => {
+const on = this.state.themePick === l.toLowerCase();
+return { label: l, cls: on ? 'on' : '', pressed: on ? 'true' : 'false', pick: () => this.setState({ themePick: l.toLowerCase() }) };
+});
+return {
+theme, themeClass: theme === 'dark' ? 'dark' : '', themes,
+copyLabel: this.state.copied ? 'Copied' : 'Copy email',
+copy: () => { this.setState({ copied: true }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ copied: false }), 2000); },
+tokens: [
+{ name: 'Paper', light: '#F5F7F8', dark: '#0E1216' }, { name: 'Surface', light: '#FFFFFF', dark: '#151B21' },
+{ name: 'Ink', light: '#141A22', dark: '#E6EBF0' }, { name: 'Muted', light: '#5A6472', dark: '#9AA5B1' },
+{ name: 'Line', light: '#DCE1E6', dark: '#27303A' }, { name: 'Jade', light: '#0D7663', dark: '#43C2A8' },
+{ name: 'Jade soft', light: '#DCEFEA', dark: '#15302A' }, { name: 'Amber', light: '#A86A12', dark: '#E2A64C' },
+{ name: 'Amber soft', light: '#F6EBD9', dark: '#33270F' }
+]
+};
+}
+componentWillUnmount() { clearTimeout(this._t); }
+}
+</script>
+</body>
+</html>

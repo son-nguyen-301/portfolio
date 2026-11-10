@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Work</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+.pf{--paper:#F5F7F8;--surface:#FFFFFF;--ink:#141A22;--muted:#5A6472;--line:#DCE1E6;--jade:#0D7663;--jade-soft:#DCEFEA;--amber:#A86A12;--amber-soft:#F6EBD9;--on-jade:#FFFFFF;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.6}
+.pf.dark{--paper:#0E1216;--surface:#151B21;--ink:#E6EBF0;--muted:#9AA5B1;--line:#27303A;--jade:#43C2A8;--jade-soft:#15302A;--amber:#E2A64C;--amber-soft:#33270F;--on-jade:#0E1216}
+.pf h1,.pf h2,.pf h3{font-family:"Bricolage Grotesque",Inter,system-ui,sans-serif;margin:0;line-height:1.12;text-wrap:balance}
+.pf p{margin:0}
+.pf a{color:var(--jade);text-underline-offset:3px}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.label{font:600 12px/1.3 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:24px;padding-right:24px;box-sizing:border-box}
+.tag{font:500 12px/1 "JetBrains Mono",monospace;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.wcard{transition:border-color .15s}
+.wcard:hover{border-color:var(--jade)}
+.shot{background:repeating-linear-gradient(135deg,var(--paper) 0 12px,var(--line) 12px 13px);border-bottom:1px solid var(--line)}
+@media (max-width:760px){.cols-sm-1{grid-template-columns:minmax(0,1fr)!important}}
+</style>
+</helmet>
+<div class="pf {{themeClass}}" style="min-height: 100vh">
+<dc-import name="SiteHeader" theme="{{theme}}" upwork="{{upwork}}" active="work" hint-size="100%,72px"></dc-import>
+<main class="wrap" style="padding-top: 64px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px; max-width: 680px">
+<p class="label">Work</p>
+<h1 style="font-size: 48px; letter-spacing: -0.02em">Case studies</h1>
+<p style="font-size: 18px; color: var(--muted)">Each one says what was wrong, what I did, and what changed. Numbers are real and checked. Pick the one closest to your project.</p>
+</div>
+<div class="cols-sm-1" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+<sc-for list="{{work}}" as="w" hint-placeholder-count="6">
+<a class="card wcard" href="CaseStudy.dc.html" style="display: flex; flex-direction: column; overflow: hidden; text-decoration: none; color: var(--ink)">
+<div class="shot" style="aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center"><span class="label">{{w.media}}</span></div>
+<div style="padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline"><span class="mono" style="font-size: 13px; font-weight: 600; color: var(--jade)">{{w.metric}}</span><span class="mono" style="font-size: 12px; color: var(--muted)">{{w.period}}</span></div>
+<h2 style="font-size: 23px">{{w.title}}</h2>
+<p style="font-size: 14px; color: var(--muted)">{{w.client}}</p>
+<p style="font-size: 15px">{{w.summary}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px"><sc-for list="{{w.stack}}" as="s" hint-placeholder-count="3"><span class="tag">{{s}}</span></sc-for></div>
+</div>
+</a>
+</sc-for>
+</div>
+<div class="card" style="padding: 28px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 style="font-size: 24px">Smaller and older projects</h2><p style="color: var(--muted)">Side projects with AI, and the client work I led from 2019 to 2021.</p></div>
+<div style="display: flex; gap: 16px; font-weight: 600"><a href="Lab.dc.html">Lab →</a><a href="About.dc.html">Earlier projects →</a></div>
+</div>
+</main>
+<dc-import name="SiteFooter" theme="{{theme}}" upwork="{{upwork}}" hint-size="100%,220px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"upwork":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":1500}}'>
+class Component extends DCLogic {
+renderVals() {
+const theme = this.props.theme ?? 'light';
+return {
+theme, upwork: !!this.props.upwork, themeClass: theme === 'dark' ? 'dark' : '',
+work: [
+{ title: 'Faster pages and a safe UI library swap on a live shop', client: 'A New Zealand e-commerce company', metric: 'UI library CSS −65%', period: '2026', media: 'Screenshot · room home page', stack: ['Nuxt 4', 'Nuxt UI', 'Playwright'], summary: 'I cut the UI library CSS by 65%, then replaced the whole UI library with test coverage held at 93%.' },
+{ title: 'An AI dev team that takes a ticket to a reviewed pull request', client: 'A New Zealand e-commerce company', metric: '7 agent-built PRs merged', period: '2026', media: 'Diagram · AI pipeline', stack: ['Claude Code', 'GitHub Actions', 'MCP'], summary: 'A Claude Code pipeline turns tickets into reviewed, merged pull requests, with a person approving each key step.' },
+{ title: 'Building a live storefront from zero, and leading the team on it', client: 'A New Zealand e-commerce company', metric: '53% of the commits, 235 reviews', period: '2024 to now', media: 'Diagram · one app, 5 shops', stack: ['Nuxt 4', 'Vue 3', 'Vitest'], summary: 'I set up a new Nuxt storefront, led 3 vendor developers onto it, made one app serve 5 shops, and built the test system.' },
+{ title: 'Multi-currency budgets and cards for a business spending app', client: 'Aspire, a Singapore fintech', metric: 'One budget, many currencies', period: '2025', media: 'Diagram · shared limit', stack: ['Vue 3', 'Quasar', 'Pinia'], summary: 'As the only frontend developer on the team, I built budgets and cards that work in many currencies under one shared limit.' },
+{ title: 'Moving a live fintech area to a new design, with dark mode', client: 'Aspire, a Singapore fintech', metric: 'Light and dark, behind a flag', period: '2026', media: 'Diagram · feature flag', stack: ['Vue 3', 'Quasar', 'Playwright'], summary: 'I moved the whole cards and budgets area to the new design system and added a dark theme.' },
+{ title: 'A CMS-driven website for a game payments product', client: 'Paymentwall, a global payments company', metric: 'Live in 2 months', period: '2021 to 2022', media: 'Diagram · CMS to pages', stack: ['Vue 2', 'TypeScript', 'Strapi'], summary: 'I built the Terminal3 website from scratch, so the content team could run it on their own.' }
+]
+};
+}
+}
+</script>
+</body>
+</html>
