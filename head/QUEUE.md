@@ -25,28 +25,27 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 
 | Pos | Sprint | Priority | ID | Issue | Needs | Added by | Why here |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 1 | P1 | PF-001 | #27 | | head | Everything builds on the clean static setup |
-| 2 | 1 | P1 | PF-002 | #28 | #27 | head | Tests, the banned-words guard and CI gate every later task |
-| 3 | 1 | P1 | PF-003 | #29 | #27, #28 | head | Pages read content through these collections |
-| 4 | 1 | P1 | PF-004 | #30 | #27, #28 | head | Tokens and theme before any component |
-| 5 | 1 | P2 | PF-005 | #31 | #30, #29 | head | P2, moved above P1 PF-006 because the layout needs these components |
-| 6 | 1 | P1 | PF-006 | #32 | #31 | head | Header, footer and layout close Sprint 1 |
-| 7 | 2 | P0 | PF-007 | #33 | #32, #29 | head | Upwork mode protects Son's account; first in Sprint 2 |
-| 8 | 2 | P0 | PF-008 | #34 | #33 | head | Contact block must be Upwork-safe before any page shows contact details |
-| 9 | 2 | P1 | PF-009 | #35 | #28 | head | Clock math before the clock |
-| 10 | 2 | P1 | PF-010 | #36 | #35, #31 | head | Clock component for the home page |
-| 11 | 2 | P1 | PF-011 | #37 | #34, #36 | head | Home page closes Sprint 2 |
-| 12 | 3 | P1 | PF-012 | #38 | #32, #31, #29 | head | Work list first in Sprint 3 |
-| 13 | 3 | P1 | PF-013 | #39 | #38, #34 | head | Case study pages are the main proof |
-| 14 | 3 | P1 | PF-015 | #41 | #34, #38 | head | Services links to case studies |
-| 15 | 3 | P2 | PF-014 | #40 | #39 | head | Diagrams fill the case study media slots |
-| 16 | 3 | P2 | PF-016 | #42 | #31, #29 | head | About page |
-| 17 | 4 | P1 | PF-018 | #44 | #42, #33 | head | CV page for recruiters |
-| 18 | 4 | P2 | PF-017 | #43 | #40 | head | P2, moved above P1 PF-020 because SEO covers every page |
-| 19 | 4 | P2 | PF-019 | #45 | #34, #36 | head | P2, moved above P1 PF-020 because SEO covers every page |
-| 20 | 4 | P1 | PF-020 | #46 | #39, #41, #42, #43, #44, #45 | head | SEO once every page exists |
-| 21 | 4 | P2 | PF-021 | #47 | #46 | head | Preview images build on the SEO tags |
-| 22 | 5 | P1 | PF-022 | #48 | #47 | head | Quality pass on the finished pages |
-| 23 | 5 | P1 | PF-023 | #49 | #45 | head | Cloudflare config before Son connects Workers Builds |
-| 24 | 5 | P2 | PF-024 | #50 | #48, #49 | head | Launch prep after quality and hosting |
-| 25 | 5 | P2 | PF-031 | #51 | #55, #56, #57, #40, #43 | head | Waits on Son's manual tasks PF-028, PF-029 and PF-030 |
+| 1 | 1 | P1 | PF-002 | #28 | #27 | head | Tests, the banned-words guard and CI gate every later task |
+| 2 | 1 | P1 | PF-003 | #29 | #27, #28 | head | Pages read content through these collections |
+| 3 | 1 | P1 | PF-004 | #30 | #27, #28 | head | Tokens and theme before any component |
+| 4 | 1 | P2 | PF-005 | #31 | #30, #29 | head | P2, moved above P1 PF-006 because the layout needs these components |
+| 5 | 1 | P1 | PF-006 | #32 | #31 | head | Header, footer and layout close Sprint 1 |
+| 6 | 2 | P0 | PF-007 | #33 | #32, #29 | head | Upwork mode protects Son's account; first in Sprint 2 |
+| 7 | 2 | P0 | PF-008 | #34 | #33 | head | Contact block must be Upwork-safe before any page shows contact details |
+| 8 | 2 | P1 | PF-009 | #35 | #28 | head | Clock math before the clock |
+| 9 | 2 | P1 | PF-010 | #36 | #35, #31 | head | Clock component for the home page |
+| 10 | 2 | P1 | PF-011 | #37 | #34, #36 | head | Home page closes Sprint 2 |
+| 11 | 3 | P1 | PF-012 | #38 | #32, #31, #29 | head | Work list first in Sprint 3 |
+| 12 | 3 | P1 | PF-013 | #39 | #38, #34 | head | Case study pages are the main proof |
+| 13 | 3 | P1 | PF-015 | #41 | #34, #38 | head | Services links to case studies |
+| 14 | 3 | P2 | PF-014 | #40 | #39 | head | Diagrams fill the case study media slots |
+| 15 | 3 | P2 | PF-016 | #42 | #31, #29 | head | About page |
+| 16 | 4 | P1 | PF-018 | #44 | #42, #33 | head | CV page for recruiters |
+| 17 | 4 | P2 | PF-017 | #43 | #40 | head | P2, moved above P1 PF-020 because SEO covers every page |
+| 18 | 4 | P2 | PF-019 | #45 | #34, #36 | head | P2, moved above P1 PF-020 because SEO covers every page |
+| 19 | 4 | P1 | PF-020 | #46 | #39, #41, #42, #43, #44, #45 | head | SEO once every page exists |
+| 20 | 4 | P2 | PF-021 | #47 | #46 | head | Preview images build on the SEO tags |
+| 21 | 5 | P1 | PF-022 | #48 | #47 | head | Quality pass on the finished pages |
+| 22 | 5 | P1 | PF-023 | #49 | #45 | head | Cloudflare config before Son connects Workers Builds |
+| 23 | 5 | P2 | PF-024 | #50 | #48, #49 | head | Launch prep after quality and hosting |
+| 24 | 5 | P2 | PF-031 | #51 | #55, #56, #57, #40, #43 | head | Waits on Son's manual tasks PF-028, PF-029 and PF-030 |
