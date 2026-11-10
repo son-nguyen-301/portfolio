@@ -18,9 +18,9 @@ Things that wait on Son. The build goes ahead with placeholders: a quote is `nul
 ## Hosting
 
 - [ ] Connect the repo in Cloudflare Workers Builds (root `app`, build `pnpm install --frozen-lockfile && pnpm generate`, deploy `npx wrangler deploy`).
-- [ ] Remove the old `me.haisonnguyen.dev` CNAME that points at CloudFront, then add the Worker custom domain.
+- [ ] Add the Worker custom domain `me.haisonnguyen.dev` (the old CloudFront record is already gone).
 - [ ] Turn on Cloudflare Web Analytics for the site.
-- [ ] Decide when to remove the AWS stack (`terraform destroy`, then delete `infra/`). Tell the build session how Terraform is run today (on your computer or in CI).
+- [ ] Optional: delete the AWS leftovers by hand (see "AWS leftovers" in `docs/architecture.md`). Also delete the `CLOUDFLARE_API_TOKEN` GitHub secret if nothing else uses it.
 
 ## Outside the site (Son)
 
