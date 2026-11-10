@@ -54,8 +54,8 @@ blockquote {
   margin: 0;
 }
 
-p,
-li {
+/* Running text stops at about 68 characters. */
+p {
   max-width: var(--measure);
 }
 

@@ -115,3 +115,12 @@ test('the dev-only gallery is not built and not in the sitemap', async ({ page }
   const response = await page.goto('/_gallery')
   expect(response?.status()).toBe(404)
 })
+
+test('the fonts are self-hosted, with no Google Fonts host in the built site', async () => {
+  const index = readFileSync(join(built, 'index.html'), 'utf8')
+  for (const family of ['Bricolage Grotesque', 'Inter', 'JetBrains Mono']) {
+    const face = new RegExp(`@font-face\\{font-family:"?${family}"?;src:[^}]*url\\(/_nuxt/fonts/[^)]+\\.woff2\\)`)
+    expect(index, family).toMatch(face)
+  }
+  expect(index).not.toMatch(/fonts\.(googleapis|gstatic)\.com/)
+})
