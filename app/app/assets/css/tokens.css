@@ -1,0 +1,85 @@
+/*
+ * Design tokens (docs/design.md, direction A). Every color on the site comes
+ * from these custom properties. Dark mode redefines only the color tokens.
+ *
+ * - Light is the default (:root).
+ * - Dark follows the system setting unless the visitor picked light.
+ * - [data-theme] on <html> is set by the theme switch and the head script.
+ *
+ * tests/unit/tokens.test.ts reads this file and checks WCAG contrast, so keep
+ * one hex value per color token in each block.
+ */
+
+:root {
+  color-scheme: light;
+
+  --paper: #F5F7F8;
+  --surface: #FFFFFF;
+  --ink: #141A22;
+  --muted: #5A6472;
+  --line: #DCE1E6;
+  --jade: #0D7663;
+  --jade-soft: #DCEFEA;
+  --amber: #A86A12;
+  --amber-soft: #F6EBD9;
+  /* Text on a jade fill (action button). */
+  --on-jade: #FFFFFF;
+
+  --font-display: "Bricolage Grotesque", Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Type scale (rem). */
+  --text-label: 0.75rem;
+  --text-small: 0.875rem;
+  --text-body: 1rem;
+  --text-lead: 1.15rem;
+  --text-h3: 1.5rem;
+  --text-h2: 2rem;
+  --text-h1: clamp(2.2rem, 5vw, 3.2rem);
+
+  --leading-body: 1.6;
+  --leading-heading: 1.15;
+  --measure: 68ch;
+
+  /* Layout. */
+  --content-max: 1040px;
+  --gutter: 16px;
+  --radius: 8px;
+  --radius-card: 12px;
+
+  --focus-ring: 2px solid var(--jade);
+  --focus-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --paper: #0E1216;
+    --surface: #151B21;
+    --ink: #E6EBF0;
+    --muted: #9AA5B1;
+    --line: #27303A;
+    --jade: #43C2A8;
+    --jade-soft: #15302A;
+    --amber: #E2A64C;
+    --amber-soft: #33270F;
+    --on-jade: #0E1216;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --paper: #0E1216;
+  --surface: #151B21;
+  --ink: #E6EBF0;
+  --muted: #9AA5B1;
+  --line: #27303A;
+  --jade: #43C2A8;
+  --jade-soft: #15302A;
+  --amber: #E2A64C;
+  --amber-soft: #33270F;
+  --on-jade: #0E1216;
+}
