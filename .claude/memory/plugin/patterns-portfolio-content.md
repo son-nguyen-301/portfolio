@@ -25,7 +25,7 @@ On the public site the current employer is "a New Zealand e-commerce company". N
 
 ## What is Son's career timeline?
 type: qa
-answer: XTEL Apr 2019 – Jul 2021 (Team Lead, Frontend Developer). Outcubator / Paymentwall Jul 2021 – May 2022 (Frontend Developer). Aspire FT Pte Ltd May 2022 – Jul 2026 (Senior Frontend Developer, Singapore, remote). Current employer (NZ e-commerce, never named on the site) since Sep 2024 as a contractor, Senior Frontend Developer; it overlapped with Aspire until Jul 2026. Education: BachKhoa-Aptech, IT, 2015 – 2018. 7+ years with Vue.
+answer: XTEL Apr 2019 – Jul 2021 (Team Lead, Frontend Developer). Outcubator / Paymentwall Jul 2021 – May 2022 (Frontend Developer). Aspire FT Pte Ltd May 2022 – Jul 2026 (Senior Frontend Developer, Singapore, remote). Current employer (NZ e-commerce, never named on the site) since Sep 2024, Senior Frontend Developer: a contractor while still at Aspire, full-time since Aspire ended in Jul 2026. Education: BachKhoa-Aptech, IT, 2015 – 2018. 7+ years with Vue.
 captured: 2026-11-10
 status: active
 freshness: 365d

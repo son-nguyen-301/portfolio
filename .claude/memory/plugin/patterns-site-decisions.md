@@ -54,3 +54,25 @@ freshness: 180d
 **Why:** Simpler than a form. Upwork bans contact details on pages linked from Upwork.
 
 ---
+
+## What are Son's working hours and contact details for the site?
+type: qa
+answer: Works 08:00–22:00 Hanoi time (UTC+7). Show haison143@gmail.com as text (not a form). Booking link: Cal.com free plan (Son creates it). No photo for now.
+captured: 2026-11-10
+status: active
+freshness: 180d
+
+**Why:** Son's answers on 2026-11-10. The hours drive the time-overlap clock on the home page.
+
+---
+
+## What work is Son open to?
+type: qa
+answer: Both full-time roles and contract or freelance work, remote.
+captured: 2026-11-10
+status: active
+freshness: 180d
+
+**Why:** Son's answer on 2026-11-10. Matches the "both audiences equally" decision for the home page.
+
+---
