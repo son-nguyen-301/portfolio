@@ -97,14 +97,17 @@ test('the theme still works when local storage is blocked', async ({ page }) => 
   expect(errors).toEqual([])
 })
 
-test('the home page has no sideways scroll at 360px in both themes', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 740 })
+test('the home page has no sideways scroll at 360px in both themes', async ({ browser }) => {
   for (const theme of ['light', 'dark']) {
+    // A new context per theme, so only this theme's init script runs.
+    const context = await browser.newContext({ viewport: { width: 360, height: 740 } })
+    const page = await context.newPage()
     await page.addInitScript(value => localStorage.setItem('theme', value), theme)
     await page.goto('/')
     await expect(html(page)).toHaveAttribute('data-theme', theme)
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     expect(overflow).toBe(0)
+    await context.close()
   }
 })
 
@@ -122,5 +125,9 @@ test('the fonts are self-hosted, with no Google Fonts host in the built site', a
     const face = new RegExp(`@font-face\\{font-family:"?${family}"?;src:[^}]*url\\(/_nuxt/fonts/[^)]+\\.woff2\\)`)
     expect(index, family).toMatch(face)
   }
+  // Every font file the page names is in the build.
+  const urls = [...index.matchAll(/url\((\/_nuxt\/fonts\/[^)]+\.woff2)\)/g)].map(match => match[1]!)
+  expect(urls.length).toBeGreaterThan(0)
+  for (const url of new Set(urls)) expect(existsSync(join(built, url)), url).toBe(true)
   expect(index).not.toMatch(/fonts\.(googleapis|gstatic)\.com/)
 })
