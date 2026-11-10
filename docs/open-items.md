@@ -24,6 +24,10 @@ Things that wait on Son. The build goes ahead with placeholders: a quote is `nul
 - [ ] Turn on Cloudflare Web Analytics for the site.
 - [ ] Optional: delete the AWS leftovers by hand (see "AWS leftovers" in `docs/architecture.md`). Also delete the `CLOUDFLARE_API_TOKEN` GitHub secret if nothing else uses it.
 
+## Site
+
+- [ ] **Footer stats line:** the Lighthouse score and the JavaScript size of the site. The footer shows `TODO` until they are measured after launch. PF-024 (#50) fills them in.
+
 ## Outside the site (Son)
 
 - [ ] Upwork: new title, overview, skills (add PostgreSQL, Docker, AI agent development, Claude, workflow automation), profile visibility set to public, ID verification, English level, rate.

@@ -1,6 +1,22 @@
 // Read the content collections (see content.config.ts and docs/content-model.md).
 // Pages and components read content only through these.
 import type { ProfileCollectionItem } from '@nuxt/content'
+import type { SiteProfile } from '#shared/site-profile'
+
+declare module 'nuxt/schema' {
+  interface AppConfig {
+    // Set at build time by modules/site-profile.ts.
+    siteProfile: SiteProfile
+  }
+}
+
+// The profile fields the header and footer show: name, title, location, hours,
+// reply promise and the LinkedIn, GitHub and Upwork links. They come from app
+// config, not a content query, so they work on 404.html too, which has no
+// prerendered page data. Never the email or the booking link.
+export function useSiteProfile(): SiteProfile {
+  return useAppConfig().siteProfile
+}
 
 // Only the profile fields you name. A page's data is written into its built
 // files, and profile.yml holds the email and the booking link, which must never
