@@ -25,3 +25,14 @@ freshness: 365d
 **Why:** From Son's CV and his answer on 2026-11-10. The CV PDF still says Aspire is current, so this entry wins over the PDF.
 
 ---
+
+## What may the site say about Aspire?
+type: qa
+answer: Aspire may be named. Two case studies (multi-currency budgets and cards; cards and budgets redesign) plus a short "also built" list. No Aspire screenshots exist, so use diagrams. No numbers are known for Aspire work. Team feedback (reliable code, no P0 bugs, on time) is verbal only; quote it only after a former manager writes it, for example in a LinkedIn recommendation.
+captured: 2026-11-10
+status: active
+freshness: 365d
+
+**Why:** Son's answers on 2026-11-10, plus the rule that only sourced claims are published.
+
+---
