@@ -24,16 +24,19 @@ defineProps<{
 .quote-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   margin: 0;
-  padding: 4px 0 4px 20px;
+  padding: 4px 0 4px 18px;
   border-left: 3px solid var(--jade);
 }
 
 .quote-block__text {
   margin: 0;
-  font-size: var(--text-lead);
-  line-height: 1.5;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  /* Bricolage Grotesque is loaded at 500 and 700 only (nuxt.config.ts). */
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .quote-block__role {

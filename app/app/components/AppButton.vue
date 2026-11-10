@@ -47,12 +47,18 @@ withDefaults(defineProps<{
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+  transition: background-color 0.15s, border-color 0.15s, filter 0.15s;
 }
 
 .app-button:hover {
   text-decoration: none;
-  opacity: 0.88;
+  filter: brightness(1.12);
+}
+
+.app-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
 }
 
 .app-button--primary {
@@ -72,7 +78,13 @@ withDefaults(defineProps<{
 }
 
 .app-button--ghost:hover {
-  opacity: 1;
+  filter: none;
+  background: var(--surface);
   border-color: var(--muted);
+}
+
+.app-button--ghost:disabled {
+  background: transparent;
+  border-color: var(--line);
 }
 </style>

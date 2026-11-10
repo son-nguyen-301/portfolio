@@ -36,13 +36,12 @@ withDefaults(defineProps<{
 }
 
 .tag-list__tag {
-  padding: 2px 8px;
+  padding: 5px 9px;
   border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--paper);
+  border-radius: 999px;
   color: var(--muted);
   font-family: var(--font-mono);
   font-size: var(--text-label);
-  line-height: 1.6;
+  line-height: 1;
 }
 </style>

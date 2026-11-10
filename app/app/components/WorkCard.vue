@@ -76,6 +76,7 @@ defineSlots<{ media?: () => unknown }>()
 
 .work-card:hover .work-card__title {
   text-decoration: underline;
+  text-decoration-color: var(--jade);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
 }
@@ -88,16 +89,16 @@ defineSlots<{ media?: () => unknown }>()
 .work-card__body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 20px;
+  gap: 8px;
+  padding: 16px;
 }
 
 .work-card__metric {
-  font-size: var(--text-small);
+  font-size: var(--text-label);
 }
 
 .work-card__title {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 700;
 }
 
