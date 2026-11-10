@@ -49,3 +49,6 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 | 22 | 5 | P1 | PF-023 | #49 | #45 | head | Cloudflare config before Son connects Workers Builds |
 | 23 | 5 | P2 | PF-024 | #50 | #48, #49 | head | Launch prep after quality and hosting |
 | 24 | 5 | P2 | PF-031 | #51 | #55, #56, #57, #40, #43 | head | Waits on Son's manual tasks PF-028, PF-029 and PF-030 |
+| 25 | Backlog | P2 | PF-035 | #65 | #28 | loop | Found in PR #64. Asks Son to make CI required. |
+| 26 | Backlog | P3 | PF-036 | #66 | #28 | loop | Found in PR #64. Guard polish. |
+| 27 | Backlog | P3 | PF-037 | #67 | #28 | loop | Found in PR #64. Asks Son about D-004. |
