@@ -1,6 +1,6 @@
 # Content model
 
-All site content lives in `app/content/`. Pages read it with `@nuxt/content` v3. Define one collection per row below in `app/content.config.ts`, with a zod schema that matches the fields.
+All site content lives in `app/content/`. Pages read it with `@nuxt/content` v3. Define one collection per row below in `app/content.config.ts`, with a zod schema that matches the fields. The schemas live in `app/shared/content/schemas.ts`. `app/lib/content-check.ts` checks every file against them, so `pnpm test` and `pnpm generate` fail on a broken file. Pages read content through the composables in `app/app/composables/content.ts`.
 
 Every fact in these files is approved for the public site. Do not add facts in components. If a page needs something that is not here, add a `TODO` and a line in `docs/open-items.md`.
 

@@ -1,0 +1,42 @@
+// Read the content collections (see content.config.ts and docs/content-model.md).
+// Pages and components read content only through these.
+import type { ProfileCollectionItem } from '@nuxt/content'
+
+// Only the profile fields you name. A page's data is written into its built
+// files, and profile.yml holds the email and the booking link, which must never
+// reach a page opened from Upwork (CLAUDE.md hard rule 4). So name only the
+// fields the page shows, and leave contact fields to the contact block.
+export function useProfile<const Field extends keyof ProfileCollectionItem>(...fields: [Field, ...Field[]]) {
+  return useAsyncData(`content:profile:${fields.join(',')}`, () => queryCollection('profile').select(...fields).first())
+}
+
+export function useServices() {
+  return useAsyncData('content:services', () => queryCollection('services').first())
+}
+
+export function useTimeline() {
+  return useAsyncData('content:timeline', () => queryCollection('timeline').first())
+}
+
+export function useSkills() {
+  return useAsyncData('content:skills', () => queryCollection('skills').first())
+}
+
+export function useEarlier() {
+  return useAsyncData('content:earlier', () => queryCollection('earlier').first())
+}
+
+// All case studies, in their `order`.
+export function useCaseStudies() {
+  return useAsyncData('content:work', () => queryCollection('work').order('order', 'ASC').all())
+}
+
+// One case study by its page path, for example "/work/aspire-redesign".
+export function useCaseStudy(path: string) {
+  return useAsyncData(`content:work:${path}`, () => queryCollection('work').path(path).first())
+}
+
+// All Lab projects, in their `order`.
+export function useLabProjects() {
+  return useAsyncData('content:lab', () => queryCollection('lab').order('order', 'ASC').all())
+}
