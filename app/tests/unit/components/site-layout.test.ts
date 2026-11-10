@@ -90,6 +90,7 @@ describe('SiteHeader', () => {
   it('has every page, the action, the hours and the theme switch in the phone menu', async () => {
     const header = mountHeader()
     const dialog = header.find('dialog')
+    expect(dialog.find('nav').attributes('aria-label')).toBe('Pages')
     expect(hrefs(header, 'dialog nav a')).toEqual(['/work', '/services', '/lab', '/about', '/cv', '/contact'])
     expect(dialog.find('.app-button').attributes('href')).toBe('/contact')
     expect(dialog.text()).toContain('Sample hours. Sample reply promise.')

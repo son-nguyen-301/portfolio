@@ -39,3 +39,24 @@ test('the home page shows no email or booking link', async ({ page }) => {
   expect(html).not.toContain(profile.email)
   expect(html).not.toContain(profile.booking.url)
 })
+
+// A content query in the browser downloads the whole profile collection, the
+// email and the booking link included. 404.html has no prerendered page data,
+// so it is the page where that would happen first.
+test('no page downloads the profile collection', async ({ page }) => {
+  const dumps: string[] = []
+  page.on('request', (request) => {
+    if (request.url().includes('/__nuxt_content/profile')) dumps.push(request.url())
+  })
+  for (const path of ['/', '/work/', '/services/', '/lab/', '/about/', '/cv/', '/contact/', '/404.html']) {
+    await page.goto(path)
+    await expect(page.getByRole('contentinfo')).toBeVisible()
+  }
+  // Pages opened from the 404 page by the header links.
+  await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Work' }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Work')
+  await page.getByRole('banner').getByRole('link', { name: 'Hai Son Nguyen' }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hai Son Nguyen')
+  await page.waitForLoadState('networkidle')
+  expect(dumps).toEqual([])
+})

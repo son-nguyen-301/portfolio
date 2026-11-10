@@ -124,6 +124,18 @@ test.describe('on a phone', () => {
     await expect(button).toBeFocused()
   })
 
+  test('the menu closes when the window gets wider', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Open menu' }).click()
+    const menu = page.getByRole('dialog', { name: 'Menu' })
+    await expect(menu).toBeVisible()
+    await expect(menu.getByRole('navigation', { name: 'Pages' })).toBeVisible()
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await expect(menu).toBeHidden()
+    await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible()
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe('hidden')
+  })
+
   test('a link in the menu opens the page and closes the menu', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Open menu' }).click()

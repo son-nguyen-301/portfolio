@@ -8,11 +8,6 @@ const props = defineProps<{ error: NuxtError }>()
 const notFound = computed(() => props.error.statusCode === 404)
 
 useSeoMeta({ title: () => (notFound.value ? 'Page not found' : 'Something went wrong'), robots: 'noindex' })
-
-// Leave the error state before going to another page.
-function leave(to: string) {
-  clearError({ redirect: to })
-}
 </script>
 
 <template>
@@ -30,14 +25,12 @@ function leave(to: string) {
       <div class="error-page__actions">
         <AppButton
           to="/"
-          @click.prevent="leave('/')"
         >
           Go to the home page
         </AppButton>
         <AppButton
           to="/work"
           variant="ghost"
-          @click.prevent="leave('/work')"
         >
           See my work
         </AppButton>

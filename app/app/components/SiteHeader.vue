@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // The site header: name with a jade dot, the page links and one action button.
-// Below 860px the links and the button move into a phone menu, a modal
+// At 860px and below, the links and the button move into a phone menu, a modal
 // <dialog>: the browser keeps focus inside it and closes it on Escape.
 // Upwork mode (no Contact link, "Message me on Upwork") comes in PF-007.
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { mainLinks, siteLinks } from '../utils/nav'
 import AppButton from './AppButton.vue'
 
@@ -27,11 +27,23 @@ function closeMenu() {
   menu.value?.close()
 }
 
-// Runs on every close: the close button, a link, or Escape.
+// Runs on every close: the close button, a link, Escape, or a wider window.
 function onMenuClose() {
   menuOpen.value = false
   menuButton.value?.focus()
 }
+
+// The menu is for narrow screens. If the window gets wider than the
+// breakpoint in the styles below, close it.
+let wide: MediaQueryList | undefined
+function onWidthChange(event: { matches: boolean }) {
+  if (event.matches) closeMenu()
+}
+onMounted(() => {
+  wide = window.matchMedia('(min-width: 861px)')
+  wide.addEventListener('change', onWidthChange)
+})
+onBeforeUnmount(() => wide?.removeEventListener('change', onWidthChange))
 </script>
 
 <template>
@@ -122,7 +134,7 @@ function onMenuClose() {
       </div>
 
       <nav
-        aria-label="Menu"
+        aria-label="Pages"
         class="site-menu__nav"
       >
         <NuxtLink

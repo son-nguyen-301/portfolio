@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // Every page: a skip link, the header, the page and the footer.
-// Only these profile fields reach the page data: no email or booking link
-// (CLAUDE.md hard rule 4, D-014).
-const { data: profile } = await useProfile('name', 'title', 'location', 'links', 'hours', 'replyPromise')
+// The profile fields come from app config, with no content query, so the
+// email and the booking link never reach the browser (CLAUDE.md hard rule 4).
+const profile = useSiteProfile()
 
 // The year of the build, kept in the page data so the browser shows the same.
 const year = useState('footer-year', () => new Date().getFullYear())
@@ -15,9 +15,8 @@ const year = useState('footer-year', () => new Date().getFullYear())
       href="#main"
     >Skip to content</a>
     <SiteHeader
-      v-if="profile"
       :name="profile.name"
-      :hours="profile.hours.label"
+      :hours="profile.hours"
       :reply-promise="profile.replyPromise"
     />
     <main
@@ -28,7 +27,6 @@ const year = useState('footer-year', () => new Date().getFullYear())
       <slot />
     </main>
     <SiteFooter
-      v-if="profile"
       :name="profile.name"
       :title="profile.title"
       :location="profile.location"
