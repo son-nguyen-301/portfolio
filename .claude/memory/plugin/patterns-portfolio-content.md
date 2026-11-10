@@ -22,3 +22,14 @@ On the public site the current employer is "a New Zealand e-commerce company". N
 **Why:** Son decided this on 2026-11-10 with his manager. Breaking it could hurt his job, and this portfolio repo is public, so private facts must never be committed here either.
 
 ---
+
+## What is Son's career timeline?
+type: qa
+answer: XTEL Apr 2019 – Jul 2021 (Team Lead, Frontend Developer). Outcubator / Paymentwall Jul 2021 – May 2022 (Frontend Developer). Aspire FT Pte Ltd May 2022 – Jul 2026 (Senior Frontend Developer, Singapore, remote). Current employer (NZ e-commerce, never named on the site) since Sep 2024 as a contractor, Senior Frontend Developer; it overlapped with Aspire until Jul 2026. Education: BachKhoa-Aptech, IT, 2015 – 2018. 7+ years with Vue.
+captured: 2026-11-10
+status: active
+freshness: 365d
+
+**Why:** From Son's CV and his answer on 2026-11-10. The CV PDF still says Aspire is current, so this entry wins over the PDF.
+
+---
