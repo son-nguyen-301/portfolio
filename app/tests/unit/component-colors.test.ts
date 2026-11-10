@@ -42,14 +42,15 @@ const colorPattern = new RegExp(
   'i',
 )
 
-// SVG and HTML attributes that take a color, plain or bound (`:fill`).
-const colorAttributes = /(?:^|\s):?(?:fill|stroke|stop-color|flood-color|lighting-color|color|bgcolor)="([^"]*)"/g
+// SVG and HTML attributes that take a color.
+// Values in double or single quotes; bound as `:fill` or `v-bind:fill`.
+const colorAttributes = /(?:^|\s)(?::|v-bind:)?(?:fill|stroke|stop-color|flood-color|lighting-color|color|bgcolor)=(["'])(.*?)\1/gs
 
 // The colors set in a file: <style> blocks, inline style attributes and
 // color attributes such as an SVG `fill`.
 function hardCodedColors(source: string): string[] {
   const styles = [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(match => match[1]!)
-  const inline = [...source.matchAll(/\bstyle="([^"]*)"/g)].map(match => match[1]!)
+  const inline = [...source.matchAll(/\bstyle=(["'])(.*?)\1/gs)].map(match => match[2]!)
   const found: string[] = []
   for (const css of [...styles, ...inline]) {
     const clean = css.replace(/\/\*[\s\S]*?\*\//g, '')
@@ -61,7 +62,7 @@ function hardCodedColors(source: string): string[] {
   }
   const template = source.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '').replace(/<script[^>]*>[\s\S]*?<\/script>/g, '')
   for (const match of template.matchAll(colorAttributes)) {
-    const value = match[1]!.trim()
+    const value = match[2]!.trim()
     if (colorPattern.test(value)) found.push(value)
   }
   return found
@@ -78,6 +79,9 @@ describe('component colors', () => {
     expect(hardCodedColors('<template><stop :stop-color="\'red\'" /></template>')).toEqual(['\'red\''])
     expect(hardCodedColors('<style>.a { color: var(--ink); white-space: nowrap; background: transparent; }</style>')).toEqual([])
     expect(hardCodedColors('<template><path fill="var(--jade)" stroke="currentColor" /></template>')).toEqual([])
+    expect(hardCodedColors(`<template><path fill='red' /></template>`)).toEqual(['red'])
+    expect(hardCodedColors(`<template><p style='color: red'>x</p></template>`)).toEqual(['red'])
+    expect(hardCodedColors(`<template><path v-bind:fill="'red'" /></template>`)).toEqual(['\'red\''])
   })
 
   const files = vueFiles(appDir)
