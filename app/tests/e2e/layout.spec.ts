@@ -136,6 +136,21 @@ test.describe('on a phone', () => {
     expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe('hidden')
   })
 
+  test('browser Back closes the menu', async ({ page }) => {
+    await page.goto('/')
+    const button = page.getByRole('button', { name: 'Open menu' })
+    const menu = page.getByRole('dialog', { name: 'Menu' })
+    await button.click()
+    await menu.getByRole('link', { name: 'Lab' }).click()
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lab')
+    await button.click()
+    await expect(menu).toBeVisible()
+    await page.goBack()
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hai Son Nguyen')
+    await expect(menu).toBeHidden()
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe('hidden')
+  })
+
   test('a link in the menu opens the page and closes the menu', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Open menu' }).click()

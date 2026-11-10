@@ -39,11 +39,16 @@ let wide: MediaQueryList | undefined
 function onWidthChange(event: { matches: boolean }) {
   if (event.matches) closeMenu()
 }
+// Browser Back or Forward opens another page under the menu, so close it.
 onMounted(() => {
   wide = window.matchMedia('(min-width: 861px)')
   wide.addEventListener('change', onWidthChange)
+  window.addEventListener('popstate', closeMenu)
 })
-onBeforeUnmount(() => wide?.removeEventListener('change', onWidthChange))
+onBeforeUnmount(() => {
+  wide?.removeEventListener('change', onWidthChange)
+  window.removeEventListener('popstate', closeMenu)
+})
 </script>
 
 <template>
