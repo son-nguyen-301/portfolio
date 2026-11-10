@@ -9,7 +9,7 @@ This repo holds Son's portfolio site at https://me.haisonnguyen.dev. People reac
 | `docs/brief.md` | Who Son is, who the site is for, the offer, services, roles, contact rules |
 | `docs/design.md` | Design direction A: tokens, fonts, layout, components, page layouts, UX details |
 | `docs/content-model.md` | The content files in `app/content/` and their fields |
-| `docs/architecture.md` | Stack, static build, AWS and Terraform changes, deploy |
+| `docs/architecture.md` | Stack, static build, Cloudflare hosting, deploy |
 | `docs/plan.md` | Build tasks in order, each with "done when" checks |
 | `docs/open-items.md` | Things still waiting on Son. Use placeholders for these. |
 | `docs/writing-style.md` | How every word on the site is written |
@@ -32,7 +32,6 @@ The design proposal (with research and mockups) is a private page: https://claud
   - `app/app/`: pages, components, composables, assets
   - `app/content/`: site content (Markdown and YAML) read by Nuxt Content
   - `app/public/`: static files
-- `infra/`: old Terraform for AWS (S3, CloudFront, Lambda, ACM) and one Cloudflare DNS record. It is being replaced by Cloudflare hosting. Don't build on it.
 - `.github/workflows/`: CI
 - `.claude/memory/plugin/`: project memory (decisions and rules). Read `MEMORY.md` there.
 
@@ -54,4 +53,4 @@ cd app && pnpm generate
 
 - The site is static (`nuxt generate`) and runs on **Cloudflare Workers static assets** at `me.haisonnguyen.dev`. The `haisonnguyen.dev` zone is on Cloudflare.
 - Cloudflare Workers Builds deploys from `main`. See `docs/architecture.md`.
-- The AWS stack in `infra/` gets removed after the Cloudflare site is live, and only when Son says so. Never run `terraform apply` or `terraform destroy` without Son's go-ahead.
+- There is no AWS any more. The old AWS stack was removed on 2026-11-10. Don't add AWS back.

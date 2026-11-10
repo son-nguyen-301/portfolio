@@ -101,7 +101,7 @@ freshness: 180d
 
 ## Where is the site hosted?
 type: qa
-answer: Cloudflare Workers static assets, custom domain me.haisonnguyen.dev (zone haisonnguyen.dev is on Cloudflare), deployed by Workers Builds from main. Fully static Nuxt (nuxt generate). The old AWS stack in infra/ is removed only after the Cloudflare site is live and Son agrees.
+answer: Cloudflare Workers static assets, custom domain me.haisonnguyen.dev (zone haisonnguyen.dev is on Cloudflare), deployed by Workers Builds from main. Fully static Nuxt (nuxt generate). The old AWS stack was destroyed on 2026-11-10 (GitHub Actions job) and infra/ deleted; don't add AWS back.
 captured: 2026-11-10
 status: active
 freshness: 180d

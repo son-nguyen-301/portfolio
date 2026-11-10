@@ -4,7 +4,7 @@
 
 A fully static Nuxt 4 site, built with `nuxt generate` and served by **Cloudflare Workers static assets** at `me.haisonnguyen.dev`. The `haisonnguyen.dev` zone is already on Cloudflare. No server code runs at request time, because there is no contact form.
 
-The AWS setup in `infra/` (S3, CloudFront, Lambda, ACM, a DNS record pointing at CloudFront) is no longer needed. Removing it is a task in `docs/plan.md`.
+The old AWS setup (S3, CloudFront, Lambda, ACM, and a DNS record pointing at CloudFront) was removed on 2026-11-10, and `infra/` was deleted from the repo. The site has no AWS parts.
 
 Cloudflare now points new projects to Workers static assets instead of Pages. Static asset requests are free on both. Check the current docs before setup: https://developers.cloudflare.com/workers/static-assets/
 
@@ -79,17 +79,14 @@ GitHub Actions still runs `ci.yml` on pull requests: install, lint, unit tests, 
 
 ### DNS and the custom domain
 
-`infra/dns_cert.tf` manages a CNAME for `me.haisonnguyen.dev` that points at CloudFront. The Worker's custom domain needs that name to be free: Cloudflare creates its own record when you add the custom domain. So remove the old record first, then add the custom domain, and expect a few minutes of downtime while it switches. Nothing real is on the domain yet, so this is safe.
+The old CNAME for `me.haisonnguyen.dev` (pointing at CloudFront) was removed with the AWS stack, so the name is free. Cloudflare creates the DNS record itself when you add the Worker's custom domain. If a record for `me` shows up in the zone again before then, delete it first.
 
-### Removing AWS
+### AWS leftovers
 
-After the Cloudflare site is live:
-
-1. `terraform destroy` in `infra/` removes CloudFront, Lambda, the S3 assets bucket, the ACM certificate, the DNS records it manages and the GitHub OIDC role.
-2. Delete `infra/` and `.github/workflows/verify-aws.yml` from the repo.
-3. The Terraform state bucket (`haisonnguyen-portfolio-tfstate-…`) was made outside this Terraform. Son deletes it by hand if he no longer needs it.
-
-Son decides when to do this. See `docs/open-items.md`.
+Removed on 2026-11-10 by a one-time GitHub Actions job. A few things were made outside that Terraform, or kept on purpose, and Son can delete them by hand in the AWS console:
+- the IAM role `github-terraform` and the GitHub OIDC identity provider
+- the Terraform state bucket `haisonnguyen-portfolio-tfstate-…`
+- the `portfolio-prod` AWS account itself, if nothing else uses it
 
 ## Analytics
 

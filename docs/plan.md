@@ -71,17 +71,11 @@ Do the tasks in order. Each one is a pull request into `main` with its "done whe
 ## 10. Cloudflare hosting
 
 - Add `app/wrangler.jsonc` and `app/public/_headers` as in `docs/architecture.md`.
-- Son connects the repo in Workers Builds and removes the old DNS record (see `docs/open-items.md`).
+- Son connects the repo in Workers Builds (see `docs/open-items.md`).
 
 **Done when:** `https://me.haisonnguyen.dev` serves the site over HTTPS from Cloudflare, `/about` and `/about/` both work, an unknown path shows the 404 page with status 404, and the security headers are present.
 
-## 11. Remove AWS
-
-- After step 10 is live and Son agrees: `terraform destroy`, then delete `infra/` and `.github/workflows/verify-aws.yml`.
-
-**Done when:** no AWS resources from this project are left, and the repo has no AWS files.
-
-## 12. Launch
+## 11. Launch
 
 - Check every page with LinkedIn Post Inspector.
 - Son adds the site to LinkedIn (Featured and Contact info), GitHub bio and Upwork (portfolio items link to case studies with `?from=upwork`).
