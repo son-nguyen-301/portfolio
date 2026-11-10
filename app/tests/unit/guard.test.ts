@@ -3,7 +3,7 @@ import { gzipSync } from 'node:zlib'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
-import { normalize, readText, scanFiles, scanText, sha256, textFiles, words } from '../guard'
+import { allFiles, formatHits, normalize, readText, scanFiles, scanText, sha256, words } from '../guard'
 
 // A made-up name that stands in for a banned word in these tests.
 const SAMPLE = 'examplecorp'
@@ -38,8 +38,13 @@ describe('words', () => {
     expect(words('me@example.co.nz')).toContain('example.co.nz')
   })
 
-  it('keeps letters with Vietnamese marks', () => {
-    expect(words('Nguyễn Hải Sơn')).toEqual(['nguyễn', 'hải', 'sơn'])
+  it('keeps letters with Vietnamese marks, and also gives each word without them', () => {
+    expect(words('Nguyễn Hải Sơn')).toEqual(['nguyễn', 'hải', 'sơn', 'nguyen', 'hai', 'son'])
+  })
+
+  it('splits an all-caps prefix from the next word', () => {
+    expect(words('ACMEWidget')).toEqual(expect.arrayContaining(['acme', 'widget']))
+    expect(words('SVGExampleCorpLogo')).toContain('examplecorp')
   })
 })
 
@@ -82,6 +87,10 @@ describe('scanText', () => {
     ['HTML entities', '&#69;xample&#x43;orp'],
     ['%-codes', 'https://x.test/?q=%45xampleCorp'],
     ['a camelCase name', 'const exampleCorpUrl = 1'],
+    ['an all-caps prefix', 'EXAMPLECORPLogo'],
+    ['a combining accent', 'e\u0301xamplecorp'],
+    ['a grapheme joiner', 'example\u034Fcorp'],
+    ['a Hangul filler', 'example\u3164corp'],
   ])('fails on a banned word hidden by %s', (_, text) => {
     expect(scanText(text, banned).map(hit => hit.detail)).toContain(sha256(SAMPLE))
   })
@@ -92,16 +101,19 @@ describe('scanText', () => {
   })
 
   it.each([
-    '+84 912 345 678',
-    '+84912345678',
-    'tel:+84-912-345-678',
+    '+84 900 000 000',
+    '+84900000000',
+    'tel:+84-900-000-000',
     '(+84) 28 0000 0000',
-    '"+84.912.345.678"',
-    '0084 912 345 678',
-    '+ 84 912 345 678',
-    '&#43;84912345678',
-    'tel:%2B84912345678',
-    'https://wa.me/84912345678',
+    '"+84.900.000.000"',
+    '0084 900 000 000',
+    '+ 84 900 000 000',
+    '&#43;84900000000',
+    'tel:%2B84900000000',
+    'https://wa.me/84900000000',
+    'https://api.whatsapp.com/send?phone=84900000000',
+    '+84/900/000/000',
+    '+84_900_000_000',
   ])('fails on the Vietnamese phone number %s', (text) => {
     const hits = scanText(text, banned)
     expect(hits).toHaveLength(1)
@@ -124,24 +136,28 @@ describe('scanFiles', () => {
   const dir = mkdtempSync(join(tmpdir(), 'guard-'))
   afterAll(() => rmSync(dir, { recursive: true, force: true }))
 
-  it('walks folders, skips binary files and missing folders, and finds the fixture', () => {
+  it('walks folders, skips missing folders, reads only text files, and finds the fixture', () => {
     mkdirSync(join(dir, 'nested'))
     writeFileSync(join(dir, 'clean.md'), 'Nothing to see here.')
     writeFileSync(join(dir, 'nested', 'dirty.yml'), 'company: ExampleCorp')
     writeFileSync(join(dir, 'logo.png'), SAMPLE)
 
-    const files = textFiles([dir, join(dir, 'missing')])
-    expect(files.map(file => file.replace(dir, ''))).toEqual(['/clean.md', '/nested/dirty.yml'])
+    const files = allFiles([dir, join(dir, 'missing')])
+    expect(files.map(file => file.replace(dir, '')).sort()).toEqual(['/clean.md', '/logo.png', '/nested/dirty.yml'])
 
     const hits = scanFiles(files, banned, dir)
     expect(hits).toHaveLength(1)
     expect(hits[0]?.file).toBe(join(dir, 'nested', 'dirty.yml'))
   })
 
-  it('checks file and folder names', () => {
-    const named = join(dir, 'examplecorp-logo.svg')
+  it.each(['examplecorp-logo.svg', 'examplecorp-logo.png', 'ExampleCorp/logo.webp'])('checks the file or folder name %s', (name) => {
+    const named = join(dir, name)
+    mkdirSync(join(named, '..'), { recursive: true })
     writeFileSync(named, '<svg></svg>')
-    expect(scanFiles([named], banned, dir)).toEqual([{ file: named, line: 0, kind: 'banned-word', detail: sha256(SAMPLE) }])
+    const hits = scanFiles([named], banned, dir)
+    expect(hits).toEqual([{ file: named, line: 0, kind: 'banned-word', detail: sha256(SAMPLE) }])
+    expect(formatHits(hits, dir, banned).toLowerCase()).not.toContain(SAMPLE)
+    expect(formatHits(hits, dir, banned)).toContain('<hidden>')
     rmSync(named)
   })
 

@@ -21,19 +21,20 @@ const JOINED = /[\p{L}\p{N}]+(?:[.\-_@][\p{L}\p{N}]+)+/gu
 // A dotted word, like a domain. Each of its endings is checked too.
 const DOTTED = /[\p{L}\p{N}]+(?:\.[\p{L}\p{N}]+)+/gu
 // Where a camelCase name or a word glued to digits splits into pieces.
-const PIECE_BREAK = /(?<=\p{Ll})(?=\p{Lu})|(?<=\p{L})(?=\p{N})|(?<=\p{N})(?=\p{L})/u
+// `ACMEWidget` splits into `ACME` and `Widget`.
+const PIECE_BREAK = /(?<=\p{Ll})(?=\p{Lu})|(?<=\p{Lu})(?=\p{Lu}\p{Ll})|(?<=\p{L})(?=\p{N})|(?<=\p{N})(?=\p{L})/u
 // A Vietnamese phone number: +84 or 0084, then 8 to 10 digits, with optional
-// spaces, dots, dashes or brackets between them. The lookbehind skips sums in
+// spaces, dots, dashes, slashes, underscores or brackets between them. The lookbehind skips sums in
 // minified code, like `a+84000000`. Runs after entities and %-codes are decoded,
 // so `&#43;84` and `%2B84` are caught too.
-const VN_PHONE = /(?<![\p{L}\p{N}_)\]])(?:\+|00)\s?84(?:[\s.\-()]*\d){8,10}/gu
-// A WhatsApp link to a Vietnamese number.
-const VN_WHATSAPP = /wa\.me\/84\d{8,10}/gu
-// Invisible format characters, like a zero-width space or a soft hyphen.
-const INVISIBLE = /\p{Cf}/gu
+const VN_PHONE = /(?<![\p{L}\p{N}_)\]])(?:\+|00)\s?84(?:[\s.\-()/_]*\d){8,10}/gu
+// A WhatsApp link to a Vietnamese number: `wa.me/84…` or `phone=84…`.
+const VN_WHATSAPP = /(?:wa\.me\/|phone=)84\d{8,10}/gu
+// Invisible characters, like a zero-width space, a soft hyphen or a Hangul filler.
+const INVISIBLE = /[\p{Cf}\u034F\uFE00-\uFE0F\u115F\u1160\u3164\uFFA0\u2800]/gu
 
 const NAMED_ENTITIES: Record<string, string> = {
-  amp: '&', lt: '<', gt: '>', quot: '"', apos: '\'', nbsp: ' ', shy: '­', plus: '+', period: '.', commat: '@',
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: '\'', nbsp: ' ', shy: '\u00AD', plus: '+', period: '.', commat: '@',
 }
 
 // Files we can't read as text. Everything else is scanned.
@@ -91,6 +92,8 @@ export function words(text: string): string[] {
     }
   }
   for (const word of lower.match(JOINED) ?? []) found.add(word)
+  // Each word without accents too, so `éxample` (e plus a combining accent) is caught.
+  for (const word of [...found]) found.add(word.normalize('NFD').replace(/\p{M}/gu, '').normalize('NFC'))
   for (const word of lower.match(DOTTED) ?? []) {
     const labels = word.split('.')
     for (let i = 0; i < labels.length - 1; i++) found.add(labels.slice(i).join('.'))
@@ -114,14 +117,14 @@ export function scanText(text: string, banned: ReadonlySet<string>, file = '<tex
   return hits
 }
 
-/** Every text file under the given folders. Folders that don't exist are skipped. */
-export function textFiles(dirs: string[]): string[] {
+/** Every file under the given folders, binary or not. Folders that don't exist are skipped. */
+export function allFiles(dirs: string[]): string[] {
   const files: string[] = []
   const walk = (dir: string) => {
     for (const name of readdirSync(dir)) {
       const path = join(dir, name)
       if (statSync(path).isDirectory()) walk(path)
-      else if (isText(path)) files.push(path)
+      else files.push(path)
     }
   }
   for (const dir of dirs) if (existsSync(dir)) walk(dir)
@@ -150,16 +153,27 @@ export function readText(file: string): string {
   return text
 }
 
-/** Scans each file's contents and its path below `root` (reported as line 0). */
+/**
+ * Scans the path of every file below `root` (reported as line 0), so a logo
+ * named after a banned word fails, and the contents of every text file.
+ */
 export function scanFiles(files: string[], banned: ReadonlySet<string>, root = '/'): Hit[] {
   return files.flatMap(file => [
     ...scanText(relative(root, file), banned, file, 0),
-    ...scanText(readText(file), banned, file),
+    ...(isText(file) ? scanText(readText(file), banned, file) : []),
   ])
 }
 
-export function formatHits(hits: Hit[], root: string): string {
+/**
+ * One line per hit. In the path, any folder or file name that holds a banned
+ * word is shown as `<hidden>`, so the report never prints the word.
+ */
+export function formatHits(hits: Hit[], root: string, banned: ReadonlySet<string>): string {
+  const hide = (path: string) => path
+    .split('/')
+    .map(part => (scanText(part, banned).length > 0 ? '<hidden>' : part))
+    .join('/')
   return hits
-    .map(hit => `${relative(root, hit.file)}:${hit.line} ${hit.kind} ${hit.detail}`)
+    .map(hit => `${hide(relative(root, hit.file))}:${hit.line} ${hit.kind} ${hit.detail}`)
     .join('\n')
 }
