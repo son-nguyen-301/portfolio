@@ -57,7 +57,7 @@ freshness: 180d
 
 ## What are Son's working hours and contact details for the site?
 type: qa
-answer: Works 08:00–22:00 Hanoi time (UTC+7). Show haison143@gmail.com as text (not a form). Booking link: Cal.com free plan (Son creates it). No photo for now.
+answer: Works 08:00–22:00 Hanoi time (UTC+7). Show haison143@gmail.com as text (not a form). Booking link: https://cal.com/hai-son-nguyen-xijls2/30min (a 30-minute call, so site copy says "30-minute call"). No photo for now.
 captured: 2026-11-10
 status: active
 freshness: 180d
@@ -90,7 +90,7 @@ freshness: 180d
 
 ## Does the site show prices?
 type: qa
-answer: No. The site says "fixed price after a 20-minute call". Rates live on Upwork only.
+answer: No. The site says "fixed price after a 30-minute call". Rates live on Upwork only.
 captured: 2026-11-10
 status: active
 freshness: 180d
