@@ -38,6 +38,12 @@ describe('MetricTile', () => {
     expect(wrapper.find('.metric-tile__value').classes()).toContain('num')
     expect(wrapper.find('.metric-tile__label').text()).toBe('Sample label')
   })
+
+  it('keeps each word of the value whole, so it wraps only at a space', () => {
+    const wrapper = mount(MetricTile, { props: { value: 'Alpha, beta-gamma', label: 'Sample label' } })
+    expect(wrapper.findAll('.keep-word').map(word => word.text())).toEqual(['Alpha,', 'beta-gamma'])
+    expect(wrapper.find('.metric-tile__value').element.textContent).toBe('Alpha, beta-gamma')
+  })
 })
 
 describe('TagList', () => {

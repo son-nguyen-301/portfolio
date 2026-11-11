@@ -125,7 +125,9 @@ test.describe('with JavaScript off', () => {
   })
 })
 
-// The box of the clock and of the heading above it, once fonts are in.
+// The box of the clock and of the heading above it, once fonts are in. The
+// contexts ask for reduced motion, so the hero's fade-up (a transform, which
+// moves no layout) is not caught half way.
 async function measure(page: Page) {
   await page.evaluate(() => document.fonts.ready)
   const clock = await page.getByRole('complementary', { name: 'Shared working hours' }).boundingBox()
@@ -134,7 +136,7 @@ async function measure(page: Page) {
 }
 
 async function serverBox(browser: Browser, timezoneId: string, viewport: { width: number, height: number }) {
-  const context = await browser.newContext({ javaScriptEnabled: false, timezoneId, viewport })
+  const context = await browser.newContext({ javaScriptEnabled: false, timezoneId, viewport, reducedMotion: 'reduce' })
   const page = await context.newPage()
   await page.goto('/')
   const box = await measure(page)
@@ -150,7 +152,7 @@ test.describe('no layout shift when the clock fills in', () => {
     for (const size of sizes) {
       test(`${zone}, ${size.name}`, async ({ browser }) => {
         const before = await serverBox(browser, zone, size.viewport)
-        const context = await browser.newContext({ timezoneId: zone, viewport: size.viewport })
+        const context = await browser.newContext({ timezoneId: zone, viewport: size.viewport, reducedMotion: 'reduce' })
         const page = await context.newPage()
         await openClock(page, winter)
         const after = await measure(page)

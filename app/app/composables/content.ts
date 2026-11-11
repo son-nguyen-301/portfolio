@@ -49,6 +49,15 @@ export function useCaseStudies() {
   return useAsyncData('content:work', () => queryCollection('work').order('order', 'ASC').all())
 }
 
+// The fields a case study card shows, for every case study in its `order`.
+// No body, so a page that lists cards stays small.
+export function useWorkCards() {
+  return useAsyncData('content:work:cards', () => queryCollection('work')
+    .select('path', 'title', 'summary', 'stack', 'cardMetric', 'featured', 'quote', 'order')
+    .order('order', 'ASC')
+    .all())
+}
+
 // One case study by its page path, for example "/work/aspire-redesign".
 export function useCaseStudy(path: string) {
   return useAsyncData(`content:work:${path}`, () => queryCollection('work').path(path).first())

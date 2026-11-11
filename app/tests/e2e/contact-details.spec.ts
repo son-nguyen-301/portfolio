@@ -11,7 +11,7 @@ import { parse } from 'yaml'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const built = join(root, '.output/public')
-const profile = parse(readFileSync(join(root, 'content/profile.yml'), 'utf8')) as { email: string, booking: { url: string, label: string } }
+const profile = parse(readFileSync(join(root, 'content/profile.yml'), 'utf8')) as { email: string, booking: { url: string, label: string }, hero: { headline: string } }
 
 // The one file that holds them (app/utils/contact.ts). Only ContactBlock
 // downloads it, after it has found that the visit is not in Upwork mode.
@@ -89,7 +89,7 @@ test('no page downloads the profile collection', async ({ page }) => {
   await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Work' }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Work')
   await page.getByRole('banner').getByRole('link', { name: 'Hai Son Nguyen' }).click()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hai Son Nguyen')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(profile.hero.headline)
   await page.waitForLoadState('networkidle')
   expect(dumps).toEqual([])
 })
