@@ -16,6 +16,7 @@ const profile = read('profile.yml') as {
   links: { upwork: string }
   about: string
   location: string
+  utcOffset: number
   hours: { label: string }
   languages: string[]
   openTo: string[]
@@ -52,7 +53,7 @@ test('the facts box shows the place, hours, languages, what Son is open to and t
   const box = page.locator('dl.about__facts')
   await expect(box.locator('dt')).toHaveText(['Based in', 'Working hours', 'Languages', 'Open to', 'Roles'])
   await expect(box.locator('dd')).toHaveText([
-    `${profile.location} (UTC+7)`,
+    `${profile.location} (UTC${profile.utcOffset < 0 ? '-' : '+'}${Math.abs(profile.utcOffset)})`,
     profile.hours.label,
     ...profile.languages,
     ...profile.openTo,
@@ -119,6 +120,10 @@ test('"Earlier projects →" on /work lands on the earlier projects section', as
   await expect(page).toHaveURL(/\/about\/?#earlier$/)
   const heading = page.locator('section#earlier').getByRole('heading', { level: 2 })
   await expect(heading).toBeInViewport()
+  // Below the header, which is sticky on phones and at the top of the page here.
+  const header = await page.getByRole('banner').boundingBox()
+  const box = await heading.boundingBox()
+  expect(box!.y).toBeGreaterThanOrEqual(Math.max(0, header!.y + header!.height))
 })
 
 test('Upwork mode shows no email, booking link or contact page link', async ({ page }) => {
@@ -154,6 +159,16 @@ for (const colorScheme of ['light', 'dark'] as const) {
       expect(two!.y).toBeGreaterThan(one!.y + one!.height)
       await page.locator('section#earlier').scrollIntoViewIfNeeded()
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(phone.width)
+    })
+
+    test('/about#earlier lands below the sticky header', async ({ page }) => {
+      await page.goto('/about#earlier')
+      const heading = page.locator('section#earlier').getByRole('heading', { level: 2 })
+      await expect(heading).toBeInViewport()
+      const header = await page.getByRole('banner').boundingBox()
+      const box = await heading.boundingBox()
+      expect(header!.y).toBeGreaterThanOrEqual(0)
+      expect(box!.y).toBeGreaterThanOrEqual(header!.y + header!.height)
     })
   })
 }
