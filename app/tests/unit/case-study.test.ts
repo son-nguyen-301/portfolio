@@ -58,6 +58,14 @@ describe('hardChoice', () => {
     ])
   })
 
+  it('drops a colon that sits after the bold lead', () => {
+    const node: MinimarkNode = ['blockquote', {}, ['p', {}, ['strong', {}, 'Hard choice'], ': ship it small.']]
+    expect(hardChoice(node)).toEqual(['div', { class: 'hard-choice' },
+      ['p', { class: 'label hard-choice__label' }, 'Hard choice'],
+      ['p', {}, 'Ship it small.'],
+    ])
+  })
+
   it('leaves any other node as it is', () => {
     const quote: MinimarkNode = ['blockquote', {}, ['p', {}, ['strong', {}, 'Note:'], ' something.']]
     const plain: MinimarkNode = ['blockquote', {}, ['p', {}, 'No bold lead.']]

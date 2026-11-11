@@ -188,6 +188,21 @@ for (const colorScheme of ['light', 'dark'] as const) {
   })
 }
 
+test.describe('on a narrow desktop, where the header is sticky', () => {
+  test.use({ viewport: { width: 800, height: 650 } })
+
+  test('the side panel never slides under the header', async ({ page }) => {
+    await page.goto(`/work/${studies[0]!.slug}`)
+    for (const y of [300, 900, 1500]) {
+      await page.evaluate(top => window.scrollTo(0, top), y)
+      const header = await page.locator('header.site-header').boundingBox()
+      const panel = await facts(page).boundingBox()
+      const hidden = panel!.y + panel!.height <= header!.y + header!.height
+      expect(hidden || panel!.y >= header!.y + header!.height, `scrolled ${y}`).toBe(true)
+    }
+  })
+})
+
 test.describe('on a desktop', () => {
   test.use({ viewport: { width: 1280, height: 800 } })
 

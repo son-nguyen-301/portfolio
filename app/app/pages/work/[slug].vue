@@ -494,8 +494,6 @@ useSeoMeta({
   }
 
   .case-study__facts {
-    position: sticky;
-    top: 24px;
     padding: 24px;
   }
 

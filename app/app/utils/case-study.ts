@@ -54,7 +54,7 @@ const hardChoiceLead = /^\s*(hard choice)\s*:?\s*$/i
 // "> **Hard choice:** a big-bang rewrite ..." becomes a callout: a label with
 // the words of the bold lead ("Hard choice"), then the rest of the quote, with
 // its first letter in capitals because it now starts a sentence. Any other
-// node is returned as it is.
+// node is returned as it is. The colon may sit inside or after the bold.
 export function hardChoice(node: MinimarkNode): MinimarkNode {
   if (!isElement(node) || node[0] !== 'blockquote') return node
   const [, , first, ...more] = node
@@ -66,7 +66,7 @@ export function hardChoice(node: MinimarkNode): MinimarkNode {
 
   const [head, ...tail] = rest
   const text: MinimarkNode[] = typeof head === 'string'
-    ? [capitalize(head.trimStart()), ...tail].filter(part => part !== '')
+    ? [capitalize(head.replace(/^\s*:?\s*/, '')), ...tail].filter(part => part !== '')
     : rest
   const label = match[1]!.charAt(0).toUpperCase() + match[1]!.slice(1).toLowerCase()
   const callout: MinimarkElement = ['div', { class: 'hard-choice' }, ['p', { class: 'label hard-choice__label' }, label]]
