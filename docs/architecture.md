@@ -68,7 +68,7 @@ Check every field name against the current Cloudflare docs before you change it.
 - All paths: `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, a Content Security Policy that allows the Cloudflare analytics script, and `Cache-Control: public, max-age=0, must-revalidate`, so a new deploy shows up at once.
 - `/_nuxt/*`: `Cache-Control: public, max-age=31536000, immutable` (the short cache is dropped first with `! Cache-Control`).
 - `/_nuxt-skew-sw.js`: `Cache-Control: no-cache`.
-- `/contact-details.json`: `X-Robots-Tag: noindex`.
+- `/contact-details.json`, `/200` (the app's fallback page) and `/404`: `X-Robots-Tag: noindex`.
 - `nuxt-ai-ready` adds its own `/*.md` rule after it.
 
 ### Deploy

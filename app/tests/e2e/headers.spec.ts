@@ -74,6 +74,11 @@ test('_headers caches /_nuxt/ for a year and never caches the service worker', (
   for (const path of ['/contact-details.json', '/200', '/404']) expect(rules.get(path)?.headers.get('x-robots-tag')).toBe('noindex')
 })
 
+test('_headers keeps the Markdown rule that nuxt-ai-ready adds after it', () => {
+  // modules/headers.ts writes the file first; nuxt-ai-ready appends its rule.
+  expect(rules.get('/*.md')?.headers.get('content-type')).toBe('text/markdown; charset=utf-8')
+})
+
 // wrangler.jsonc has no comments, so it reads as plain JSON.
 const wrangler = JSON.parse(readFileSync(join(root, 'wrangler.jsonc'), 'utf8')) as { assets: { html_handling: string, not_found_handling: string, directory: string } }
 
@@ -120,8 +125,6 @@ test('no built page holds the analytics beacon while the token is empty', () => 
   expect(hits).toEqual([])
 })
 
-// Workers sends 404.html for a path that is not there (wrangler.jsonc); sirv
-// does not, so the test opens the file itself.
 // Opens a page with the built policy on every document, and collects every
 // script, style or connection the policy blocks.
 async function openWithPolicy(page: Page, path: string) {
@@ -147,6 +150,8 @@ async function openWithPolicy(page: Page, path: string) {
 
 const violations = (page: Page) => page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations)
 
+// Workers sends 404.html for a path that is not there (wrangler.jsonc); sirv
+// does not, so the test opens the file itself.
 for (const path of ['/', '/work/', '/work/nz-ai-dev-team/', '/services/', '/lab/', '/about/', '/cv/', '/404.html']) {
   test(`${path} runs under the policy with nothing blocked`, async ({ page }) => {
     const { errors } = await openWithPolicy(page, path)
