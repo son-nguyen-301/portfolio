@@ -5,7 +5,7 @@ groups:
   - name: Frontend
     note: "My main work. Senior level."
   - name: AI
-    note: "For teams that want AI help, with a person checking each step."
+    note: "For teams that want AI help, with a person approving each key step."
   - name: Lead
     note: "Part-time, next to your team."
 items:
