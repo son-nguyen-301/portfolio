@@ -1,19 +1,21 @@
 // The email and the booking link must not reach a page opened from Upwork
 // (CLAUDE.md hard rule 4). A page's content data is written into its built
-// files, so this scans the generated site for them. Run `pnpm generate` first.
-import { readdirSync, readFileSync } from 'node:fs'
+// files, so this scans the generated site for them, Nuxt Content's copies of
+// the collections included. Run `pnpm generate` first.
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { gunzipSync } from 'node:zlib'
 import { expect, test } from '@playwright/test'
 import { parse } from 'yaml'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const built = join(root, '.output/public')
-const profile = parse(readFileSync(join(root, 'content/profile.yml'), 'utf8')) as { email: string, booking: { url: string } }
+const profile = parse(readFileSync(join(root, 'content/profile.yml'), 'utf8')) as { email: string, booking: { url: string, label: string } }
 
-// Nuxt Content's compressed copies of each collection. They hold every field,
-// contact details included, and are tracked in #34.
-const skipped = ['__nuxt_content/']
+// The one file that holds them (app/utils/contact.ts). Only ContactBlock
+// downloads it, after it has found that the visit is not in Upwork mode.
+const contactFile = 'contact-details.json'
 
 function files(dir: string, prefix = ''): string[] {
   return readdirSync(join(dir, prefix), { withFileTypes: true }).flatMap((item) => {
@@ -22,19 +24,48 @@ function files(dir: string, prefix = ''): string[] {
   })
 }
 
-test('no built page file holds the email or the booking link', () => {
-  const secrets = [profile.email, profile.email.replace('@', '%40'), profile.booking.url]
-  const scanned = files(built).filter(file => !skipped.some(part => file.startsWith(part)))
+// Nuxt Content's copy of a collection is gzip, then base64.
+function readBuilt(file: string): string {
+  const text = readFileSync(join(built, file), 'utf8')
+  return file.startsWith('__nuxt_content/') && file.endsWith('/sql_dump.txt')
+    ? gunzipSync(Buffer.from(text, 'base64')).toString('utf8')
+    : text
+}
+
+const [localPart] = profile.email.split('@') as [string]
+const secrets: [string, string][] = [
+  ['email', profile.email],
+  ['email local part', localPart],
+  ['email with %40', profile.email.replace('@', '%40')],
+  ['email with &#64;', profile.email.replace('@', '&#64;')],
+  ['mailto link', 'mailto:'],
+  ['booking link', profile.booking.url],
+  ['cal.com link', 'cal.com'],
+]
+
+test('no built file but the contact file holds the email or the booking link', () => {
+  const scanned = files(built).filter(file => file !== contactFile)
   expect(scanned).toContain('_payload.json')
+  expect(scanned.some(file => file.endsWith('/sql_dump.txt'))).toBe(true)
   const hits = scanned.flatMap((file) => {
-    const text = readFileSync(join(built, file), 'utf8')
-    return secrets.filter(secret => text.includes(secret)).map(secret => `${file}: ${secret === profile.booking.url ? 'booking link' : 'email'}`)
+    const text = readBuilt(file).toLowerCase()
+    return secrets.filter(([, secret]) => text.includes(secret.toLowerCase())).map(([name]) => `${file}: ${name}`)
   })
   expect(hits).toEqual([])
 })
 
-test('the home page shows no email or booking link', async ({ page }) => {
-  await page.goto('/')
+test('the contact file holds only the email and the booking link', () => {
+  const data = JSON.parse(readFileSync(join(built, contactFile), 'utf8'))
+  expect(data).toEqual({ email: profile.email, booking: { url: profile.booking.url, label: profile.booking.label } })
+})
+
+test('the build has no copy of the profile collection', () => {
+  expect(existsSync(join(built, '__nuxt_content/profile'))).toBe(false)
+})
+
+test('the home page opened from Upwork shows no email or booking link', async ({ page }) => {
+  await page.goto('/?from=upwork')
+  await page.waitForLoadState('networkidle')
   const html = await page.content()
   expect(html).not.toContain(profile.email)
   expect(html).not.toContain(profile.booking.url)
