@@ -169,6 +169,25 @@ test.describe('on a desktop', () => {
   })
 })
 
+// The "Your time" label is cut short when it does not fit (D-023). The hero
+// keeps the clock wide enough for long city names at every desktop width.
+for (const [timezoneId, city] of [['America/Los_Angeles', 'Los Angeles'], ['America/Argentina/Buenos_Aires', 'Buenos Aires'], ['America/Sao_Paulo', 'Sao Paulo']] as const) {
+  for (const width of [960, 1040, 1280]) {
+    test(`the clock label shows "${city}" in full at ${width} px`, async ({ browser }) => {
+      const context = await browser.newContext({ timezoneId, viewport: { width, height: 800 } })
+      const page = await context.newPage()
+      await page.goto('/')
+      const clock = page.getByRole('complementary', { name: 'Shared working hours' })
+      await expect(clock).toHaveAttribute('data-state', 'ready')
+      const label = clock.locator('.time-overlap__clock--you .label')
+      await expect(label).toHaveText(`Your time · ${city}`)
+      await page.evaluate(() => document.fonts.ready)
+      expect(await label.evaluate(node => node.scrollWidth - node.clientWidth)).toBeLessThanOrEqual(0)
+      await context.close()
+    })
+  }
+}
+
 for (const colorScheme of ['light', 'dark'] as const) {
   test.describe(`on a phone, ${colorScheme}`, () => {
     test.use({ viewport: phone, colorScheme })
@@ -178,6 +197,13 @@ for (const colorScheme of ['light', 'dark'] as const) {
       const heading = await page.getByRole('heading', { level: 1 }).boundingBox()
       const clock = await page.getByRole('complementary', { name: 'Shared working hours' }).boundingBox()
       expect(clock!.y).toBeGreaterThan(heading!.y + heading!.height)
+      // The headline breaks only between words, never after the hyphen in
+      // "e-commerce": each word is one box, one line tall.
+      await page.evaluate(() => document.fonts.ready)
+      const heights = await page.getByRole('heading', { level: 1 }).locator('.keep-word').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().height))
+      expect(heights.length).toBeGreaterThan(1)
+      expect(Math.max(...heights) - Math.min(...heights)).toBeLessThan(1)
+      expect(await page.getByRole('heading', { level: 1 }).evaluate(node => node.getBoundingClientRect().right)).toBeLessThanOrEqual(phone.width)
       await page.getByRole('heading', { name: 'Tell me what you are building' }).scrollIntoViewIfNeeded()
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(phone.width)
     })

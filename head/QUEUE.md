@@ -47,5 +47,5 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 | 20 | 5 | P3 | PF-038 | #71 | #31 | loop | Found in PR #70. Son moved it to Sprint 5. Color test gaps |
 | 21 | Backlog | P2 | PF-040 | #76 | #33 | loop | Found in PR #75. Asks Son about Upwork mode with JavaScript off. |
 | 22 | Backlog | P2 | PF-041 | #78 | none | loop | Found in PR #77. Flaky keyboard test for the phone menu |
-| 23 | Backlog | P3 | PF-042 | #81 | none | loop | Found in PR #80. Four more renamed zones for the clock label |
-| 24 | Backlog | P3 | PF-043 | #83 | none | loop | Found in PR #82. Fixed bottom bar on phones |
+| 23 | Backlog | P2 | PF-043 | #83 | none | loop | Found in PR #82. Fixed bottom bar on phones, named in `docs/design.md` |
+| 24 | Backlog | P3 | PF-042 | #81 | none | loop | Found in PR #80. Four more renamed zones for the clock label |

@@ -138,6 +138,15 @@ hr {
   color: var(--muted);
 }
 
+/* One word as its own box (app/utils/words.ts): the line breaks at the
+   spaces between words, never after a hyphen inside one. Only a word wider
+   than the whole line wraps inside itself. */
+.keep-word {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 /* Result numbers: mono, jade, digits of equal width. */
 .num {
   font-family: var(--font-mono);

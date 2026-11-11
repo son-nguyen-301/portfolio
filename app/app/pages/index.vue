@@ -4,11 +4,18 @@
 // once a case study has one) and contact. Every word comes from app/content,
 // except the section labels and headings.
 //
+// Section labels, headings, link labels and aria-labels are written here,
+// from the design screens (D-024).
+//
 // The profile fields are named one by one, and never `email` or `booking`:
 // ContactBlock gets those after mount, outside Upwork mode (D-021).
 const { data: profile } = await useProfile('title', 'location', 'utcOffset', 'hours', 'replyPromise', 'links', 'hero', 'proofStrip', 'howIWork', 'aiRules', 'pricing')
 const { data: services } = await useServices()
 const { data: work } = await useWorkCards()
+
+// The headline word by word, so it never breaks after the hyphen in
+// "e-commerce" (app/utils/words.ts).
+const headline = computed(() => words(profile.value?.hero.headline ?? ''))
 
 // "Hanoi, Vietnam" -> "Hanoi"
 const city = computed(() => profile.value?.location.split(',')[0]?.trim() ?? '')
@@ -39,7 +46,12 @@ useSeoMeta({
           {{ profile.hero.label }}
         </p>
         <h1 id="home-title">
-          {{ profile.hero.headline }}
+          <template
+            v-for="(word, i) in headline"
+            :key="i"
+          >
+            <span class="keep-word">{{ word }}</span>{{ i < headline.length - 1 ? ' ' : '' }}
+          </template>
         </h1>
         <p class="lead home-hero__subline">
           {{ profile.hero.subline }}
@@ -210,14 +222,9 @@ useSeoMeta({
       data-section="quotes"
       aria-labelledby="home-quotes"
     >
-      <div class="home-section__head">
-        <p class="label">
-          What people say
-        </p>
-        <h2 id="home-quotes">
-          In their words
-        </h2>
-      </div>
+      <h2 id="home-quotes">
+        What people say
+      </h2>
       <div class="home-quotes">
         <QuoteBlock
           v-for="quote in quotes"
@@ -477,8 +484,10 @@ useSeoMeta({
 }
 
 @media (min-width: 960px) {
+  /* The clock column is at least 440 px, so a long city such as
+     "Los Angeles" fits in the "Your time" label. */
   .home-hero {
-    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.3fr) minmax(440px, 1fr);
     gap: 48px;
   }
 }

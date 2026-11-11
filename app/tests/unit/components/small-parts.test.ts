@@ -41,7 +41,7 @@ describe('MetricTile', () => {
 
   it('keeps each word of the value whole, so it wraps only at a space', () => {
     const wrapper = mount(MetricTile, { props: { value: 'Alpha, beta-gamma', label: 'Sample label' } })
-    expect(wrapper.findAll('.metric-tile__word').map(word => word.text())).toEqual(['Alpha,', 'beta-gamma'])
+    expect(wrapper.findAll('.keep-word').map(word => word.text())).toEqual(['Alpha,', 'beta-gamma'])
     expect(wrapper.find('.metric-tile__value').element.textContent).toBe('Alpha, beta-gamma')
   })
 })

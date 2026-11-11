@@ -2,6 +2,7 @@
 // A big mono number with a short label under it. Used in case studies and the
 // proof strip. `value` is text from app/content, for example "379 PRs".
 import { computed } from 'vue'
+import { words as split } from '../utils/words'
 
 const props = defineProps<{
   value: string
@@ -10,7 +11,7 @@ const props = defineProps<{
 
 // Each word of the value stays whole, so a long value wraps at a space and
 // never after a hyphen ("Fintech, e-" / "commerce").
-const words = computed(() => props.value.split(' ').filter(Boolean))
+const words = computed(() => split(props.value))
 </script>
 
 <template>
@@ -18,7 +19,7 @@ const words = computed(() => props.value.split(' ').filter(Boolean))
     <span class="metric-tile__value num"><template
       v-for="(word, i) in words"
       :key="i"
-    ><span class="metric-tile__word">{{ word }}</span>{{ i < words.length - 1 ? ' ' : '' }}</template></span>
+    ><span class="keep-word">{{ word }}</span>{{ i < words.length - 1 ? ' ' : '' }}</template></span>
     <span class="metric-tile__label">{{ label }}</span>
   </div>
 </template>
@@ -34,10 +35,6 @@ const words = computed(() => props.value.split(' ').filter(Boolean))
 .metric-tile__value {
   font-size: var(--text-h3);
   line-height: 1.2;
-}
-
-.metric-tile__word {
-  white-space: nowrap;
 }
 
 .metric-tile__label {
