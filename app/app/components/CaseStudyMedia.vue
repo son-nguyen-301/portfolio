@@ -2,7 +2,7 @@
 // The screens and diagrams of a case study (docs/design/CaseStudy.dc.html,
 // "Screens"). Images go through @nuxt/image, lazy, at a fixed size so nothing
 // moves when they load. An item that doesn't exist yet (no `src`, a caption
-// that starts with "TODO", or a diagram PF-014 hasn't built) shows a neutral
+// that starts with "TODO", or a diagram not in utils/diagrams.ts) shows a neutral
 // placeholder with the `alt` text as its caption, never a broken image or the
 // TODO note. A diagram is an <svg role="img"> whose <title> is the `alt` text.
 import { computed } from 'vue'
