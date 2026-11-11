@@ -16,7 +16,7 @@ const ThemeSwitchStub = defineComponent({
 })
 const global = { components: { NuxtLink: NuxtLinkStub, ThemeSwitch: ThemeSwitchStub } }
 
-const headerProps = { name: 'Sample Name', hours: 'Sample hours', replyPromise: 'Sample reply promise.' }
+const headerProps = { name: 'Sample Name', upwork: 'https://example.com/upwork', hours: 'Sample hours', replyPromise: 'Sample reply promise.' }
 const footerProps = {
   name: 'Sample Name',
   title: 'Sample title',
@@ -54,10 +54,26 @@ describe('SiteHeader', () => {
   it('has the main links and one action button to the contact page', () => {
     const header = mountHeader()
     expect(hrefs(header, 'nav[aria-label="Main"] a')).toEqual(['/work', '/services', '/lab', '/about', '/contact'])
-    const actions = header.findAll('.site-header__bar .app-button')
+    const actions = header.findAll('.site-header__bar .app-button:not(.upwork-only)')
     expect(actions).toHaveLength(1)
     expect(actions[0]!.text()).toBe('Book a 30-minute call')
     expect(actions[0]!.attributes('href')).toBe('/contact')
+  })
+
+  // Upwork mode itself is CSS on <html data-upwork> (assets/css/base.css);
+  // tests/e2e/upwork-mode.spec.ts checks what the browser shows.
+  it('marks the Contact link and the call button to hide in Upwork mode, and has the Upwork button for it', () => {
+    const header = mountHeader()
+    const hidden = (selector: string) => header.findAll(selector).filter(item => item.classes('not-upwork')).map(item => item.text())
+    expect(hidden('nav[aria-label="Main"] a')).toEqual(['Contact'])
+    expect(hidden('dialog nav a')).toEqual(['Contact'])
+    for (const area of ['.site-header__bar', 'dialog']) {
+      const buttons = header.findAll(`${area} .app-button`)
+      expect(buttons.map(button => [button.text(), button.attributes('href'), button.classes('not-upwork') ? 'not-upwork' : button.classes('upwork-only') ? 'upwork-only' : 'always'])).toEqual([
+        ['Book a 30-minute call', '/contact', 'not-upwork'],
+        ['Message me on Upwork', 'https://example.com/upwork', 'upwork-only'],
+      ])
+    }
   })
 
   it('never links an email or a booking site', () => {
@@ -92,7 +108,7 @@ describe('SiteHeader', () => {
     const dialog = header.find('dialog')
     expect(dialog.find('nav').attributes('aria-label')).toBe('Pages')
     expect(hrefs(header, 'dialog nav a')).toEqual(['/work', '/services', '/lab', '/about', '/cv', '/contact'])
-    expect(dialog.find('.app-button').attributes('href')).toBe('/contact')
+    expect(dialog.find('.app-button:not(.upwork-only)').attributes('href')).toBe('/contact')
     expect(dialog.text()).toContain('Sample hours. Sample reply promise.')
     expect(dialog.find('[data-test="theme-switch"]').exists()).toBe(true)
   })
@@ -127,5 +143,11 @@ describe('SiteFooter', () => {
       ['Upwork', 'https://example.com/upwork'],
     ])
     expect(footer.find('[data-test="theme-switch"]').exists()).toBe(true)
+  })
+
+  it('marks the Contact and LinkedIn links to hide in Upwork mode', () => {
+    const footer = mount(SiteFooter, { props: footerProps, global })
+    expect(footer.findAll('a.not-upwork').map(link => link.text())).toEqual(['Contact', 'LinkedIn'])
+    expect(footer.findAll('.upwork-only')).toHaveLength(0)
   })
 })

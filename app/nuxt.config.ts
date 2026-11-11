@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 // The site is fully static: build it with `pnpm generate` (see docs/architecture.md).
 import { themeHeadScript } from './shared/theme'
+import { upworkHeadScript } from './app/utils/upwork'
 
 export default defineNuxtConfig({
   modules: [
@@ -24,8 +25,12 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: 'en' },
       meta: [{ name: 'color-scheme', content: 'light dark' }],
-      // Applies a saved light or dark choice before the page paints.
-      script: [{ innerHTML: themeHeadScript, tagPriority: 'critical' }],
+      // Before the page paints: apply a saved light or dark choice, and mark
+      // <html> when the visit is in Upwork mode, so no contact link shows.
+      script: [
+        { innerHTML: themeHeadScript, tagPriority: 'critical' },
+        { innerHTML: upworkHeadScript, tagPriority: 'critical' },
+      ],
     },
   },
 

@@ -2,13 +2,16 @@
 // The site header: name with a jade dot, the page links and one action button.
 // At 860px and below, the links and the button move into a phone menu, a modal
 // <dialog>: the browser keeps focus inside it and closes it on Escape.
-// Upwork mode (no Contact link, "Message me on Upwork") comes in PF-007.
+// In Upwork mode the Contact link and "Book a 30-minute call" hide, and
+// "Message me on Upwork" shows instead (classes in assets/css/base.css).
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { mainLinks, siteLinks } from '../utils/nav'
 import AppButton from './AppButton.vue'
 
 defineProps<{
   name: string
+  // profile.links.upwork, for the Upwork mode button.
+  upwork: string
   // profile.hours.label and profile.replyPromise, shown in the phone menu.
   hours: string
   replyPromise: string
@@ -72,7 +75,7 @@ onBeforeUnmount(() => {
           v-for="link in mainLinks"
           :key="link.to"
           :to="link.to"
-          class="site-header__link"
+          :class="['site-header__link', { 'not-upwork': link.hideInUpwork }]"
         >
           {{ link.label }}
         </NuxtLink>
@@ -81,9 +84,16 @@ onBeforeUnmount(() => {
       <AppButton
         to="/contact"
         variant="action"
-        class="site-header__action"
+        class="site-header__action not-upwork"
       >
         Book a 30-minute call
+      </AppButton>
+      <AppButton
+        :to="upwork"
+        variant="action"
+        class="site-header__action upwork-only"
+      >
+        Message me on Upwork
       </AppButton>
 
       <button
@@ -146,7 +156,7 @@ onBeforeUnmount(() => {
           v-for="link in siteLinks"
           :key="link.to"
           :to="link.to"
-          class="site-menu__link"
+          :class="['site-menu__link', { 'not-upwork': link.hideInUpwork }]"
           @click="closeMenu"
         >
           <span>{{ link.label }}</span>
@@ -166,9 +176,18 @@ onBeforeUnmount(() => {
         <AppButton
           to="/contact"
           variant="action"
+          class="not-upwork"
           @click="closeMenu"
         >
           Book a 30-minute call
+        </AppButton>
+        <AppButton
+          :to="upwork"
+          variant="action"
+          class="upwork-only"
+          @click="closeMenu"
+        >
+          Message me on Upwork
         </AppButton>
         <p class="small site-menu__hours">
           {{ hours }}. {{ replyPromise }}

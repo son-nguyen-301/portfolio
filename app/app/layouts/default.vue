@@ -4,6 +4,11 @@
 // email and the booking link never reach the browser (CLAUDE.md hard rule 4).
 const profile = useSiteProfile()
 
+// Reads Upwork mode after mount, for the whole visit. The head script already
+// marked <html> before the page painted, so the header and footer show the
+// right links at once (docs/brief.md, Upwork mode).
+useUpworkMode()
+
 // The year of the build, kept in the page data so the browser shows the same.
 const year = useState('footer-year', () => new Date().getFullYear())
 </script>
@@ -16,6 +21,7 @@ const year = useState('footer-year', () => new Date().getFullYear())
     >Skip to content</a>
     <SiteHeader
       :name="profile.name"
+      :upwork="profile.links.upwork"
       :hours="profile.hours"
       :reply-promise="profile.replyPromise"
     />
