@@ -63,7 +63,7 @@ test('Upwork mode stays on for the other pages of the visit', async ({ page }) =
   // A link inside the app.
   await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Work' }).click()
   await expect(page).toHaveURL(/\/work\/?$/)
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Work')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Case studies')
   await expectUpworkHeader(page)
 
   // A full page load in the same tab, with no ?from=upwork.

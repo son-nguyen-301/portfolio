@@ -53,7 +53,7 @@ export function useCaseStudies() {
 // No body, so a page that lists cards stays small.
 export function useWorkCards() {
   return useAsyncData('content:work:cards', () => queryCollection('work')
-    .select('path', 'title', 'summary', 'stack', 'cardMetric', 'featured', 'quote', 'order')
+    .select('path', 'title', 'summary', 'client', 'period', 'stack', 'cardMetric', 'featured', 'quote', 'order')
     .order('order', 'ASC')
     .all())
 }

@@ -81,7 +81,7 @@ test('a visit from Upwork never shows or downloads the contact details', async (
     await expectNoContactDetails(page)
   }
   await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Work' }).click()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Work')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Case studies')
   await page.waitForLoadState('networkidle')
   await expectNoContactDetails(page)
 

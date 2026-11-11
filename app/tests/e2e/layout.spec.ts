@@ -180,5 +180,5 @@ test('the header still works from the 404 page', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('This page doesn\'t exist')
   await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Work' }).click()
   await expect(page).toHaveURL(/\/work\/?$/)
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Work')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Case studies')
 })

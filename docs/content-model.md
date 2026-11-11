@@ -6,7 +6,7 @@ Every fact in these files is approved for the public site. Do not add facts in c
 
 | Collection | Type | Source | Holds |
 | --- | --- | --- | --- |
-| `profile` | data | `profile.yml` | Name, title, location, hours, contact links, headline, about text, roles |
+| `profile` | data | `profile.yml` | Name, title, location, hours, contact links, headline, about text, roles, and the words of the `/work` page (`workList`: `intro`, and `more` for the line about the Lab and earlier projects) |
 | `services` | data | `services.yml` | The 6 services, grouped |
 | `timeline` | data | `timeline.yml` | Career entries and education |
 | `skills` | data | `skills.yml` | Skill groups for About and CV |

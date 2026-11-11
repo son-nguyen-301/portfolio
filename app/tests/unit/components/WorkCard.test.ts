@@ -40,6 +40,26 @@ describe('WorkCard', () => {
     expect(wrapper.find('.work-card__media').exists()).toBe(false)
   })
 
+  it('shows the period beside the result line and the client under the title', () => {
+    const wrapper = mount(WorkCard, { props: { ...props, period: 'Sample period', client: 'Sample client' }, global })
+    expect(wrapper.find('.work-card__top .work-card__metric').text()).toBe('Sample metric')
+    expect(wrapper.find('.work-card__top .work-card__period').text()).toBe('Sample period')
+    const title = wrapper.find('h3').element
+    const client = wrapper.find('.work-card__client').element
+    expect(client.textContent?.trim()).toBe('Sample client')
+    expect(title.nextElementSibling).toBe(client)
+  })
+
+  it('leaves out the period and client when they are missing, and the top row with no metric either', () => {
+    const wrapper = mount(WorkCard, { props, global })
+    expect(wrapper.find('.work-card__period').exists()).toBe(false)
+    expect(wrapper.find('.work-card__client').exists()).toBe(false)
+    const bare = mount(WorkCard, { props: { ...props, metric: undefined }, global })
+    expect(bare.find('.work-card__top').exists()).toBe(false)
+    const periodOnly = mount(WorkCard, { props: { ...props, metric: undefined, period: 'Sample period' }, global })
+    expect(periodOnly.find('.work-card__top').text()).toBe('Sample period')
+  })
+
   it('lists the stack as tags', () => {
     const wrapper = mount(WorkCard, { props, global })
     const tags = wrapper.find('ul[aria-label="Stack"]')
