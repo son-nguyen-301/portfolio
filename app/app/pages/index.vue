@@ -1,11 +1,9 @@
 <script setup lang="ts">
 // The home page, in the section order of docs/design.md (Home page): hero with
 // the clock, proof strip, selected work, services, how I work, quotes (only
-// once a case study has one) and contact. Every word comes from app/content,
-// except the section labels and headings.
-//
-// Section labels, headings, link labels and aria-labels are written here,
-// from the design screens (D-024).
+// once a case study has one) and contact. Every fact and most words come from
+// app/content. Section labels, headings, link labels and aria-labels are
+// written here, from the design screens, and hold no fact (D-024).
 //
 // The profile fields are named one by one, and never `email` or `booking`:
 // ContactBlock gets those after mount, outside Upwork mode (D-021).
