@@ -1,0 +1,71 @@
+/* The inline SVG diagrams (PF-014, docs/design.md "Diagrams"). One copy of the
+   look for the case study pages and the Lab page. Every color is a token, so
+   each diagram follows light and dark. Sizes are in SVG units: every diagram
+   is 320 units wide, so 13-unit text stays about 12 px on a 360 px phone. */
+
+.diagram {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin-inline: auto;
+}
+
+.diagram text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  fill: var(--ink);
+}
+
+.diagram .diagram__strong {
+  font-weight: 600;
+}
+
+.diagram .diagram__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--muted);
+}
+
+.diagram .diagram__accent {
+  fill: var(--jade);
+}
+
+.diagram__box {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 1.5;
+}
+
+.diagram__box--jade {
+  stroke: var(--jade);
+}
+
+.diagram__box--soft {
+  fill: var(--jade-soft);
+  stroke: var(--jade-soft);
+}
+
+.diagram__bar {
+  fill: var(--line);
+}
+
+.diagram__bar--jade {
+  fill: var(--jade);
+}
+
+.diagram__bar--soft {
+  fill: var(--jade-soft);
+}
+
+.diagram__line {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.diagram__line--jade {
+  stroke: var(--jade);
+}

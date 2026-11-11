@@ -34,7 +34,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['~/assets/css/tokens.css', '~/assets/css/base.css'],
+  css: ['~/assets/css/tokens.css', '~/assets/css/base.css', '~/assets/css/diagrams.css'],
 
   site: {
     url: 'https://me.haisonnguyen.dev',
