@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { themes } from '#shared/theme'
+// The theme list comes through useTheme(): components never import values
+// from shared/ (D-027).
 import type { Theme } from '#shared/theme'
 
-const { theme, setTheme } = useTheme()
+const { theme, setTheme, themes } = useTheme()
 
 const labels: Record<Theme, string> = { light: 'Light', dark: 'Dark', system: 'System' }
 </script>

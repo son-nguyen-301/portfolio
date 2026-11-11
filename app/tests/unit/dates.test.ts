@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { parse } from 'yaml'
-import { formatMonth } from '../../shared/dates'
+import { formatMonth } from '../../app/utils/dates'
 
 describe('formatMonth', () => {
   it('writes a YYYY-MM month as a short month and the year', () => {
