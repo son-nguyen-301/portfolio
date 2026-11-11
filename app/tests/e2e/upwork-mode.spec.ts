@@ -120,7 +120,7 @@ test.describe('on a phone', () => {
     await expect(menu.getByRole('link', { name: 'Message me on Upwork' })).toHaveAttribute('href', profile.links.upwork)
   })
 
-  test('the header shows no action button, in either mode', async ({ page }) => {
+  test('the header shows no Upwork button on a phone', async ({ page }) => {
     await page.goto('/?from=upwork')
     await expect(page.getByRole('button', { name: 'Open menu' })).toBeVisible()
     await expect(page.getByRole('banner').getByRole('link', { name: 'Message me on Upwork' })).toBeHidden()

@@ -49,3 +49,4 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 | 22 | 5 | P3 | PF-036 | #66 | #28 | loop | Found in PR #64. Son moved it to Sprint 5. Guard polish |
 | 23 | 5 | P3 | PF-037 | #67 | #28 | loop | Found in PR #64. Son moved it to Sprint 5. Asks Son about D-004 |
 | 24 | 5 | P3 | PF-038 | #71 | #31 | loop | Found in PR #70. Son moved it to Sprint 5. Color test gaps |
+| 25 | Backlog | P2 | PF-040 | #76 | #33 | loop | Found in PR #75. Asks Son about Upwork mode with JavaScript off. |
