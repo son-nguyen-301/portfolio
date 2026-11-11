@@ -3,6 +3,8 @@
 export interface NavLink {
   label: string
   to: string
+  // Hidden in Upwork mode (docs/brief.md, Upwork mode).
+  hideInUpwork?: boolean
 }
 
 const work = { label: 'Work', to: '/work' }
@@ -10,7 +12,7 @@ const services = { label: 'Services', to: '/services' }
 const lab = { label: 'Lab', to: '/lab' }
 const about = { label: 'About', to: '/about' }
 const cv = { label: 'CV', to: '/cv' }
-const contact = { label: 'Contact', to: '/contact' }
+const contact = { label: 'Contact', to: '/contact', hideInUpwork: true }
 
 // The header on wide screens (docs/design.md, SiteHeader).
 export const mainLinks: NavLink[] = [work, services, lab, about, contact]

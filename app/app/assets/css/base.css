@@ -11,6 +11,15 @@ html {
   text-size-adjust: 100%;
 }
 
+/* Upwork mode (docs/brief.md). The head script puts data-upwork on <html>
+   before the page paints. `not-upwork` parts hide in Upwork mode and
+   `upwork-only` parts show only then. Never use this for contact details:
+   hidden parts are still in the HTML. Those use useUpworkMode() instead. */
+html[data-upwork] .not-upwork,
+html:not([data-upwork]) .upwork-only {
+  display: none !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // The site footer: who Son is, the page links, links elsewhere, the theme
 // switch, the stats line and the copyright.
-// Upwork mode (no Contact or LinkedIn link) comes in PF-007.
+// In Upwork mode the Contact and LinkedIn links hide (docs/design.md, Screens),
+// with the classes in assets/css/base.css.
 import { siteLinks } from '../utils/nav'
 
 const props = defineProps<{
@@ -15,7 +16,7 @@ const props = defineProps<{
 }>()
 
 const elsewhere = [
-  { label: 'LinkedIn', href: props.links.linkedin },
+  { label: 'LinkedIn', href: props.links.linkedin, hideInUpwork: true },
   { label: 'GitHub', href: props.links.github },
   { label: 'Upwork', href: props.links.upwork },
 ]
@@ -49,7 +50,7 @@ const elsewhere = [
           v-for="link in siteLinks"
           :key="link.to"
           :to="link.to"
-          class="site-footer__link"
+          :class="['site-footer__link', { 'not-upwork': link.hideInUpwork }]"
         >
           {{ link.label }}
         </NuxtLink>
@@ -61,7 +62,7 @@ const elsewhere = [
           v-for="link in elsewhere"
           :key="link.label"
           :href="link.href"
-          class="site-footer__link"
+          :class="['site-footer__link', { 'not-upwork': link.hideInUpwork }]"
         >{{ link.label }}</a>
         <span class="label site-footer__theme-label">Theme</span>
         <ThemeSwitch />
