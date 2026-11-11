@@ -56,12 +56,14 @@ function withoutComments(code: string): string {
 function imports(code: string): Array<{ from: string, typeOnly: boolean }> {
   const source = withoutComments(code)
   const found: Array<{ from: string, typeOnly: boolean }> = []
-  const statement = /\b(?:import|export)\s+(type\s+)?([^'"`;]*?)\s*from\s*['"]([^'"]+)['"]/g
+  // One statement at a time: the names part never runs into the next import
+  // or export, so `export type Foo = ...` can't swallow the import after it.
+  const statement = /\b(?:import|export)\s+(type\s+)?(?:(?!\b(?:import|export)\b)[^'"`;])*?\bfrom\s*['"]([^'"]+)['"]/g
   for (const match of source.matchAll(statement)) {
-    const names = match[2]!.trim()
-    // `import { type A, type B } from` is type-only too.
-    const allTypes = /^\{[^}]*\}$/.test(names) && names.slice(1, -1).split(',').map(part => part.trim()).filter(Boolean).every(part => part.startsWith('type '))
-    found.push({ from: match[3]!, typeOnly: Boolean(match[1]) || allTypes })
+    // Only `import type` and `export type` are type-only. With
+    // verbatimModuleSyntax, `import { type A } from` stays in the build as an
+    // empty import of the module, which fails `pnpm generate` like a value.
+    found.push({ from: match[2]!, typeOnly: Boolean(match[1]) })
   }
   for (const match of source.matchAll(/\bimport\s+['"]([^'"]+)['"]/g)) found.push({ from: match[1]!, typeOnly: false })
   for (const match of source.matchAll(/\bimport\(\s*['"]([^'"]+)['"]\s*\)/g)) found.push({ from: match[1]!, typeOnly: false })
@@ -97,14 +99,19 @@ describe('imports from shared/', () => {
       `/* import { i } from '#shared/block' */`,
       `const url = 'https://example.com'`,
       `const cdn = '//cdn.example.com'; import { j } from '#shared/after-string'`,
+      `export type Foo = string`,
+      `import { k } from '../shared/after-export-type'`,
+      `export type { L } from '#shared/type-export'`,
     ].join('\n'))
     expect(found).toEqual([
       { from: '../../shared/x', typeOnly: false },
       { from: '#shared/y', typeOnly: true },
-      { from: '#shared/z', typeOnly: true },
+      { from: '#shared/z', typeOnly: false },
       { from: '#shared/w', typeOnly: false },
       { from: '../shared/v', typeOnly: false },
       { from: '#shared/after-string', typeOnly: false },
+      { from: '../shared/after-export-type', typeOnly: false },
+      { from: '#shared/type-export', typeOnly: true },
       { from: '../shared/side-effect', typeOnly: false },
       { from: '#shared/lazy', typeOnly: false },
     ])
