@@ -11,7 +11,8 @@
     "postinstall": "nuxt prepare",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "test:guard": "vitest run tests/unit/banned-words.test.ts"
+    "test:guard": "vitest run tests/unit/banned-words.test.ts",
+    "deploy:check": "wrangler deploy --dry-run"
   },
   "dependencies": {
     "@nuxt/content": "^3.16.2",
@@ -35,7 +36,8 @@
     "sirv-cli": "^3.0.1",
     "typescript": "^5.9.3",
     "vitest": "^5.1.0",
-    "vue-tsc": "^3.3.14"
+    "vue-tsc": "^3.3.14",
+    "wrangler": "4.158.0"
   },
   "packageManager": "pnpm@10.28.0",
   "engines": {

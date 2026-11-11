@@ -1,5 +1,6 @@
 # Checks every pull request: lint, types, unit tests, the static build,
-# the banned-words guard on the built site, and browser tests.
+# a dry run of the Workers config, the banned-words guard on the built site,
+# and browser tests.
 name: CI
 
 on:
@@ -48,6 +49,11 @@ jobs:
 
       - name: Generate
         run: pnpm generate
+
+      - name: Workers config dry run
+        run: pnpm deploy:check
+        env:
+          WRANGLER_SEND_METRICS: 'false'
 
       - name: Banned-words guard on the built site
         run: pnpm test:guard

@@ -27,3 +27,6 @@ logs
 test-results
 playwright-report
 *.tsbuildinfo
+
+# Wrangler state from `wrangler dev`
+.wrangler

@@ -79,6 +79,7 @@ onBeforeUnmount(() => clearTimeout(copiedTimer))
           <AppButton
             :to="details.booking.url"
             variant="action"
+            data-track="book-call"
           >
             {{ details.booking.label }}
           </AppButton>
@@ -97,6 +98,7 @@ onBeforeUnmount(() => clearTimeout(copiedTimer))
             variant="ghost"
             class="contact-block__copy"
             aria-live="polite"
+            data-track="copy-email"
             @click="copyEmail"
           >
             {{ copied ? 'Copied' : 'Copy email' }}
@@ -115,6 +117,7 @@ onBeforeUnmount(() => clearTimeout(copiedTimer))
         <AppButton
           :to="upwork"
           variant="action"
+          data-track="message-upwork"
         >
           Message me on Upwork
         </AppButton>
