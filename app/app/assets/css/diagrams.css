@@ -46,6 +46,10 @@
   stroke: var(--jade-soft);
 }
 
+.diagram__box--soft.diagram__box--jade {
+  stroke: var(--jade);
+}
+
 .diagram__bar {
   fill: var(--line);
 }

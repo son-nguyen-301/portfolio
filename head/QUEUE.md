@@ -51,3 +51,4 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 | 24 | Backlog | P3 | PF-049 | #93 | none | loop | Found in PR #92. The import test misses the `~~/shared` and `@@/shared` aliases |
 | 25 | Backlog | P3 | PF-051 | #100 | none | loop | Found in PR #99. `docs/design.md` names four service groups, the content has three |
 | 26 | Backlog | P3 | PF-052 | #101 | none | loop | Found in PR #99. Step numbers run into the step text in the Markdown copies |
+| 27 | Backlog | P3 | PF-053 | #103 | none | loop | Found in PR #102. The work cards show no image or diagram, though `docs/design.md` says they do |

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The AI pipeline of the "AI dev team" case study (app/content/work/nz-ai-dev-team.md):
 // ticket to merge, with at most two AI review fix rounds, and a person doing
-// the merge. Words come from that file. Styles: app/assets/css/diagrams.css.
+// the merge, drawn in jade. Words come from that file. Styles: app/assets/css/diagrams.css.
 defineProps<{ title: string }>()
 
 const steps = ['Ticket', 'Brief', 'Plan', 'Build test-first', 'Pull request', 'AI review', 'Person merges']
@@ -12,14 +12,13 @@ const centre = box.x + box.width / 2
 const right = box.x + box.width
 const build = steps.indexOf('Build test-first')
 const review = steps.indexOf('AI review')
-const legend = top(steps.length) + 4
 </script>
 
 <template>
   <svg
     class="diagram"
     role="img"
-    viewBox="0 0 320 358"
+    viewBox="0 0 320 324"
     xmlns="http://www.w3.org/2000/svg"
   >
     <title>{{ title }}</title>
@@ -28,7 +27,7 @@ const legend = top(steps.length) + 4
       :key="step"
     >
       <rect
-        :class="['diagram__box', { 'diagram__box--soft': i === steps.length - 1 }]"
+        :class="['diagram__box', { 'diagram__box--soft diagram__box--jade': i === steps.length - 1 }]"
         :x="box.x"
         :y="top(i)"
         :width="box.width"
@@ -62,33 +61,5 @@ const legend = top(steps.length) + 4
       :x="right + 28"
       :y="(middle(build) + middle(review)) / 2 + 11"
     >fix rounds</text>
-    <rect
-      class="diagram__box"
-      :x="box.x"
-      :y="legend"
-      width="14"
-      height="14"
-      rx="3"
-    />
-    <text
-      class="diagram__label"
-      :x="box.x + 20"
-      :y="legend + 7"
-      dy="0.35em"
-    >Agent</text>
-    <rect
-      class="diagram__box diagram__box--soft"
-      :x="box.x + 84"
-      :y="legend"
-      width="14"
-      height="14"
-      rx="3"
-    />
-    <text
-      class="diagram__label"
-      :x="box.x + 104"
-      :y="legend + 7"
-      dy="0.35em"
-    >Person</text>
   </svg>
 </template>
