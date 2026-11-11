@@ -7,7 +7,7 @@ Every fact in these files is approved for the public site. Do not add facts in c
 | Collection | Type | Source | Holds |
 | --- | --- | --- | --- |
 | `profile` | data | `profile.yml` | Name, title, location, hours, contact links, headline, about text, roles, and the words of the `/work` page (`workList`: `intro`, and `more` for the line about the Lab and earlier projects) |
-| `services` | data | `services.yml` | The 6 services, grouped |
+| `services` | data | `services.yml` | The 6 services, grouped. Also the words of the `/services` page: `intro` (the line under the title) and `groups` (each group's `name` and `note`, in page order) |
 | `timeline` | data | `timeline.yml` | Career entries and education |
 | `skills` | data | `skills.yml` | Skill groups for About and CV |
 | `work` | page | `work/*.md` | Case studies (Markdown body plus front matter) |

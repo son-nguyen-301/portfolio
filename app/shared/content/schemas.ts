@@ -69,15 +69,38 @@ export const profileSchema = z.strictObject({
   workList: z.strictObject({ intro: text, more: text }),
 })
 
+const serviceGroup = z.enum(['Frontend', 'AI', 'Lead'])
+
 export const servicesSchema = z.strictObject({
+  // The line under the title of /services.
+  intro: text,
+  // The groups in the order /services shows them, each with a short note.
+  groups: z.array(z.strictObject({ name: serviceGroup, note: text })).min(1),
   items: z.array(z.strictObject({
     id: slug,
-    group: z.enum(['Frontend', 'AI', 'Lead']),
+    group: serviceGroup,
     title: text,
     summary: text,
     // Slugs of case studies in work/ that back this service.
     proof: z.array(slug).min(1),
   })).min(1),
+}).superRefine((services, ctx) => {
+  // Each group is listed once, and has at least one service. Every service's
+  // group is listed, so no service is left off the page.
+  const names = services.groups.map(group => group.name)
+  for (const [index, name] of names.entries()) {
+    if (names.indexOf(name) !== index) {
+      ctx.addIssue({ code: 'custom', path: ['groups', index, 'name'], message: `"${name}" is listed twice` })
+    }
+    else if (!services.items.some(item => item.group === name)) {
+      ctx.addIssue({ code: 'custom', path: ['groups', index, 'name'], message: `"${name}" has no service` })
+    }
+  }
+  for (const [index, item] of services.items.entries()) {
+    if (!names.includes(item.group)) {
+      ctx.addIssue({ code: 'custom', path: ['items', index, 'group'], message: `"${item.group}" is not in \`groups\`` })
+    }
+  }
 })
 
 export const timelineSchema = z.strictObject({
