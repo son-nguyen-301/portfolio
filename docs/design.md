@@ -114,7 +114,7 @@ Two columns on desktop: a side panel and the story. One column on phones (side p
 - A 24-hour bar in the visitor's time: Son's hours (08:00 to 22:00 Hanoi) as a jade fill, and the visitor's 9-to-5 as an amber striped band. Son's band can wrap past midnight; draw both parts.
 - One sentence: "We share N work hours each weekday: HH:MM to HH:MM your time." If there is no overlap: "Our work days don't overlap. I send a written update before your day starts, and I can take calls at HH:MM your time."
 - Same time zone: "We are in the same time zone."
-- On phones it shrinks to one line: "Shared work hours: N h".
+- On phones it shrinks to one line, as in `docs/design/HomePhone.dc.html`: the label "Shared work hours" over "N h · HH:MM to HH:MM", with Hanoi time on the right.
 - Server render shows a neutral version ("Hanoi, UTC+7 · 08:00 to 22:00"), then the client fills in the visitor's details. No layout jump.
 
 ## Other UX details

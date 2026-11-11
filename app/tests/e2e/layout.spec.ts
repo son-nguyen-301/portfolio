@@ -1,12 +1,14 @@
 // The header, the footer and the phone menu on every generated page (PF-006).
 // Run `pnpm generate` first.
-import { readdirSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { parse } from 'yaml'
 
 const built = fileURLToPath(new URL('../../.output/public', import.meta.url))
+const profile = parse(readFileSync(fileURLToPath(new URL('../../content/profile.yml', import.meta.url)), 'utf8')) as { hero: { headline: string } }
 
 // Every HTML page in the build, as a URL path. 200.html is the empty app shell
 // that Nuxt writes for client-only routes; no link points to it.
@@ -28,7 +30,8 @@ async function sidewaysScroll(page: Page) {
 }
 
 test('the build has every page in the header and footer, and the 404 page', () => {
-  expect(paths.sort()).toEqual(['/', '/404.html', '/about/', '/contact/', '/cv/', '/lab/', '/services/', '/work/'])
+  const top = paths.filter(path => !/^\/work\/.+/.test(path))
+  expect(top.sort()).toEqual(['/', '/404.html', '/about/', '/contact/', '/cv/', '/lab/', '/services/', '/work/'])
 })
 
 for (const path of paths) {
@@ -146,7 +149,7 @@ test.describe('on a phone', () => {
     await button.click()
     await expect(menu).toBeVisible()
     await page.goBack()
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hai Son Nguyen')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(profile.hero.headline)
     await expect(menu).toBeHidden()
     expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe('hidden')
   })
@@ -169,7 +172,7 @@ test('the 404 page says the page does not exist and links home and to the work',
   await expect(page.getByRole('main').getByRole('link', { name: 'See my work' })).toHaveAttribute('href', '/work')
   await page.getByRole('main').getByRole('link', { name: 'Go to the home page' }).click()
   await expect(page).toHaveURL(/\/$/)
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hai Son Nguyen')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(profile.hero.headline)
 })
 
 test('the header still works from the 404 page', async ({ page }) => {
