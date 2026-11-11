@@ -47,7 +47,7 @@ Build `/cv` with a print stylesheet. A script (`pnpm cv:pdf`) prints `/cv` to `a
   "assets": {
     "directory": "./.output/public",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
+    "html_handling": "drop-trailing-slash"
   },
   "routes": [
     { "pattern": "me.haisonnguyen.dev", "custom_domain": true }
@@ -56,6 +56,8 @@ Build `/cv` with a print stylesheet. A script (`pnpm cv:pdf`) prints `/cv` to `a
 ```
 
 Check every field name against the current Cloudflare docs before you change it.
+
+`html_handling` is `drop-trailing-slash`, because the canonical tags, the sitemap and every link on the site have no trailing slash (`/about`). With `auto-trailing-slash`, each of them was a 307 redirect to `/about/` (D-025).
 
 `nuxt.config.ts` sets `nitro.preset` to `static`. Workers Builds sets `WORKERS_CI=1`, and without a preset Nitro then picks its Cloudflare preset, which prerenders no pages.
 

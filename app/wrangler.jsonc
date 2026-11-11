@@ -5,7 +5,7 @@
   "assets": {
     "directory": "./.output/public",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
+    "html_handling": "drop-trailing-slash"
   },
   "routes": [
     { "pattern": "me.haisonnguyen.dev", "custom_domain": true }

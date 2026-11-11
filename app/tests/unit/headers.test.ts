@@ -108,6 +108,10 @@ describe('headersFile', () => {
     expect(lines[at + 1]).toBe('  X-Robots-Tag: noindex')
   })
 
+  it('keeps the fallback and 404 pages out of search', () => {
+    for (const path of ['/200', '/404']) expect(lines[lines.indexOf(path) + 1]).toBe('  X-Robots-Tag: noindex')
+  })
+
   it('ends with a line break, so a module that appends rules starts on a new line', () => {
     expect(text.endsWith('\n')).toBe(true)
   })

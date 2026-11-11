@@ -38,6 +38,7 @@ test('a click on Message me on Upwork sends a message-upwork event', async ({ pa
   await page.addInitScript(() => {
     window.addEventListener('click', event => event.preventDefault())
   })
+  await page.route(/upwork\.com/, route => route.abort())
   await page.goto('/contact/?from=upwork')
   await page.getByRole('region', { name: 'Contact details' }).getByRole('link', { name: 'Message me on Upwork' }).click()
   await expect.poll(() => sent(page)).toEqual(['message-upwork'])

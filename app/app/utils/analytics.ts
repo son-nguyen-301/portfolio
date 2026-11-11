@@ -4,7 +4,7 @@
 // token is set at build time. With no token the pages hold no beacon.
 //
 // Clicks: buttons that matter carry `data-track="<event>"`. A click listener
-// (plugins/analytics.client.ts) hands the name to trackEvent(). Web Analytics
+// (plugins/analytics.ts) hands the name to trackEvent(). Web Analytics
 // has no custom events, so trackEvent() sends them only when a tool that takes
 // events is on the page (Cloudflare Zaraz, `zaraz.track()`). Until then a
 // click sends nothing.

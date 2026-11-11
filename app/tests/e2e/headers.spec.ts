@@ -71,7 +71,25 @@ test('_headers sets the security headers on every path', () => {
 test('_headers caches /_nuxt/ for a year and never caches the service worker', () => {
   expect(rules.get('/_nuxt/*')).toEqual({ headers: new Map([['cache-control', 'public, max-age=31536000, immutable']]), detach: ['cache-control'] })
   expect(rules.get('/_nuxt-skew-sw.js')).toEqual({ headers: new Map([['cache-control', 'no-cache']]), detach: ['cache-control'] })
-  expect(rules.get('/contact-details.json')?.headers.get('x-robots-tag')).toBe('noindex')
+  for (const path of ['/contact-details.json', '/200', '/404']) expect(rules.get(path)?.headers.get('x-robots-tag')).toBe('noindex')
+})
+
+// wrangler.jsonc has no comments, so it reads as plain JSON.
+const wrangler = JSON.parse(readFileSync(join(root, 'wrangler.jsonc'), 'utf8')) as { assets: { html_handling: string, not_found_handling: string, directory: string } }
+
+test('Workers serves the page URLs the site links to, with no redirect', () => {
+  // drop-trailing-slash serves /about from about/index.html and sends /about/ to /about.
+  expect(wrangler.assets).toEqual({ directory: './.output/public', not_found_handling: '404-page', html_handling: 'drop-trailing-slash' })
+  const urls: string[] = []
+  for (const file of htmlFiles(built)) {
+    const html = readFileSync(file, 'utf8')
+    for (const [, href] of html.matchAll(/<link rel="canonical" href="([^"]+)"/g)) urls.push(href!)
+    for (const [, href] of html.matchAll(/<a\b[^>]*\shref="(\/[^"#?]*)"/g)) urls.push(href!)
+  }
+  for (const [, loc] of readFileSync(join(built, 'sitemap.xml'), 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)) urls.push(loc!)
+  expect(urls.length).toBeGreaterThan(20)
+  const withSlash = urls.map(url => new URL(url, 'https://me.haisonnguyen.dev').pathname).filter(path => path !== '/' && path.endsWith('/'))
+  expect(withSlash).toEqual([])
 })
 
 test('_headers fits the Workers limits: 100 rules, 2,000 characters a line', () => {
@@ -129,7 +147,7 @@ async function openWithPolicy(page: Page, path: string) {
 
 const violations = (page: Page) => page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations)
 
-for (const path of ['/', '/work/', '/about/', '/cv/', '/404.html']) {
+for (const path of ['/', '/work/', '/work/nz-ai-dev-team/', '/services/', '/lab/', '/about/', '/cv/', '/404.html']) {
   test(`${path} runs under the policy with nothing blocked`, async ({ page }) => {
     const { errors } = await openWithPolicy(page, path)
     // The head scripts and the app ran: the theme switch is live after mount.
@@ -151,6 +169,19 @@ test('the contact block loads the email under the policy', async ({ page }) => {
 test('the Upwork head script runs under the policy', async ({ page }) => {
   const { errors } = await openWithPolicy(page, '/?from=upwork')
   await expect(page.locator('html')).toHaveAttribute('data-upwork', '')
+  expect(await violations(page)).toEqual([])
+  expect(errors).toEqual([])
+})
+
+test('moving between pages in the app runs under the policy', async ({ page }) => {
+  const { errors } = await openWithPolicy(page, '/')
+  const nav = page.getByRole('navigation', { name: 'Main' })
+  for (const name of ['Work', 'Services', 'Lab', 'About', 'Contact']) {
+    await nav.getByRole('link', { name }).click()
+    await expect(page).toHaveURL(new RegExp(`/${name.toLowerCase()}$`))
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  }
+  await expect(page.getByRole('region', { name: 'Contact details' }).getByText(profile.email, { exact: true })).toBeVisible()
   expect(await violations(page)).toEqual([])
   expect(errors).toEqual([])
 })

@@ -112,6 +112,15 @@ export function headerRules(scriptHashes: string[]): HeaderRule[] {
       path: '/contact-details.json',
       headers: { 'X-Robots-Tag': 'noindex' },
     },
+    {
+      // The app's fallback page, which Workers serves at /200.
+      path: '/200',
+      headers: { 'X-Robots-Tag': 'noindex' },
+    },
+    {
+      path: '/404',
+      headers: { 'X-Robots-Tag': 'noindex' },
+    },
   ]
 }
 
