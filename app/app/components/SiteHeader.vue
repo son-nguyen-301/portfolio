@@ -92,6 +92,7 @@ onBeforeUnmount(() => {
         :to="upwork"
         variant="action"
         class="site-header__action upwork-only"
+        data-track="message-upwork"
       >
         Message me on Upwork
       </AppButton>
@@ -185,6 +186,7 @@ onBeforeUnmount(() => {
           :to="upwork"
           variant="action"
           class="upwork-only"
+          data-track="message-upwork"
           @click="closeMenu"
         >
           Message me on Upwork

@@ -20,7 +20,7 @@ Cloudflare now points new projects to Workers static assets instead of Pages. St
 | Styles | Plain CSS with the tokens in `docs/design.md`, scoped component styles | No UI library and no Tailwind. Keeps JavaScript and CSS small. |
 | Lint | `@nuxt/eslint` | |
 | Tests | Vitest for composables (Upwork mode, time overlap math). Playwright for page smoke tests, Upwork mode, theme switch, no horizontal scroll at 360px. | |
-| Package manager | pnpm (lock file exists) | Node 22 or newer. |
+| Package manager | pnpm (lock file exists) | Node 22.13 or newer (D-006). `app/.node-version` holds `22` for Workers Builds. |
 
 Check current docs before adding modules (for example with the Context7 tool). Versions move fast.
 
@@ -37,16 +37,17 @@ Build `/cv` with a print stylesheet. A script (`pnpm cv:pdf`) prints `/cv` to `a
 
 ### Worker config
 
-`app/wrangler.jsonc` (a Worker with static assets only, no script):
+`app/wrangler.jsonc` (a Worker with static assets only, no script). Added by PF-023 (PR #85) and checked against the Cloudflare docs on 2026-11-11. `pnpm deploy:check` runs `wrangler deploy --dry-run` on it, with no login, and CI runs it after `pnpm generate`.
 
 ```jsonc
 {
+  "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "portfolio",
-  "compatibility_date": "<today's date when you set it up>",
+  "compatibility_date": "2026-11-11",
   "assets": {
     "directory": "./.output/public",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
+    "html_handling": "drop-trailing-slash"
   },
   "routes": [
     { "pattern": "me.haisonnguyen.dev", "custom_domain": true }
@@ -54,15 +55,21 @@ Build `/cv` with a print stylesheet. A script (`pnpm cv:pdf`) prints `/cv` to `a
 }
 ```
 
-Check every field name against the current Cloudflare docs before you use it.
+Check every field name against the current Cloudflare docs before you change it.
+
+`html_handling` is `drop-trailing-slash`, because the canonical tags, the sitemap and every link on the site have no trailing slash (`/about`). With `auto-trailing-slash`, each of them was a 307 redirect to `/about/` (D-025).
+
+`nuxt.config.ts` sets `nitro.preset` to `static`. Workers Builds sets `WORKERS_CI=1`, and without a preset Nitro then picks its Cloudflare preset, which prerenders no pages.
 
 ### Headers
 
-`app/public/_headers` (copied into the build output):
+`_headers` in the build output. It is not in `app/public/`: `app/modules/headers.ts` writes it after every page is prerendered, with the rules in `app/lib/headers.ts` (D-025). The Content Security Policy lists the hash of every inline script, and Nuxt's config script holds the build ID, so the hashes change with every build.
 
-- All pages: `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, and a Content Security Policy that allows the Cloudflare analytics script.
-- `/_nuxt/*`: `Cache-Control: public, max-age=31536000, immutable`.
-- HTML: short cache, so a new deploy shows up at once.
+- All paths: `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, a Content Security Policy that allows the Cloudflare analytics script, and `Cache-Control: public, max-age=0, must-revalidate`, so a new deploy shows up at once.
+- `/_nuxt/*`: `Cache-Control: public, max-age=31536000, immutable` (the short cache is dropped first with `! Cache-Control`).
+- `/_nuxt-skew-sw.js`: `Cache-Control: no-cache`.
+- `/contact-details.json`, `/200` (the app's fallback page) and `/404`: `X-Robots-Tag: noindex`.
+- `nuxt-ai-ready` adds its own `/*.md` rule after it.
 
 ### Deploy
 
@@ -75,7 +82,7 @@ Use **Workers Builds** (Cloudflare's Git integration). Cloudflare builds on ever
 
 Son connects the repo in the Cloudflare dashboard (Workers & Pages → Create → Import a repository). If he prefers GitHub Actions instead, use `cloudflare/wrangler-action` with a `CLOUDFLARE_API_TOKEN` secret.
 
-GitHub Actions still runs `ci.yml` on pull requests: install, lint, unit tests, generate, and Playwright smoke tests on the generated site.
+GitHub Actions still runs `ci.yml` on pull requests: install, lint, unit tests, generate, the Workers config dry run, the banned-words guard on the built site, and Playwright smoke tests on the generated site.
 
 ### DNS and the custom domain
 
@@ -90,10 +97,12 @@ Removed on 2026-11-10 by a one-time GitHub Actions job. A few things were made o
 
 ## Analytics
 
-Cloudflare Web Analytics (free, no cookies). Turn it on for the site in the Cloudflare dashboard. If the beacon is not added on its own, add the JavaScript snippet with the site token (the token is public). Track:
+Cloudflare Web Analytics (free, no cookies). Turn it on for the site in the Cloudflare dashboard. If the beacon is not added on its own, set the public site token as `NUXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` in the Workers Builds build variables. With a token, every page loads the beacon; with none (the default), no page holds it. The CSP allows the beacon either way. Track:
 - page views and referrers (LinkedIn vs Upwork vs search)
 - Upwork mode visits (`from=upwork`)
 - clicks on "Book a call", "Copy email" and "Message me on Upwork"
+
+Web Analytics has no custom events (its FAQ, checked on 2026-11-11). The buttons carry `data-track` (`book-call`, `copy-email`, `message-upwork`), and `app/utils/analytics.ts` sends them to `zaraz.track()` only when Cloudflare Zaraz is on the page. Until Son picks a tool, a click sends nothing.
 
 ## Link previews
 

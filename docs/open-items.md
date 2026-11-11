@@ -21,7 +21,8 @@ Things that wait on Son. The build goes ahead with placeholders: a quote is `nul
 
 - [ ] Connect the repo in Cloudflare Workers Builds (root `app`, build `pnpm install --frozen-lockfile && pnpm generate`, deploy `npx wrangler deploy`).
 - [ ] Add the Worker custom domain `me.haisonnguyen.dev` (the old CloudFront record is already gone).
-- [ ] Turn on Cloudflare Web Analytics for the site.
+- [ ] Turn on Cloudflare Web Analytics for the site. If Cloudflare does not add the beacon itself, set the public site token as `NUXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` in the Workers Builds build variables (D-025).
+- [ ] "Workers Builds: portfolio" fails before any build command runs. Read its log in the Cloudflare dashboard and check the build settings above.
 - [ ] Optional: delete the AWS leftovers by hand (see "AWS leftovers" in `docs/architecture.md`). Also delete the `CLOUDFLARE_API_TOKEN` GitHub secret if nothing else uses it.
 
 ## Site

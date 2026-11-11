@@ -70,10 +70,10 @@ This is the original outline. The live plan is on GitHub: 5 sprints (milestones)
 
 ## 10. Cloudflare hosting
 
-- Add `app/wrangler.jsonc` and `app/public/_headers` as in `docs/architecture.md`.
+- Add `app/wrangler.jsonc`, and the `_headers` file that the build writes (D-025), as in `docs/architecture.md`.
 - Son connects the repo in Workers Builds (see `docs/open-items.md`).
 
-**Done when:** `https://me.haisonnguyen.dev` serves the site over HTTPS from Cloudflare, `/about` and `/about/` both work, an unknown path shows the 404 page with status 404, and the security headers are present.
+**Done when:** `https://me.haisonnguyen.dev` serves the site over HTTPS from Cloudflare, `/about` works and `/about/` goes to `/about`, an unknown path shows the 404 page with status 404, and the security headers are present.
 
 ## 11. Launch
 

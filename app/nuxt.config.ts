@@ -47,7 +47,21 @@ export default defineNuxtConfig({
     experimental: { sqliteConnector: 'native' },
   },
 
+  runtimeConfig: {
+    public: {
+      // The public site token of Cloudflare Web Analytics. Empty: no beacon.
+      // Set NUXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN when you build (D-025).
+      cloudflareAnalyticsToken: '',
+    },
+  },
+
   compatibilityDate: '2026-09-30',
+
+  // Always a static build. Workers Builds sets WORKERS_CI, and without this
+  // Nitro then picks its Cloudflare preset, which prerenders no pages.
+  nitro: {
+    preset: 'static',
+  },
 
   typescript: {
     // Type check content.config.ts with the other build-time files.
