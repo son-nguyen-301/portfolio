@@ -24,12 +24,13 @@ function files(dir: string, prefix = ''): string[] {
   })
 }
 
-// Nuxt Content's copy of a collection is gzip, then base64.
+// Nuxt Content's copies of the collections are gzip, then base64. Where they
+// are depends on the preset: `__nuxt_content/<name>/sql_dump.txt` by default,
+// `dump.<name>.sql` with the Cloudflare one. So any file that starts like
+// gzip in base64 ("H4sI") is decoded, wherever it is.
 function readBuilt(file: string): string {
   const text = readFileSync(join(built, file), 'utf8')
-  return file.startsWith('__nuxt_content/') && file.endsWith('/sql_dump.txt')
-    ? gunzipSync(Buffer.from(text, 'base64')).toString('utf8')
-    : text
+  return text.startsWith('H4sI') ? gunzipSync(Buffer.from(text.trim(), 'base64')).toString('utf8') : text
 }
 
 const [localPart] = profile.email.split('@') as [string]
@@ -61,6 +62,7 @@ test('the contact file holds only the email and the booking link', () => {
 
 test('the build has no copy of the profile collection', () => {
   expect(existsSync(join(built, '__nuxt_content/profile'))).toBe(false)
+  expect(files(built).filter(file => /(^|\/)dump\.profile\./.test(file))).toEqual([])
 })
 
 test('the home page opened from Upwork shows no email or booking link', async ({ page }) => {
