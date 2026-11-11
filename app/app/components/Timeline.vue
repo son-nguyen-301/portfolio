@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // Career entries for the About and CV pages, newest first as in
 // app/content/timeline.yml. Dates show as "Sep 2024 to now".
-// Relative paths, not #shared, so the component tests can type check it too.
-import { formatMonth } from '../../shared/dates'
+// Values come from app/utils, never from shared/ (D-027). An `import type`
+// is removed before the build, so a relative path to shared/ is fine there.
+import { formatMonth } from '../utils/dates'
 import type { Timeline } from '../../shared/content/schemas'
 
 withDefaults(defineProps<{

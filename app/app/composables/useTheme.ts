@@ -1,7 +1,7 @@
 // The visitor's theme choice (light, dark or system), kept in local storage.
 // The head script in nuxt.config.ts applies a saved choice before the page
 // paints; this composable reads it after mount and changes it.
-import { isTheme, themeAttribute, themeStorageKey } from '#shared/theme'
+import { isTheme, themeAttribute, themes, themeStorageKey } from '#shared/theme'
 import type { Theme } from '#shared/theme'
 
 function readStored(): Theme {
@@ -41,5 +41,6 @@ export function useTheme() {
     apply(next)
   }
 
-  return { theme: readonly(theme), setTheme }
+  // `themes` is here for ThemeSwitch, which imports no values from shared/.
+  return { theme: readonly(theme), setTheme, themes }
 }
