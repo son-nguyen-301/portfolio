@@ -8,6 +8,7 @@ useSeoMeta({ title: 'Gallery', robots: 'noindex, nofollow' })
 const { data: profile } = await useProfile('proofStrip')
 const { data: caseStudies } = await useCaseStudies()
 const { data: timeline } = await useTimeline()
+const siteProfile = useSiteProfile()
 const cards = computed(() => (caseStudies.value ?? []).slice(0, 2))
 
 // No case study has a quote yet, so this one is only to show the look.
@@ -219,6 +220,21 @@ const scale = [
       <Timeline
         v-if="timeline"
         :jobs="timeline.jobs.slice(0, 2)"
+      />
+    </section>
+
+    <section>
+      <h2 class="label">
+        ContactBlock
+      </h2>
+      <p class="small">
+        Shows the email and the booking button after mount. Open
+        <code>/_gallery?from=upwork</code> in a new tab to see the Upwork version.
+      </p>
+      <ContactBlock
+        :upwork="siteProfile.links.upwork"
+        :hours="siteProfile.hours"
+        :reply-promise="siteProfile.replyPromise"
       />
     </section>
   </div>
