@@ -3,10 +3,10 @@
 // $GITHUB_OUTPUT.
 //
 // `app=false` means every changed file is a doc: `docs/` (design mockups
-// included), `head/`, `.claude/`, a Markdown file at the repo root, or the
-// Dependabot config. Those still need the banned-words guard, because the repo
-// is public and the guard scans every tracked file. Any other path, or a path
-// this list does not know, runs every check.
+// included), `head/`, `.claude/` or a Markdown file at the repo root. Those
+// still need the banned-words guard, because the repo is public and the guard
+// scans every tracked file. Any other path, or a path this list does not know,
+// runs every check.
 import { readFileSync } from 'node:fs'
 
 const docs = [
@@ -14,7 +14,6 @@ const docs = [
   /^head\//,
   /^\.claude\//,
   /^[^/]+\.md$/,
-  /^\.github\/dependabot\.yml$/,
 ]
 
 const files = readFileSync(0, 'utf8').split('\n').map(line => line.trim()).filter(Boolean)

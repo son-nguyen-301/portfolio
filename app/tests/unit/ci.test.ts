@@ -1,13 +1,23 @@
 // CI: which pull requests run which checks (.github/ci-scope.mjs), and the
-// rules the workflow keeps so "CI / check" can be a required check on `main`.
+// rules the workflows keep so "CI / check" can be a required check on `main`.
 import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { afterAll, describe, expect, it } from 'vitest'
 import { parse } from 'yaml'
+
+type Step = { name?: string, uses?: string, run?: string, if?: string, env?: Record<string, string>, with?: Record<string, string> }
 
 const repo = fileURLToPath(new URL('../../..', import.meta.url)).replace(/\/$/, '')
 const scopeScript = `${repo}/.github/ci-scope.mjs`
+const workflow = parse(readFileSync(`${repo}/.github/workflows/ci.yml`, 'utf8'))
+const job = workflow.jobs.check
+const steps: Step[] = job.steps
+const cacheWorkflow = parse(readFileSync(`${repo}/.github/workflows/cache.yml`, 'utf8'))
+const cacheSteps: Step[] = cacheWorkflow.jobs.fill.steps
+const scopeStep = steps.find(step => step.name === 'Find what changed')!
 
 function scope(files: string[]) {
   return execFileSync(process.execPath, [scopeScript], { input: files.join('\n'), encoding: 'utf8' }).trim()
@@ -23,7 +33,6 @@ describe('ci-scope', () => {
       '.claude/memory/plugin/MEMORY.md',
       'CLAUDE.md',
       'README.md',
-      '.github/dependabot.yml',
     ])).toBe('app=false')
   })
 
@@ -36,6 +45,8 @@ describe('ci-scope', () => {
       'app/pnpm-lock.yaml',
       '.github/workflows/ci.yml',
       '.github/ci-scope.mjs',
+      // Its test only runs with the full checks.
+      '.github/dependabot.yml',
       '.gitignore',
       'docs.md/x.ts',
       'some-new-folder/notes.md',
@@ -50,14 +61,62 @@ describe('ci-scope', () => {
   })
 })
 
-describe('ci workflow', () => {
-  const workflow = parse(readFileSync(`${repo}/.github/workflows/ci.yml`, 'utf8'))
-  const job = workflow.jobs.check
-  const steps: Array<{ name?: string, uses?: string, run?: string, if?: string }> = job.steps
+// Runs the workflow's "Find what changed" step in a scratch git repo, on a
+// commit whose first parent stands in for the base branch.
+describe('the scope step on a real diff', () => {
+  const dirs: string[] = []
+  afterAll(() => {
+    for (const dir of dirs) rmSync(dir, { recursive: true, force: true })
+  })
 
-  it('has one job, named check, that runs on every non-draft PR', () => {
+  function runScope(change: (dir: string, git: (...args: string[]) => void) => void) {
+    const dir = mkdtempSync(join(tmpdir(), 'ci-scope-'))
+    dirs.push(dir)
+    const git = (...args: string[]) => {
+      execFileSync('git', ['-c', 'user.name=test', '-c', 'user.email=test@example.invalid', '-c', 'commit.gpgsign=false', ...args], { cwd: dir, stdio: 'pipe' })
+    }
+    const write = (path: string, text: string) => {
+      mkdirSync(dirname(join(dir, path)), { recursive: true })
+      writeFileSync(join(dir, path), text)
+    }
+    git('init', '-q')
+    mkdirSync(join(dir, '.github'))
+    copyFileSync(scopeScript, join(dir, '.github/ci-scope.mjs'))
+    write('app/modules/example.ts', 'export default function example() {\n  return 1\n}\n')
+    write('docs/brief.md', '# Brief\n')
+    git('add', '-A')
+    git('commit', '-q', '-m', 'base')
+    change(dir, git)
+    git('add', '-A')
+    git('commit', '-q', '-m', 'change')
+    const output = join(dir, 'output.txt')
+    writeFileSync(output, '')
+    execFileSync('bash', ['-eo', 'pipefail', '-c', scopeStep.run!], {
+      cwd: dir,
+      env: { ...process.env, RUNNER_TEMP: dir, GITHUB_OUTPUT: output },
+      stdio: 'pipe',
+    })
+    return readFileSync(output, 'utf8').trim()
+  }
+
+  it('sees an app file moved into docs/ as an app change', () => {
+    expect(runScope((_, git) => git('mv', 'app/modules/example.ts', 'docs/example.ts'))).toBe('app=true')
+  })
+
+  it('sees a deleted app file as an app change', () => {
+    expect(runScope((_, git) => git('rm', '-q', 'app/modules/example.ts'))).toBe('app=true')
+  })
+
+  it('sees a docs edit as docs only', () => {
+    expect(runScope(dir => writeFileSync(join(dir, 'docs/brief.md'), '# Brief\n\nMore.\n'))).toBe('app=false')
+  })
+})
+
+describe('ci workflow', () => {
+  it('has one job, named check, that runs on every non-draft PR into main', () => {
     expect(Object.keys(workflow.jobs)).toEqual(['check'])
     expect(workflow.on.pull_request.types).toEqual(['opened', 'synchronize', 'reopened', 'ready_for_review'])
+    expect(workflow.on.pull_request.branches).toEqual(['main'])
     // A path filter on the trigger would leave a required check waiting forever.
     expect(workflow.on.pull_request.paths).toBeUndefined()
     expect(workflow.on.pull_request['paths-ignore']).toBeUndefined()
@@ -68,21 +127,29 @@ describe('ci workflow', () => {
     expect(workflow.concurrency).toEqual({ 'group': 'ci-${{ github.event.pull_request.number }}', 'cancel-in-progress': true })
   })
 
-  it('pins every action to a full commit SHA', () => {
-    const actions = steps.filter(step => step.uses).map(step => step.uses!)
+  it('pins every action in both workflows to a full commit SHA', () => {
+    const actions = [...steps, ...cacheSteps].filter(step => step.uses).map(step => step.uses!)
     expect(actions.length).toBeGreaterThan(0)
     for (const action of actions) expect(action, action).toMatch(/^[\w.-]+\/[\w.-]+@[0-9a-f]{40}$/)
   })
 
+  it('lists both paths of a moved file', () => {
+    expect(scopeStep.run).toContain('git diff --no-renames --name-only HEAD^1 HEAD')
+    expect(steps.find(step => step.uses?.startsWith('actions/checkout@'))?.with?.['fetch-depth']).toBe(2)
+  })
+
   it('runs the guard on docs-only PRs and every check on the rest', () => {
-    const appIs = (value: 'true' | 'false') => `steps.scope.outputs.app == '${value}'`
     const run = (command: string) => steps.filter(step => step.run?.trim() === command)
     expect(run('pnpm test:guard').map(step => step.if)).toEqual([
-      appIs('false'),
-      appIs('true'),
+      'steps.scope.outputs.app == \'false\'',
+      'steps.scope.outputs.app != \'false\'',
     ])
+    // `!= 'false'`: a missing or odd scope runs everything instead of nothing.
     for (const command of ['pnpm lint', 'pnpm typecheck', 'pnpm test', 'pnpm generate', 'pnpm deploy:check', 'pnpm test:e2e']) {
-      expect(run(command).map(step => step.if), command).toEqual([appIs('true')])
+      expect(run(command).map(step => step.if), command).toEqual(['steps.scope.outputs.app != \'false\''])
+    }
+    for (const step of steps.filter(step => step.if?.includes('steps.scope.outputs.app'))) {
+      expect(step.if, step.name ?? step.run).not.toContain('app == \'true\'')
     }
     // Install runs for both kinds of PR.
     expect(run('pnpm install --frozen-lockfile').map(step => step.if)).toEqual([undefined])
@@ -97,19 +164,38 @@ describe('ci workflow', () => {
   })
 
   it('scans the built site with a missing build failing the run', () => {
-    const guard = job.steps.find((step: { name?: string }) => step.name === 'Banned-words guard on the built site')
+    const guard = steps.find(step => step.name === 'Banned-words guard on the built site')!
     expect(guard.env).toEqual({ GUARD_REQUIRE_BUILD: '1' })
     expect(steps.indexOf(guard)).toBeGreaterThan(steps.findIndex(step => step.run?.trim() === 'pnpm generate'))
   })
 })
 
+describe('cache workflow', () => {
+  it('fills the caches on main when the lockfile or a workflow changes', () => {
+    expect(cacheWorkflow.on.push).toEqual({ branches: ['main'], paths: ['app/pnpm-lock.yaml', '.github/workflows/**'] })
+    expect(cacheWorkflow.on).toHaveProperty('workflow_dispatch')
+    expect(cacheWorkflow.permissions).toEqual({ contents: 'read' })
+  })
+
+  it('saves the same cache keys that ci.yml restores', () => {
+    const setupNode = (list: Step[]) => list.find(step => step.uses?.startsWith('actions/setup-node@'))
+    expect(setupNode(cacheSteps)).toEqual(setupNode(steps))
+    const browser = (list: Step[]) => list.find(step => step.uses?.startsWith('actions/cache@'))
+    expect(browser(cacheSteps)?.uses).toBe(browser(steps)?.uses)
+    expect(browser(cacheSteps)?.with).toEqual(browser(steps)?.with)
+    const version = (list: Step[]) => list.find(step => step.name === 'Find the Playwright version')?.run
+    expect(version(cacheSteps)).toBe(version(steps))
+  })
+})
+
 describe('dependabot', () => {
-  it('updates the GitHub Actions weekly', () => {
+  it('updates the GitHub Actions weekly, once a release is a week old', () => {
     const config = parse(readFileSync(`${repo}/.github/dependabot.yml`, 'utf8'))
     expect(config.updates).toEqual([expect.objectContaining({
       'package-ecosystem': 'github-actions',
       'directory': '/',
       'schedule': { interval: 'weekly' },
+      'cooldown': { 'default-days': 7 },
     })])
   })
 })
