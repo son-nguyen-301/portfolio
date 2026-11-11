@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home, dark</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>body{margin:0;background:#0E1216}</style>
+</helmet>
+<div style="background: #0E1216; font-family: Inter, system-ui, sans-serif; color: #E6EBF0">
+<dc-import name="Main" theme="dark" upwork="{{upwork}}" hint-size="100%,3900px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"upwork":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":3900}}'>
+class Component extends DCLogic {
+renderVals() {
+return { upwork: !!this.props.upwork };
+}
+}
+</script>
+</body>
+</html>

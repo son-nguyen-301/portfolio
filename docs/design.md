@@ -4,6 +4,32 @@ The site should look like a well-made SaaS product: calm, clear and fast. Son's 
 
 Avoid: dark code-editor themes, purple gradients, emoji, cards with the same shadow everywhere, everything centered.
 
+## Screens
+
+The full design is in `docs/design/`, one file per screen. The files are design mockups (HTML with inline styles and a small template syntax), not app code. Read them for layout, spacing, sizes and copy, then build the real page with the app's own tokens and components. The live canvas, where Son can comment, is private: https://claude.ai/artifact/3W9uiWHFKpB9dD9db4oy3y
+
+| Screen | File | Build task |
+| --- | --- | --- |
+| Home, desktop | `docs/design/Main.dc.html` (dark: `HomeDark.dc.html`) | PF-011 |
+| Home, phone | `docs/design/HomePhone.dc.html` | PF-011 |
+| Phone menu, Upwork mode | `docs/design/MenuPhone.dc.html` | PF-006, PF-007 |
+| Header and footer | `docs/design/SiteHeader.dc.html`, `SiteFooter.dc.html` | PF-006, PF-007 |
+| Work list | `docs/design/Work.dc.html` | PF-012 |
+| Case study | `docs/design/CaseStudy.dc.html` (phone, dark: `CaseStudyPhone.dc.html`) | PF-013, PF-014 |
+| Services | `docs/design/Services.dc.html` | PF-015 |
+| About | `docs/design/About.dc.html` | PF-016 |
+| Lab | `docs/design/Lab.dc.html` | PF-017 |
+| CV | `docs/design/CV.dc.html` | PF-018 |
+| Contact | `docs/design/Contact.dc.html` | PF-019 |
+| 404 | `docs/design/NotFound.dc.html` | PF-019 |
+| Components and states | `docs/design/Components.dc.html` | PF-004, PF-005, PF-008, PF-010 |
+
+Rules when a screen and the content differ: `app/content/` wins for facts and copy, this file wins for tokens and rules, and the screen wins for layout.
+
+Two choices the screens make that the brief does not spell out:
+- In Upwork mode the footer also hides the LinkedIn link (GitHub and Upwork stay), because LinkedIn is a way to contact Son off Upwork.
+- The phone layout keeps two buttons fixed at the bottom: "My work" and "Book a call" ("Upwork" in Upwork mode).
+
 ## Color tokens
 
 Light is the default. Dark mode follows the system setting, with a switch in the footer (light, dark, system). Define every color as a CSS custom property and redefine only the tokens for dark mode.

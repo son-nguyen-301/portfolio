@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Site header</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+.pf{--paper:#F5F7F8;--surface:#FFFFFF;--ink:#141A22;--muted:#5A6472;--line:#DCE1E6;--jade:#0D7663;--jade-soft:#DCEFEA;--amber:#A86A12;--amber-soft:#F6EBD9;--on-jade:#FFFFFF;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.6}
+.pf.dark{--paper:#0E1216;--surface:#151B21;--ink:#E6EBF0;--muted:#9AA5B1;--line:#27303A;--jade:#43C2A8;--jade-soft:#15302A;--amber:#E2A64C;--amber-soft:#33270F;--on-jade:#0E1216}
+.wrap{max-width:1040px;margin:0 auto;padding-left:24px;padding-right:24px;box-sizing:border-box}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:8px;font:600 15px/1 Inter,system-ui,sans-serif;text-decoration:none;border:1px solid transparent;box-sizing:border-box}
+.btn-action{background:var(--jade);color:var(--on-jade)!important}
+.navlink{color:var(--muted);text-decoration:none;padding:10px 2px;border-bottom:2px solid transparent}
+.navlink:hover{color:var(--ink)}
+.navlink.on{color:var(--ink);border-bottom-color:var(--jade)}
+@media (max-width:760px){.hide-sm{display:none!important}.show-sm{display:inline-flex!important}}
+</style>
+</helmet>
+<header class="pf {{themeClass}}" style="border-bottom: 1px solid var(--line)">
+<div class="wrap" style="display: flex; align-items: center; gap: 28px; min-height: 72px">
+<a href="Main.dc.html" style="font: 700 18px/1 'Bricolage Grotesque', Inter, sans-serif; color: var(--ink); text-decoration: none">Hai Son Nguyen<span style="color: var(--jade)">.</span></a>
+<nav aria-label="Main" class="hide-sm" style="display: flex; gap: 24px; margin-left: auto; font-size: 15px">
+<sc-for list="{{links}}" as="l" hint-placeholder-count="5">
+<a class="navlink {{l.cls}}" href="{{l.href}}">{{l.label}}</a>
+</sc-for>
+</nav>
+<sc-if value="{{notUpwork}}" hint-placeholder-val="{{ true }}">
+<a class="btn btn-action hide-sm" href="Contact.dc.html">Book a 30-minute call</a>
+</sc-if>
+<sc-if value="{{upwork}}" hint-placeholder-val="{{ false }}">
+<a class="btn btn-action hide-sm" href="https://www.upwork.com/freelancers/~010a5da72f7f0ba777">Message me on Upwork</a>
+</sc-if>
+<button type="button" class="show-sm" aria-label="Open menu" style="display: none; margin-left: auto; width: 44px; height: 44px; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--line); border-radius: 8px; color: var(--ink)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+</button>
+</div>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"upwork":{"editor":"boolean","default":false},"active":{"editor":"enum","options":["home","work","services","lab","about","contact","cv"],"default":"home"},"$preview":{"width":1280,"height":80}}'>
+class Component extends DCLogic {
+renderVals() {
+const upwork = !!this.props.upwork;
+const active = this.props.active ?? 'home';
+const all = [
+{ key: 'work', label: 'Work', href: 'Work.dc.html' },
+{ key: 'services', label: 'Services', href: 'Services.dc.html' },
+{ key: 'lab', label: 'Lab', href: 'Lab.dc.html' },
+{ key: 'about', label: 'About', href: 'About.dc.html' },
+{ key: 'contact', label: 'Contact', href: 'Contact.dc.html' }
+];
+const links = all.filter(l => !(upwork && l.key === 'contact')).map(l => ({ ...l, cls: l.key === active ? 'on' : '' }));
+return { upwork, notUpwork: !upwork, links, themeClass: this.props.theme === 'dark' ? 'dark' : '' };
+}
+}
+</script>
+</body>
+</html>
