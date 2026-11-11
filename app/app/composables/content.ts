@@ -58,6 +58,15 @@ export function useWorkCards() {
     .all())
 }
 
+// The path and title of every case study, in `order`, for the previous and
+// next links and the "1 of 6" line on a case study page.
+export function useWorkNav() {
+  return useAsyncData('content:work:nav', () => queryCollection('work')
+    .select('path', 'title', 'order')
+    .order('order', 'ASC')
+    .all())
+}
+
 // One case study by its page path, for example "/work/aspire-redesign".
 export function useCaseStudy(path: string) {
   return useAsyncData(`content:work:${path}`, () => queryCollection('work').path(path).first())
