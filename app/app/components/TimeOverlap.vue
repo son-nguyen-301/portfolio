@@ -103,16 +103,24 @@ const style = (part: { left: number, width: number }) => ({ left: `${part.left}%
     <div class="time-overlap__full">
       <div class="time-overlap__clocks">
         <div class="time-overlap__clock">
-          <span class="label">{{ ready ? `${city} now` : city }}</span>
-          <span class="time-overlap__time">{{ sonNow }}</span>
+          <p class="label">
+            {{ ready ? `${city} now` : city }}
+          </p>
+          <p class="time-overlap__time">
+            {{ sonNow }}
+          </p>
         </div>
         <div
           class="time-overlap__clock time-overlap__clock--you"
           :class="{ 'time-overlap__pending': !ready }"
           :aria-hidden="ready ? undefined : 'true'"
         >
-          <span class="label">Your time{{ zone ? ` · ${zone}` : '' }}</span>
-          <span class="time-overlap__time">{{ visitorNow }}</span>
+          <p class="label">
+            Your time{{ zone ? ` · ${zone}` : '' }}
+          </p>
+          <p class="time-overlap__time">
+            {{ visitorNow }}
+          </p>
         </div>
       </div>
 
@@ -189,10 +197,16 @@ const style = (part: { left: number, width: number }) => ({ left: `${part.left}%
 
     <div class="time-overlap__line">
       <div class="time-overlap__line-main">
-        <span class="label">{{ ready ? 'Shared work hours' : 'My hours' }}</span>
-        <span class="time-overlap__line-value">{{ shortText }}</span>
+        <p class="label">
+          {{ ready ? 'Shared work hours' : 'My hours' }}
+        </p>
+        <p class="time-overlap__line-value">
+          {{ shortText }}
+        </p>
       </div>
-      <span class="time-overlap__line-clock">{{ city }}<br>{{ sonNow }}</span>
+      <p class="time-overlap__line-clock">
+        {{ city }}<br>{{ sonNow }}
+      </p>
     </div>
   </aside>
 </template>
@@ -222,6 +236,10 @@ const style = (part: { left: number, width: number }) => ({ left: `${part.left}%
   flex-direction: column;
   gap: 4px;
   min-width: 0;
+}
+
+.time-overlap p {
+  margin: 0;
 }
 
 .time-overlap__clock .label {

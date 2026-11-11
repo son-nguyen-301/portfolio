@@ -5,7 +5,7 @@
 // Facts come from app/content through the composables, as on real pages.
 useSeoMeta({ title: 'Gallery', robots: 'noindex, nofollow' })
 
-const { data: profile } = await useProfile('proofStrip')
+const { data: profile } = await useProfile('proofStrip', 'location', 'utcOffset', 'hours')
 const { data: caseStudies } = await useCaseStudies()
 const { data: timeline } = await useTimeline()
 const siteProfile = useSiteProfile()
@@ -237,10 +237,31 @@ const scale = [
         :reply-promise="siteProfile.replyPromise"
       />
     </section>
+
+    <section v-if="profile">
+      <h2 class="label">
+        TimeOverlap
+      </h2>
+      <p class="small">
+        Fills in your own time after mount. Narrow the window below 720 px to see the one-line phone version.
+      </p>
+      <div class="clock-sample">
+        <TimeOverlap
+          :city="profile.location.split(',')[0] ?? ''"
+          :utc-offset="profile.utcOffset"
+          :start="profile.hours.start"
+          :end="profile.hours.end"
+        />
+      </div>
+    </section>
   </div>
 </template>
 
 <style scoped>
+.clock-sample {
+  max-width: 420px;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
