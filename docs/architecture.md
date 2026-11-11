@@ -82,7 +82,14 @@ Use **Workers Builds** (Cloudflare's Git integration). Cloudflare builds on ever
 
 Son connects the repo in the Cloudflare dashboard (Workers & Pages → Create → Import a repository). If he prefers GitHub Actions instead, use `cloudflare/wrangler-action` with a `CLOUDFLARE_API_TOKEN` secret.
 
-GitHub Actions still runs `ci.yml` on pull requests: install, lint, unit tests, generate, the Workers config dry run, the banned-words guard on the built site, and Playwright smoke tests on the generated site.
+GitHub Actions still runs `ci.yml` on pull requests into `main`. Its one job, `check`, is meant to be the required check "CI / check" on `main`, so it reports on every PR. It runs only what the changed files need (`.github/ci-scope.mjs`; a moved file counts at both paths):
+
+- A PR that changes only `docs/`, `head/`, `.claude/` or Markdown files at the repo root: install, then the banned-words guard on every tracked file.
+- Any other PR, in two stages. First lint, typecheck and unit tests. Then, only if those pass: generate, the Workers config dry run, the banned-words guard on the built site, and Playwright tests on the generated site.
+- A draft PR runs nothing. Marking it ready for review starts the run. A new commit cancels the older run.
+- A PR into another branch gets no run. If it is then retargeted to `main`, it has no check until the next push, so it can't merge with a stale one.
+
+The pnpm store and the Playwright browser are cached. A PR can only restore caches saved on `main` or on its own branch, so `cache.yml` fills them on `main` when the lockfile or a workflow changes (or by hand). Dependabot (`.github/dependabot.yml`) opens one PR a week for updates to the pinned actions, once a release is 7 days old.
 
 ### DNS and the custom domain
 

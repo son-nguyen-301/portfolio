@@ -1,0 +1,15 @@
+# Keeps the pinned action SHAs in .github/workflows up to date. One grouped PR
+# a week, so CI runs once for all action updates. A release must be 7 days old
+# before it is proposed, so a bad release has time to be pulled.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - '*'

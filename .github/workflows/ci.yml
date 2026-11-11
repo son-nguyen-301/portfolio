@@ -1,10 +1,27 @@
-# Checks every pull request: lint, types, unit tests, the static build,
-# a dry run of the Workers config, the banned-words guard on the built site,
-# and browser tests.
+# Checks every pull request. The one job, `check`, is the required status
+# check "CI / check" on `main`, so it must report on every PR: path filters on
+# the trigger would leave a docs-only PR waiting for a check that never comes.
+# Instead the job looks at the changed files and runs only what they need:
+#
+# - Docs only (see .github/ci-scope.mjs): install, then the banned-words guard
+#   on every tracked file.
+# - Anything else, or a scope the script did not print, in two stages.
+#   Stage 1: lint, types and unit tests (the guard included). Stage 2, only
+#   once stage 1 passed: the static build, a dry run of the Workers config,
+#   the guard on the built site, and browser tests.
+#
+# A draft PR runs nothing (the check shows as skipped, which GitHub counts as
+# passing). Marking it ready for review starts the run. A new commit cancels
+# the older run on the same PR.
 name: CI
 
 on:
+  # Only PRs into main: the scope is worked out against the base branch, so a
+  # PR aimed at another branch gets no check and can't be retargeted to main
+  # with a green one.
   pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -15,53 +32,110 @@ concurrency:
 
 jobs:
   check:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     defaults:
       run:
+        shell: bash
         working-directory: app
     steps:
+      # The PR's merge commit and its first parent (the base branch), so the
+      # diff between them is exactly what the PR changes.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          fetch-depth: 2
           persist-credentials: false
 
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           package_json_file: app/package.json
 
+      # Caches the pnpm store, keyed on the lockfile. A PR can only restore
+      # caches saved on its own branch or on main, so cache.yml fills them on
+      # main.
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: 22
           cache: pnpm
           cache-dependency-path: app/pnpm-lock.yaml
 
+      # --no-renames lists both paths of a moved file, so moving an app file
+      # into docs/ still counts as an app change.
+      - name: Find what changed
+        id: scope
+        working-directory: .
+        run: |
+          git diff --no-renames --name-only HEAD^1 HEAD > "$RUNNER_TEMP/changed.txt"
+          echo "Changed files:"
+          cat "$RUNNER_TEMP/changed.txt"
+          node .github/ci-scope.mjs < "$RUNNER_TEMP/changed.txt" | tee -a "$GITHUB_OUTPUT"
+
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # Docs only
+
+      - name: Banned-words guard on tracked files (docs only)
+        if: steps.scope.outputs.app == 'false'
+        run: pnpm test:guard
+
+      # Stage 1
+
       - name: Lint
+        if: steps.scope.outputs.app != 'false'
         run: pnpm lint
 
       - name: Typecheck
+        if: steps.scope.outputs.app != 'false'
         run: pnpm typecheck
 
       - name: Unit tests
+        if: steps.scope.outputs.app != 'false'
         run: pnpm test
 
+      # Stage 2. A failed step above stops the job, so nothing here runs then.
+
       - name: Generate
+        if: steps.scope.outputs.app != 'false'
         run: pnpm generate
 
       - name: Workers config dry run
+        if: steps.scope.outputs.app != 'false'
         run: pnpm deploy:check
         env:
           WRANGLER_SEND_METRICS: 'false'
 
       - name: Banned-words guard on the built site
+        if: steps.scope.outputs.app != 'false'
         run: pnpm test:guard
         env:
           GUARD_REQUIRE_BUILD: '1'
 
-      - name: Install Chromium for Playwright
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Find the Playwright version
+        id: playwright
+        if: steps.scope.outputs.app != 'false'
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      # The tests run headless, so only the headless shell is needed. The key
+      # must match the one in cache.yml.
+      - name: Cache the Playwright browser
+        id: playwright-cache
+        if: steps.scope.outputs.app != 'false'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-chromium-shell
+
+      - name: Install the Playwright browser
+        if: steps.scope.outputs.app != 'false' && steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps --only-shell chromium
+
+      # The cache holds the browser, not the system libraries it needs.
+      - name: Install the browser's system libraries
+        if: steps.scope.outputs.app != 'false' && steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
 
       - name: Browser tests
+        if: steps.scope.outputs.app != 'false'
         run: pnpm test:e2e

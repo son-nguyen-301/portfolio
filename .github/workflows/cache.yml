@@ -1,0 +1,66 @@
+# Fills the CI caches on main. A pull request can only restore caches saved on
+# its own branch or on main, and ci.yml runs only on pull requests, so without
+# this every new PR would start with a cold pnpm store and no browser.
+# Runs only when the lockfile or a workflow changes, or by hand.
+name: Cache
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - app/pnpm-lock.yaml
+      - .github/workflows/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cache-main
+  cancel-in-progress: true
+
+jobs:
+  fill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+        working-directory: app
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+        with:
+          package_json_file: app/package.json
+
+      # Saves the pnpm store under the same key ci.yml looks for.
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+
+      # No install scripts: the store needs none, and a dependency's script
+      # can't change the cache that every PR restores.
+      - name: Install
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Find the Playwright version
+        id: playwright
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      # The key must match the one in ci.yml.
+      - name: Cache the Playwright browser
+        id: playwright-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-chromium-shell
+
+      # Only the browser is cached, so its system libraries are not needed here.
+      - name: Download the Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --only-shell chromium
