@@ -87,6 +87,7 @@ GitHub Actions still runs `ci.yml` on pull requests into `main`. Its one job, `c
 - A PR that changes only `docs/`, `head/`, `.claude/` or Markdown files at the repo root: install, then the banned-words guard on every tracked file.
 - Any other PR, in two stages. First lint, typecheck and unit tests. Then, only if those pass: generate, the Workers config dry run, the banned-words guard on the built site, and Playwright tests on the generated site.
 - A draft PR runs nothing. Marking it ready for review starts the run. A new commit cancels the older run.
+- A PR into another branch gets no run. If it is then retargeted to `main`, it has no check until the next push, so it can't merge with a stale one.
 
 The pnpm store and the Playwright browser are cached. A PR can only restore caches saved on `main` or on its own branch, so `cache.yml` fills them on `main` when the lockfile or a workflow changes (or by hand). Dependabot (`.github/dependabot.yml`) opens one PR a week for updates to the pinned actions, once a release is 7 days old.
 

@@ -49,5 +49,5 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 | 22 | Backlog | P2 | PF-044 | #84 | #49 | loop | Found in PR #85. Asks Son which tool counts button clicks |
 | 23 | Backlog | P2 | PF-045 | #86 | #49 | loop | Found in PR #85. Asks Son to name the new header files as guard paths in `head/LOOP.md` |
 | 24 | Backlog | P2 | PF-046 | #88 | #65 | loop | Found in PR #87. Asks Son how to protect the CI gate from a PR that changes it |
-| 25 | Backlog | P3 | PF-042 | #81 | none | loop | Found in PR #80. Four more renamed zones for the clock label |
-| 26 | Backlog | P3 | PF-047 | #89 | #65 | loop | Found in PR #87. `head/LOOP.md` wording on a skipped CI check |
+| 25 | Backlog | P2 | PF-047 | #89 | #65 | loop | Found in PR #87. The runner may merge on a skipped CI check left from a draft |
+| 26 | Backlog | P3 | PF-042 | #81 | none | loop | Found in PR #80. Four more renamed zones for the clock label |

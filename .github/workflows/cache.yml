@@ -43,8 +43,10 @@ jobs:
           cache: pnpm
           cache-dependency-path: app/pnpm-lock.yaml
 
+      # No install scripts: the store needs none, and a dependency's script
+      # can't change the cache that every PR restores.
       - name: Install
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Find the Playwright version
         id: playwright

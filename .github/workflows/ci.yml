@@ -5,9 +5,10 @@
 #
 # - Docs only (see .github/ci-scope.mjs): install, then the banned-words guard
 #   on every tracked file.
-# - Anything else (or a scope the script did not print), in two stages. Stage 1: lint, types and unit tests (the
-#   guard included). Stage 2, only once stage 1 passed: the static build, a dry
-#   run of the Workers config, the guard on the built site, and browser tests.
+# - Anything else, or a scope the script did not print, in two stages.
+#   Stage 1: lint, types and unit tests (the guard included). Stage 2, only
+#   once stage 1 passed: the static build, a dry run of the Workers config,
+#   the guard on the built site, and browser tests.
 #
 # A draft PR runs nothing (the check shows as skipped, which GitHub counts as
 # passing). Marking it ready for review starts the run. A new commit cancels

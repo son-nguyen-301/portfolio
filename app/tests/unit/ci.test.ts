@@ -55,9 +55,14 @@ describe('ci-scope', () => {
     }
   })
 
-  it('treats an empty change list and blank lines as docs only', () => {
+  it('treats an empty change list and empty lines as docs only', () => {
     expect(scope([])).toBe('app=false')
-    expect(scope(['', '  ', 'head/STATUS.md', ''])).toBe('app=false')
+    expect(scope(['', 'head/STATUS.md', ''])).toBe('app=false')
+  })
+
+  it('does not trim paths', () => {
+    expect(scope([' docs/evil.ts'])).toBe('app=true')
+    expect(scope(['docs/brief.md', '  '])).toBe('app=true')
   })
 })
 
@@ -65,6 +70,8 @@ describe('ci-scope', () => {
 // commit whose first parent stands in for the base branch.
 describe('the scope step on a real diff', () => {
   const dirs: string[] = []
+  // Without GIT_DIR and the like, so git can only ever touch the scratch repo.
+  const env = Object.fromEntries(Object.entries(process.env).filter(([name]) => !name.startsWith('GIT_')))
   afterAll(() => {
     for (const dir of dirs) rmSync(dir, { recursive: true, force: true })
   })
@@ -73,7 +80,7 @@ describe('the scope step on a real diff', () => {
     const dir = mkdtempSync(join(tmpdir(), 'ci-scope-'))
     dirs.push(dir)
     const git = (...args: string[]) => {
-      execFileSync('git', ['-c', 'user.name=test', '-c', 'user.email=test@example.invalid', '-c', 'commit.gpgsign=false', ...args], { cwd: dir, stdio: 'pipe' })
+      execFileSync('git', ['-c', 'user.name=test', '-c', 'user.email=test@example.invalid', '-c', 'commit.gpgsign=false', ...args], { cwd: dir, env, stdio: 'pipe' })
     }
     const write = (path: string, text: string) => {
       mkdirSync(dirname(join(dir, path)), { recursive: true })
@@ -93,7 +100,7 @@ describe('the scope step on a real diff', () => {
     writeFileSync(output, '')
     execFileSync('bash', ['-eo', 'pipefail', '-c', scopeStep.run!], {
       cwd: dir,
-      env: { ...process.env, RUNNER_TEMP: dir, GITHUB_OUTPUT: output },
+      env: { ...env, RUNNER_TEMP: dir, GITHUB_OUTPUT: output },
       stdio: 'pipe',
     })
     return readFileSync(output, 'utf8').trim()
@@ -171,6 +178,10 @@ describe('ci workflow', () => {
 })
 
 describe('cache workflow', () => {
+  it('installs with no scripts', () => {
+    expect(cacheSteps.find(step => step.name === 'Install')?.run).toBe('pnpm install --frozen-lockfile --ignore-scripts')
+  })
+
   it('fills the caches on main when the lockfile or a workflow changes', () => {
     expect(cacheWorkflow.on.push).toEqual({ branches: ['main'], paths: ['app/pnpm-lock.yaml', '.github/workflows/**'] })
     expect(cacheWorkflow.on).toHaveProperty('workflow_dispatch')

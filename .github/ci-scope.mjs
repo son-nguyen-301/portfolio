@@ -16,7 +16,8 @@ const docs = [
   /^[^/]+\.md$/,
 ]
 
-const files = readFileSync(0, 'utf8').split('\n').map(line => line.trim()).filter(Boolean)
+// Paths are taken as they are: a folder named " docs" is not `docs/`.
+const files = readFileSync(0, 'utf8').split('\n').filter(line => line !== '')
 const app = files.some(file => !docs.some(pattern => pattern.test(file)))
 
 process.stdout.write(`app=${app}\n`)
