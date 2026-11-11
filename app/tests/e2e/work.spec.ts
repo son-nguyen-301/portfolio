@@ -113,4 +113,9 @@ test.describe('on a desktop', () => {
     expect(Math.abs(second!.y - first!.y)).toBeLessThan(1)
     expect(second!.x).toBeGreaterThan(first!.x + first!.width)
   })
+
+  test('the card titles are the size of the design, larger than on the home page', async ({ page }) => {
+    await page.goto('/work')
+    await expect(cards(page).first().getByRole('heading', { level: 2 })).toHaveCSS('font-size', '23px')
+  })
 })

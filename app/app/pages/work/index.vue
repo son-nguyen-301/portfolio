@@ -147,5 +147,11 @@ useSeoMeta({
   .work-list__cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  /* The cards here are two to a row, so their titles are larger than on the
+     home page (docs/design/Work.dc.html). */
+  .work-list__cards :deep(.work-card__title) {
+    font-size: 1.4375rem;
+  }
 }
 </style>
