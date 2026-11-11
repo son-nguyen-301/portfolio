@@ -37,7 +37,7 @@ Build `/cv` with a print stylesheet. A script (`pnpm cv:pdf`) prints `/cv` to `a
 
 ### Worker config
 
-`app/wrangler.jsonc` (a Worker with static assets only, no script). Added in PR PF-023 and checked against the Cloudflare docs on 2026-11-11. `pnpm deploy:check` runs `wrangler deploy --dry-run` on it, with no login, and CI runs it after `pnpm generate`.
+`app/wrangler.jsonc` (a Worker with static assets only, no script). Added by PF-023 (PR #85) and checked against the Cloudflare docs on 2026-11-11. `pnpm deploy:check` runs `wrangler deploy --dry-run` on it, with no login, and CI runs it after `pnpm generate`.
 
 ```jsonc
 {
@@ -82,7 +82,7 @@ Use **Workers Builds** (Cloudflare's Git integration). Cloudflare builds on ever
 
 Son connects the repo in the Cloudflare dashboard (Workers & Pages → Create → Import a repository). If he prefers GitHub Actions instead, use `cloudflare/wrangler-action` with a `CLOUDFLARE_API_TOKEN` secret.
 
-GitHub Actions still runs `ci.yml` on pull requests: install, lint, unit tests, generate, and Playwright smoke tests on the generated site.
+GitHub Actions still runs `ci.yml` on pull requests: install, lint, unit tests, generate, the Workers config dry run, the banned-words guard on the built site, and Playwright smoke tests on the generated site.
 
 ### DNS and the custom domain
 

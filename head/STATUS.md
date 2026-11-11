@@ -7,7 +7,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | Sprint | Milestone | Runner tasks | Manual tasks | Status |
 | --- | --- | --- | --- | --- |
 | Sprint 1 - Foundation | #1 | PF-001 to PF-006 | PF-028, PF-032, PF-033, PF-034 | Done. Son reviewed it on 2026-11-11. |
-| Sprint 2 - Trust and home | #2 | PF-007 to PF-011, PF-023, PF-035, PF-039 | PF-025 | In progress (5 of 8 runner tasks done) |
+| Sprint 2 - Trust and home | #2 | PF-007 to PF-011, PF-023, PF-035, PF-039 | PF-025 | In progress (6 of 8 runner tasks done) |
 | Sprint 3 - Proof pages | #3 | PF-012 to PF-016 | PF-029, PF-030 | Not started |
 | Sprint 4 - Remaining pages and sharing | #4 | PF-017 to PF-021 | | Not started |
 | Sprint 5 - Quality and launch | #5 | PF-022, PF-024, PF-031, PF-036, PF-037, PF-038 | PF-026, PF-027 | Not started |
@@ -27,6 +27,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | PF-009 | #35 | Done 2026-11-11 | #79 | `useTimeOverlap(visitorOffset, ...)` in `app/app/composables/useTimeOverlap.ts`: shared hours, the shared windows, Son's hours and the visitor's workday, all in the visitor's time, in whole minutes. `formatClock()` writes `HH:MM` (D-022). 1 review round. |
 | PF-010 | #36 | Done 2026-11-11 | #80 | `TimeOverlap` on the home placeholder: both clocks, the 24-hour bar, the sentence, an update every 30 seconds, and one line on phones. The server HTML is the neutral version, and an invisible copy of the longest sentence keeps the height the same after mount (D-023). 3 review rounds. |
 | PF-011 | #37 | Done 2026-11-11 | #82 | The home page in the order of `docs/design.md`: hero with the two hire paths and the clock, proof strip, 3 featured case studies, services, how I work with the AI rules, quotes (hidden while there are none) and the contact block. Placeholder case study pages, so each card opens a real page. Headline and `MetricTile` values never break after a hyphen (D-024). Lighthouse mobile with gzip: Performance 95 to 97, Accessibility 100. 2 review rounds. |
+| PF-023 | #49 | Done 2026-11-11 | #85 | `app/wrangler.jsonc` (assets only, `drop-trailing-slash`), `pnpm deploy:check` in CI, `nitro.preset: 'static'`, a `_headers` file written at build time with security headers, cache rules and a CSP that lists every inline script hash, a beacon only when a token is set, and `data-track` click hooks (D-025). 3 review rounds. |
 
 ## Live checks Son still owes
 
@@ -41,6 +42,8 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - PF-009: none. PF-010 draws the clock.
 - PF-010: on a real phone and on a desktop, open the home page in light and dark: the clock shows your own time and the shared hours, and nothing jumps when it fills in.
 - PF-011: open the home page on a real phone, also inside the LinkedIn app, and on a desktop, in light and dark, and compare it with `docs/design/Main.dc.html`, `HomeDark.dc.html` and `HomePhone.dc.html`. Open `/?from=upwork` from your Upwork profile: the contact section shows only "Message me on Upwork". After launch, run Lighthouse mobile on the live home page: Performance 95+ and Accessibility 100.
+
+- PF-023: "Workers Builds: portfolio" fails in 0 seconds on `main` and on the PR branch, before any command runs. Read the build log in the Cloudflare dashboard and check the settings: root directory `app`, build `pnpm install --frozen-lockfile && pnpm generate`, deploy `npx wrangler deploy` (PF-025). Then set `NUXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` in the build variables, unless Cloudflare adds the beacon itself. On the live site: `curl -I https://me.haisonnguyen.dev/` shows the security headers, `/about/` goes to `/about`, the browser console shows no CSP errors on home, contact and a case study page (also with `?from=upwork`), and `/__nuxt_content/profile/sql_dump.txt` and `/dump.profile.sql` are 404. After two deploys, check whether the skew-protection cache survives.
 
 ## Close pending
 
@@ -59,3 +62,4 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - 2026-11-11: PF-009 merged (#79). The reviewer approved in round 1, after checking the math against a minute-by-minute count over 200,000 random inputs. Noted on #36 (PF-010): pass `-getTimezoneOffset() / 60`, and the shared hours change with daylight saving (US East has 2 h in summer, Sydney 5 to 6 h, not what the `docs/brief.md` table says). #78 failed once more in this run.
 - 2026-11-11: PF-010 merged (#80). Round 1 approved. Round 2 found that Chrome gives back old zone IDs, so the label said "Calcutta", "Kiev" or "Saigon"; fixed with a map of current city names and browser tests. Round 3 approved. Opened #81 (PF-042, P3, Backlog): four more renamed zones. Noted on #37 (PF-011): `docs/design.md` line 117 differs from the phone mockup, and long city names are cut short in the label. Noted on #78: the flaky keyboard test failed in about half the full runs today.
 - 2026-11-11: PF-011 merged (#82). Both reviewers approved in round 2. Round 1 found the clock label cut short at desktop widths (the clock column is now at least 440 px), the headline breaking after "e-" on phones (word boxes, `words()`), and D-024 missing link labels. Opened #83 (PF-043, P2, Backlog): the fixed bottom bar on phones. Noted on #48 (home JavaScript is 108 KB gzip, 107 KB on `main` before), #46 (SEO 92 from the robots `Content-Signal` line, a 209-character description) and #81 (13-letter city names are still cut).
+- 2026-11-11: PF-023 merged (#85). Round 1 found that `auto-trailing-slash` sent every canonical and sitemap URL through a 307, and that D-025 was missing; round 2 approved with small follow-ups, fixed and approved in round 3. Opened #84 (PF-044, P2, Backlog, Ask Son): Web Analytics has no custom events, so pick a tool for the click counts. Opened #86 (PF-045, P2, Backlog, Ask Son): `head/LOOP.md` still names `app/public/_headers` as a guard path. Workers Builds fails before any build command, so the cause is in the dashboard settings. #78 failed once more in this run.
