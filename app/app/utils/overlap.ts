@@ -42,12 +42,30 @@ export function visitorOffsetAt(now: Date): number {
   return -now.getTimezoneOffset() / 60
 }
 
-// A city name from an IANA zone: "America/New_York" -> "New York". Empty when
-// the browser gives no zone.
+// Old city names that browsers still give back in zone IDs (Chrome gives
+// "Asia/Calcutta" for Asia/Kolkata), and the names the cities use now.
+const renamedCities: Record<string, string> = {
+  Asmera: 'Asmara',
+  Calcutta: 'Kolkata',
+  Chungking: 'Chongqing',
+  Dacca: 'Dhaka',
+  Faeroe: 'Faroe',
+  Godthab: 'Nuuk',
+  Katmandu: 'Kathmandu',
+  Kiev: 'Kyiv',
+  Rangoon: 'Yangon',
+  Saigon: 'Ho Chi Minh',
+  Thimbu: 'Thimphu',
+  Ujung_Pandang: 'Makassar',
+  Ulan_Bator: 'Ulaanbaatar',
+}
+
+// A city name from an IANA zone: "America/New_York" -> "New York",
+// "Asia/Calcutta" -> "Kolkata". Empty when the browser gives no zone.
 export function zoneCity(zone: string | undefined): string {
   if (!zone) return ''
   const last = zone.split('/').pop() ?? ''
-  return last.replace(/_/g, ' ')
+  return (renamedCities[last] ?? last).replace(/_/g, ' ')
 }
 
 // What the clock says about the overlap.
@@ -69,6 +87,12 @@ export function describeOverlap(overlap: TimeOverlap, visitorOffset: number, son
   }
   const lastHour = Math.min(1, overlap.son.hours)
   return { kind: 'none', callAt: formatClock(overlap.son.end - lastHour) }
+}
+
+// The sentence when the work days don't overlap. The clock also uses it with
+// "00:00" as the longest sentence it can show, to reserve its height.
+export function noOverlapSentence(callAt: string): string {
+  return `Our work days don't overlap. I send a written update before your day starts, and I can take calls at ${callAt} your time.`
 }
 
 // "6 work hours", "1 work hour", "2.5 work hours".

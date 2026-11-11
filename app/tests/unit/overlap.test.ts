@@ -7,6 +7,7 @@ import {
   describeOverlap,
   hourAt,
   hoursText,
+  noOverlapSentence,
   offsetText,
   shortOverlapText,
   visitorOffsetAt,
@@ -84,8 +85,24 @@ describe('the words', () => {
     expect(zoneCity('America/New_York')).toBe('New York')
     expect(zoneCity('America/Argentina/Buenos_Aires')).toBe('Buenos Aires')
     expect(zoneCity('UTC')).toBe('UTC')
+    expect(zoneCity('Asia/Ho_Chi_Minh')).toBe('Ho Chi Minh')
     expect(zoneCity(undefined)).toBe('')
     expect(zoneCity('')).toBe('')
+  })
+
+  it('uses the names cities use now, not the old names in some zone IDs', () => {
+    expect(zoneCity('Asia/Calcutta')).toBe('Kolkata')
+    expect(zoneCity('Europe/Kiev')).toBe('Kyiv')
+    expect(zoneCity('Asia/Saigon')).toBe('Ho Chi Minh')
+    expect(zoneCity('Asia/Katmandu')).toBe('Kathmandu')
+    expect(zoneCity('Asia/Rangoon')).toBe('Yangon')
+    expect(zoneCity('America/Godthab')).toBe('Nuuk')
+    expect(zoneCity('Asia/Ulan_Bator')).toBe('Ulaanbaatar')
+    expect(zoneCity('Asia/Kolkata')).toBe('Kolkata')
+  })
+
+  it('writes the no-overlap sentence', () => {
+    expect(noOverlapSentence('06:00')).toBe('Our work days don\'t overlap. I send a written update before your day starts, and I can take calls at 06:00 your time.')
   })
 })
 

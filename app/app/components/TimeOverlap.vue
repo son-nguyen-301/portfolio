@@ -16,6 +16,7 @@ import {
   clockAt,
   describeOverlap,
   hourAt,
+  noOverlapSentence,
   offsetText,
   shortOverlapText,
   visitorOffsetAt,
@@ -89,7 +90,7 @@ const shortText = computed(() => (text.value ? shortOverlapText(text.value) : `$
 // The longest sentence the clock can show. It sits under the real one,
 // invisible, so the sentence box is the same height before and after mount at
 // any width.
-const longest = `Our work days don't overlap. I send a written update before your day starts, and I can take calls at 00:00 your time.`
+const longest = noOverlapSentence('00:00')
 
 const style = (part: { left: number, width: number }) => ({ left: `${part.left}%`, width: `${part.width}%` })
 </script>
@@ -190,7 +191,7 @@ const style = (part: { left: number, width: number }) => ({ left: `${part.left}%
           We share <strong>{{ workHoursText(text.hours) }}</strong> each weekday: {{ text.ranges }} your time.
         </p>
         <p v-else>
-          Our work days don't overlap. I send a written update before your day starts, and I can take calls at {{ text.callAt }} your time.
+          {{ noOverlapSentence(text.callAt) }}
         </p>
       </div>
     </div>

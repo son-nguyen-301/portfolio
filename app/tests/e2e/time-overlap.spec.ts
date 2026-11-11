@@ -77,10 +77,23 @@ test.describe('Hanoi', () => {
   test.use({ timezoneId: 'Asia/Ho_Chi_Minh', viewport: desktop })
 
   test('says we are in the same time zone', async ({ page }) => {
-    await openClock(page, winter)
+    const clock = await openClock(page, winter)
     await expect(sentence(page)).toHaveText('We are in the same time zone.')
+    // Chrome gives back the old zone ID, Asia/Saigon.
+    await expect(clock.locator('.time-overlap__clock--you .label')).toHaveText('Your time · Ho Chi Minh')
   })
 })
+
+for (const { timezoneId, city } of [{ timezoneId: 'Asia/Kolkata', city: 'Kolkata' }, { timezoneId: 'Europe/Kyiv', city: 'Kyiv' }]) {
+  test.describe(timezoneId, () => {
+    test.use({ timezoneId, viewport: desktop })
+
+    test(`names the city ${city}`, async ({ page }) => {
+      const clock = await openClock(page, winter)
+      await expect(clock.locator('.time-overlap__clock--you .label')).toHaveText(`Your time · ${city}`)
+    })
+  })
+}
 
 test.describe('on a phone', () => {
   test.use({ timezoneId: 'Europe/London', viewport: phone })
