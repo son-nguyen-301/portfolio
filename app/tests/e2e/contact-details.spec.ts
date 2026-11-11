@@ -87,7 +87,7 @@ test('no page downloads the profile collection', async ({ page }) => {
   }
   // Pages opened from the 404 page by the header links.
   await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Work' }).click()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Work')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Case studies')
   await page.getByRole('banner').getByRole('link', { name: 'Hai Son Nguyen' }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(profile.hero.headline)
   await page.waitForLoadState('networkidle')

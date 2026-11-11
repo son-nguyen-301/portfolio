@@ -64,6 +64,9 @@ export const profileSchema = z.strictObject({
   howIWork: texts,
   aiRules: texts,
   pricing: text,
+  // The words of the /work page: the intro line, and the line about the Lab
+  // and the earlier projects under the cards.
+  workList: z.strictObject({ intro: text, more: text }),
 })
 
 export const servicesSchema = z.strictObject({

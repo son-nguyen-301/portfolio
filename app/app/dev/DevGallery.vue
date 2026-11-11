@@ -189,6 +189,8 @@ const scale = [
           :summary="card.summary"
           :stack="card.stack"
           :metric="card.cardMetric"
+          :period="card.period"
+          :client="card.client"
         >
           <template
             v-if="card === cards[0]"

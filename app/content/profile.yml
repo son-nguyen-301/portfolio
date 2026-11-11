@@ -67,3 +67,7 @@ aiRules:
   - "A person approves every merge."
   - "No client secrets are sent to AI tools."
 pricing: "No hourly rates here. You get a fixed price after a 30-minute call."
+
+workList:
+  intro: "Each one says what was wrong, what I did, and what changed. Pick the one closest to your project."
+  more: "Side projects, and the client work I led from 2019 to 2021."

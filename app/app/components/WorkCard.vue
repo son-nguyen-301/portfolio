@@ -12,9 +12,15 @@ withDefaults(defineProps<{
   stack: string[]
   // `cardMetric`: one short result line, shown in mono jade.
   metric?: string
+  // When the work was done, shown beside the result line.
+  period?: string
+  // Who it was for, shown under the title.
+  client?: string
   heading?: 'h2' | 'h3'
 }>(), {
   metric: undefined,
+  period: undefined,
+  client: undefined,
   heading: 'h3',
 })
 
@@ -34,18 +40,35 @@ defineSlots<{ media?: () => unknown }>()
       <slot name="media" />
     </div>
     <div class="work-card__body">
-      <p
-        v-if="metric"
-        class="work-card__metric num"
+      <div
+        v-if="metric || period"
+        class="work-card__top"
       >
-        {{ metric }}
-      </p>
+        <p
+          v-if="metric"
+          class="work-card__metric num"
+        >
+          {{ metric }}
+        </p>
+        <p
+          v-if="period"
+          class="work-card__period"
+        >
+          {{ period }}
+        </p>
+      </div>
       <component
         :is="heading"
         class="work-card__title"
       >
         {{ title }}
       </component>
+      <p
+        v-if="client"
+        class="work-card__client"
+      >
+        {{ client }}
+      </p>
       <p class="work-card__summary">
         {{ summary }}
       </p>
@@ -93,13 +116,32 @@ defineSlots<{ media?: () => unknown }>()
   padding: 16px;
 }
 
+.work-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
 .work-card__metric {
+  font-size: var(--text-label);
+}
+
+.work-card__period {
+  color: var(--muted);
+  font-family: var(--font-mono);
   font-size: var(--text-label);
 }
 
 .work-card__title {
   font-size: 1.125rem;
   font-weight: 700;
+}
+
+.work-card__client {
+  color: var(--muted);
+  font-size: var(--text-small);
 }
 
 .work-card__summary {
