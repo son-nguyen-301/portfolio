@@ -12,7 +12,10 @@ const NuxtImgStub = defineComponent({
   setup: props => () => h('img', { src: props.src, alt: props.alt, width: props.width, height: props.height, loading: props.loading }),
 })
 const stubs = { global: { components: { ...global.components, NuxtImg: NuxtImgStub } } }
-const DiagramSample = defineComponent({ setup: () => () => h('svg', { class: 'sample-diagram' }) })
+const DiagramSample = defineComponent({
+  props: { title: String },
+  setup: props => () => h('svg', { class: 'sample-diagram', role: 'img' }, [h('title', props.title)]),
+})
 
 describe('CaseStudyMedia', () => {
   it('shows a placeholder, with the alt text as caption, for a screenshot that is a TODO', () => {
@@ -44,7 +47,8 @@ describe('CaseStudyMedia', () => {
     const wrapper = mount(CaseStudyMedia, { ...stubs, props: { items, diagrams: { DiagramSample } } })
     const figures = wrapper.findAll('figure')
     expect(figures[0]!.find('.sample-diagram').exists()).toBe(true)
-    expect(figures[0]!.find('[role="img"]').attributes('aria-label')).toBe('A flow')
+    expect(figures[0]!.findAll('[role="img"]')).toHaveLength(1)
+    expect(figures[0]!.find('.sample-diagram title').text()).toBe('A flow')
     expect(figures[1]!.find('.case-media__placeholder').text()).toBe('Diagram coming')
     expect(figures[1]!.find('figcaption').text()).toBe('Another flow')
   })

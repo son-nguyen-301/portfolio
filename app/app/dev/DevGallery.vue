@@ -256,10 +256,38 @@ const scale = [
         />
       </div>
     </section>
+
+    <section>
+      <h2 class="label">
+        Diagrams
+      </h2>
+      <p class="small">
+        The pages pass the media's alt text as the title. The task runner diagram waits for the Lab page (PF-017).
+      </p>
+      <div
+        v-for="(component, name) in diagrams"
+        :key="name"
+        class="diagram-sample"
+      >
+        <code>{{ name }}</code>
+        <component
+          :is="component"
+          :title="name"
+        />
+      </div>
+    </section>
   </div>
 </template>
 
 <style scoped>
+.diagram-sample {
+  max-width: 440px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
 .clock-sample {
   max-width: 420px;
 }
