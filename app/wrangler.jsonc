@@ -7,6 +7,7 @@
     "not_found_handling": "404-page",
     "html_handling": "drop-trailing-slash"
   },
+  "previews": {},
   "routes": [
     { "pattern": "me.haisonnguyen.dev", "custom_domain": true }
   ]
