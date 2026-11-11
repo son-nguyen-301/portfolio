@@ -103,7 +103,7 @@ Review brief:
 You review one pull request in son-nguyen-301/portfolio. You did not write it. Do not edit files, commit, push, comment on GitHub or open issues. Only report.
 PR #<n>, branch pf/<id>-<slug>, task PF-0XX (issue #<issue>). Worktree: <path>, checks set up as head/LOOP.md section 9 says.
 1. Read CLAUDE.md, docs/scrum.md (Definition of Done), head/LOOP.md sections 6 and 9, head/DECISIONS.md, the issue and the docs it lists under "Read first".
-2. Run every check yourself: cd app && pnpm lint && pnpm typecheck && pnpm test && pnpm generate && pnpm test:e2e (skip only scripts that do not exist yet on main, as section 9 says). Report the real numbers.
+2. Run every check yourself: cd app && pnpm lint && pnpm typecheck && pnpm generate && pnpm test && pnpm test:e2e (generate before test, so the banned-words guard also scans the built site; skip only scripts that do not exist yet on main, as section 9 says). Report the real numbers.
 3. Read the whole diff: git -C <path> diff origin/main...HEAD
 4. Pass or fail, with file:line: every acceptance item met or listed as a live check; CLAUDE.md hard rules 1 to 7 (no employer name, only facts from app/content, no private notes, Upwork mode hides contact details, no prices, no photo, plain English); no decision changed without a new entry; new code has tests; tests never call real external services; no secret or .env committed.
 5. List every other problem you see.
@@ -113,7 +113,10 @@ Answer: Verdict: approve | changes needed. Checks: <command: pass/fail, count>. 
 ## 8. Merge and close upward
 
 1. One commit on the PR branch: `head/STATUS.md` (task row done with date and PR, live checks owed, a log line), `head/QUEUE.md` (remove this row), `head/DECISIONS.md` (new conventions as the next D-entry). Push.
-2. Merge: `gh api -X PUT repos/son-nguyen-301/portfolio/pulls/<n>/merge -f merge_method=squash`.
+2. **Wait for CI, then merge.** CI runs on GitHub for every ready (non-draft) PR. After the push in step 1, poll the check runs of the PR's head commit every 60 seconds (`gh api repos/son-nguyen-301/portfolio/commits/<head sha>/check-runs`) until the `check` job of the `CI` workflow is completed, for at most 20 minutes.
+   - `success` (or `skipped` because nothing it covers changed): merge with `gh api -X PUT repos/son-nguyen-301/portfolio/pulls/<n>/merge -f merge_method=squash`.
+   - `failure`: a blocker (section 6). Read the failed job's log, fix it on the branch, push, rerun the cloud checks. If the fix changed code, run one more review round (section 7). Then wait for CI again.
+   - Still not completed after 20 minutes, or the merge is refused because a required check is missing: stop and ask Son (section 10).
 3. Close upward:
    - The task issue closes through `Closes #<issue>`. Check it did.
    - A story whose sub-issues are all closed: close it with `state_reason: completed`.
@@ -135,10 +138,12 @@ cd app
 pnpm install --frozen-lockfile
 pnpm lint          # added by PF-001
 pnpm typecheck     # added by PF-001
-pnpm test          # added by PF-002 (Vitest, includes the banned-words guard)
 pnpm generate
+pnpm test          # added by PF-002 (Vitest; the banned-words guard also scans .output/public, so it runs after generate)
 pnpm test:e2e      # added by PF-002 (Playwright against .output/public)
 ```
+
+These are the local checks. CI on GitHub runs the same checks again before every merge (section 8 step 2), and from PF-035 on it is a required check on `main`.
 
 A script that does not exist on `main` yet is skipped only until the task that adds it merges. After that, a missing or failing script is a failing check. A reviewer subagent uses its own worktree and its own `.output`, so it does not race the builder. Never put a real token in `.env`. A check that cannot run in a cloud session is a live check.
 
