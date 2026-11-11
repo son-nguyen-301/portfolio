@@ -6,6 +6,6 @@ groups:
   - name: Server side
     items: [Nitro, Node.js, Express, NestJS, REST APIs, Strapi, Docker, GitHub Actions, Small Django REST fixes]
   - name: AI
-    items: [Claude Code, Plugins, skills and subagents, AI review in CI, MCP, Agent workflows with human checks]
+    items: [Claude Code, "Plugins, skills and subagents", AI review in CI, MCP, Agent workflows with human checks]
   - name: Ways of working
     items: [Leading small teams, Mentoring, Figma handoff, Agile and Scrum, Written updates]
