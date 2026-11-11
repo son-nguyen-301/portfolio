@@ -247,7 +247,7 @@ const scale = [
       </p>
       <div class="clock-sample">
         <TimeOverlap
-          :city="profile.location.split(',')[0] ?? ''"
+          :city="profile.location.split(',')[0]?.trim() ?? ''"
           :utc-offset="profile.utcOffset"
           :start="profile.hours.start"
           :end="profile.hours.end"
