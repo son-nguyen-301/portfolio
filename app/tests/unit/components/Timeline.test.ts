@@ -49,4 +49,34 @@ describe('Timeline', () => {
     expect(entries[0]!.findAll('.timeline__points li').map(li => li.text())).toEqual(['Point A1', 'Point A2'])
     expect(entries[1]!.find('.timeline__type').exists()).toBe(false)
   })
+
+  it('uses the list layout unless told otherwise', () => {
+    expect(wrapper.find('ol').classes()).toContain('timeline--list')
+  })
+})
+
+describe('Timeline with education and the rows layout', () => {
+  const education: TimelineContent['education'] = [
+    { school: 'School A', field: 'Field A', start: '2015-09', end: '2018-09' },
+  ]
+  const wrapper = mount(Timeline, { props: { jobs, education, layout: 'rows' } })
+  const entries = wrapper.findAll('ol > li')
+
+  it('puts education after the jobs, in the same list', () => {
+    expect(entries).toHaveLength(3)
+    expect(entries.map(entry => entry.find('h3').text())).toEqual(['Role A', 'Role B', 'Field A'])
+    expect(entries[2]!.classes()).toContain('timeline__entry--education')
+  })
+
+  it('shows the dates, field and school of a school', () => {
+    const school = entries[2]!
+    expect(school.find('.timeline__when').text()).toBe('Sep 2015 to Sep 2018')
+    expect(school.findAll('time').map(time => time.attributes('datetime'))).toEqual(['2015-09', '2018-09'])
+    expect(school.find('.timeline__place').text()).toBe('School A')
+    expect(school.find('.timeline__points').exists()).toBe(false)
+  })
+
+  it('marks the list with the rows layout', () => {
+    expect(wrapper.find('ol').classes()).toContain('timeline--rows')
+  })
 })
