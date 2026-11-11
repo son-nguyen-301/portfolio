@@ -16,7 +16,7 @@ export interface AboutText {
 // The first sentence becomes the headline, as in docs/design/About.dc.html.
 // Throws when the text has no first sentence, so `pnpm generate` stops.
 export function aboutText(text: string): AboutText {
-  const paragraphs = text.split(/\n\s*\n/).map(part => part.replace(/\s+/g, ' ').trim()).filter(Boolean)
+  const paragraphs = aboutParagraphs(text)
   const first = paragraphs[0] ?? ''
   const match = /^(.+?)\.(?:\s+(.*))?$/.exec(first)
   if (!match) throw new Error('The about text needs a first sentence that ends with a full stop')
@@ -25,6 +25,11 @@ export function aboutText(text: string): AboutText {
     headline: match[1]!,
     paragraphs: [...(rest ? [rest] : []), ...paragraphs.slice(1)],
   }
+}
+
+// The text split at blank lines, each paragraph on one line.
+export function aboutParagraphs(text: string): string[] {
+  return text.split(/\n\s*\n/).map(part => part.replace(/\s+/g, ' ').trim()).filter(Boolean)
 }
 
 export interface Job {

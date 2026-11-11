@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { parse } from 'yaml'
-import { aboutText, companyJob, yearSpan } from '../../app/utils/about'
+import { aboutParagraphs, aboutText, companyJob, yearSpan } from '../../app/utils/about'
 
 const read = (file: string) => parse(readFileSync(fileURLToPath(new URL(`../../content/${file}`, import.meta.url)), 'utf8'))
 
@@ -34,6 +34,12 @@ describe('aboutText', () => {
     expect(headline).toBe('I have built web apps with Vue since 2019')
     const words = (text: string) => text.split(/\s+/).filter(Boolean)
     expect(words(`${headline}. ${paragraphs.join(' ')}`)).toEqual(words(about))
+  })
+})
+
+describe('aboutParagraphs', () => {
+  it('splits at blank lines and puts each paragraph on one line', () => {
+    expect(aboutParagraphs('A\nb.\n\n  \nC.\n')).toEqual(['A b.', 'C.'])
   })
 })
 

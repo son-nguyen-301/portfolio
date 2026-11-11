@@ -108,7 +108,7 @@ test('the earlier projects section has the id `earlier` and every XTEL project',
   await page.goto('/about')
   const section = page.locator('section#earlier')
   await expect(section.getByRole('heading', { level: 2 })).toHaveText('Earlier projects')
-  await expect(section.getByText('Projects I led or built at XTEL, 2019 to 2021.')).toBeVisible()
+  await expect(section.getByText('XTEL, 2019 to 2021', { exact: true })).toBeVisible()
   await expect(section.getByRole('heading', { level: 3 })).toHaveText(earlier.xtel.map(project => project.name))
   await expect(section.locator('.about__project p')).toHaveText(earlier.xtel.map(project => project.summary))
 })

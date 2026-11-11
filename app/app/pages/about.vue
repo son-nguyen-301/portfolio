@@ -19,13 +19,13 @@ const { data: earlier } = await useEarlier()
 
 const about = computed(() => (profile.value ? aboutText(profile.value.about) : undefined))
 
-// "Also at Aspire" and "Projects I led or built at XTEL, 2019 to 2021."
+// "Also at Aspire", and "XTEL, 2019 to 2021" under Earlier projects.
 const aspire = computed(() => (timeline.value ? companyJob(timeline.value.jobs, 'Aspire') : undefined))
 const xtel = computed(() => (timeline.value ? companyJob(timeline.value.jobs, 'XTEL') : undefined))
 
 useSeoMeta({
   title: 'About',
-  description: () => profile.value?.about.split(/\n\s*\n/)[0]?.replace(/\s+/g, ' ').trim(),
+  description: () => (profile.value ? aboutParagraphs(profile.value.about)[0] : undefined),
 })
 </script>
 
@@ -186,7 +186,7 @@ useSeoMeta({
           v-if="xtel"
           class="about__muted"
         >
-          Projects I led or built at {{ xtel.company }}, {{ yearSpan(xtel) }}.
+          {{ xtel.company }}, {{ yearSpan(xtel) }}
         </p>
       </div>
       <ul class="about__projects">
