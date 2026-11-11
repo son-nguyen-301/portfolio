@@ -7,7 +7,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | Sprint | Milestone | Runner tasks | Manual tasks | Status |
 | --- | --- | --- | --- | --- |
 | Sprint 1 - Foundation | #1 | PF-001 to PF-006 | PF-028, PF-032, PF-033, PF-034 | Done. Son reviewed it on 2026-11-11. |
-| Sprint 2 - Trust and home | #2 | PF-007 to PF-011, PF-023, PF-035, PF-039 | PF-025 | In progress (3 of 8 runner tasks done) |
+| Sprint 2 - Trust and home | #2 | PF-007 to PF-011, PF-023, PF-035, PF-039 | PF-025 | In progress (4 of 8 runner tasks done) |
 | Sprint 3 - Proof pages | #3 | PF-012 to PF-016 | PF-029, PF-030 | Not started |
 | Sprint 4 - Remaining pages and sharing | #4 | PF-017 to PF-021 | | Not started |
 | Sprint 5 - Quality and launch | #5 | PF-022, PF-024, PF-031, PF-036, PF-037, PF-038 | PF-026, PF-027 | Not started |
@@ -25,6 +25,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | PF-007 | #33 | Done 2026-11-11 | #75 | Upwork mode: `?from=upwork` and session storage, a head script that marks `<html>` before paint, CSS classes for the header, phone menu and footer, and `useUpworkMode()` for the contact block (D-020). 2 review rounds. |
 | PF-008 | #34 | Done 2026-11-11 | #77 | ContactBlock on the `/contact` placeholder. The built page holds only "Message me on Upwork". Outside Upwork mode, the email and the booking link come from `/contact-details.json` after mount. The build has no copy of the profile collection (D-021). 2 review rounds. |
 | PF-009 | #35 | Done 2026-11-11 | #79 | `useTimeOverlap(visitorOffset, ...)` in `app/app/composables/useTimeOverlap.ts`: shared hours, the shared windows, Son's hours and the visitor's workday, all in the visitor's time, in whole minutes. `formatClock()` writes `HH:MM` (D-022). 1 review round. |
+| PF-010 | #36 | Done 2026-11-11 | #80 | `TimeOverlap` on the home placeholder: both clocks, the 24-hour bar, the sentence, an update every 30 seconds, and one line on phones. The server HTML is the neutral version, and an invisible copy of the longest sentence keeps the height the same after mount (D-023). 3 review rounds. |
 
 ## Live checks Son still owes
 
@@ -37,6 +38,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - PF-007: on a real phone, open `/?from=upwork` (after PF-025), then another page: no Contact link, no call button and no LinkedIn link in the header, phone menu and footer, and "Message me on Upwork" instead, in light and dark. Open the same link from your Upwork profile.
 - PF-008: on a real phone, open `/contact` in light and dark: the email shows, Copy email shows "Copied" and then goes back, and the booking button opens Cal.com. Open `/contact?from=upwork`: only "Message me on Upwork". After PF-023 and PF-025, `/__nuxt_content/profile/sql_dump.txt` and `/dump.profile.sql` on the live site are both 404.
 - PF-009: none. PF-010 draws the clock.
+- PF-010: on a real phone and on a desktop, open the home page in light and dark: the clock shows your own time and the shared hours, and nothing jumps when it fills in.
 
 ## Close pending
 
@@ -53,3 +55,4 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - 2026-11-11: PF-007 merged (#75). Both reviewers approved in rounds 1 and 2. Opened #76 (PF-040, P2, Backlog, Ask Son): with JavaScript off, `/?from=upwork` still shows LinkedIn and the Contact links. Noted on #49 that the CSP needs the hash of the second head script.
 - 2026-11-11: PF-008 merged (#77). Both reviewers approved in rounds 1 and 2. In round 1, a `WORKERS_CI=1` build showed that the Cloudflare preset writes `dump.profile.sql`, so the scan now decodes every gzip-base64 file. Opened #78 (PF-041, P2, Backlog): a flaky keyboard test for the phone menu. Noted on #49: with `WORKERS_CI=1`, the build has no prerendered pages (no `nitro.preset` is set), which may be why Workers Builds fails on `main`. `/contact-details.json` needs `noindex` and a CSP `connect-src` entry. Noted on #37: reserve the contact block's height.
 - 2026-11-11: PF-009 merged (#79). The reviewer approved in round 1, after checking the math against a minute-by-minute count over 200,000 random inputs. Noted on #36 (PF-010): pass `-getTimezoneOffset() / 60`, and the shared hours change with daylight saving (US East has 2 h in summer, Sydney 5 to 6 h, not what the `docs/brief.md` table says). #78 failed once more in this run.
+- 2026-11-11: PF-010 merged (#80). Round 1 approved. Round 2 found that Chrome gives back old zone IDs, so the label said "Calcutta", "Kiev" or "Saigon"; fixed with a map of current city names and browser tests. Round 3 approved. Opened #81 (PF-042, P3, Backlog): four more renamed zones. Noted on #37 (PF-011): `docs/design.md` line 117 differs from the phone mockup, and long city names are cut short in the label. Noted on #78: the flaky keyboard test failed in about half the full runs today.
