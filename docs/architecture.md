@@ -27,7 +27,7 @@ Check current docs before adding modules (for example with the Context7 tool). V
 ### Composables
 
 - `useUpworkMode()`: reads `?from=upwork`, stores it in session storage, returns a reactive boolean. Client-only. Covered by unit tests.
-- `useTimeOverlap(visitorOffset, sonStart = 8, sonEnd = 22, sonOffset = 7, visitorStart = 9, visitorEnd = 17)`: pure math that returns the overlap in the visitor's time, including windows that cross midnight. `visitorOffset` is the visitor's UTC offset in hours (5.5 for UTC+5:30); the caller reads it from the browser. Built in PF-009, in `app/app/composables/useTimeOverlap.ts`. Unit tests for UTC+7, UTC+0, UTC+1, UTC−5, UTC−8, UTC+13 and a half-hour zone (UTC+5:30).
+- `useTimeOverlap(visitorOffset, sonStart = 8, sonEnd = 22, sonOffset = 7, visitorStart = 9, visitorEnd = 17)`: pure math that returns the overlap in the visitor's time, including windows that cross midnight. `visitorOffset` is the visitor's UTC offset in hours, east positive (5.5 for UTC+5:30). The caller reads it from the browser: `Date.getTimezoneOffset()` gives minutes west of UTC, so pass `-new Date().getTimezoneOffset() / 60`. Built in PF-009, in `app/app/composables/useTimeOverlap.ts`. Unit tests for UTC+7, UTC+0, UTC+1, UTC−5, UTC−8, UTC+13 and a half-hour zone (UTC+5:30).
 
 ### CV PDF
 
