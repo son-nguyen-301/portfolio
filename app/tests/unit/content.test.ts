@@ -114,6 +114,18 @@ describe('a broken content folder', () => {
       .toContain('content/services.yml: items.4.proof: no case study "work/nz-ai-team.md"')
   })
 
+  it('fails on a service whose group is not listed in `groups`', () => {
+    expect(broken('services.yml', text => text.replace(/^ {2}- name: Lead\n {4}note: .*\n/m, '')))
+      .toContain('content/services.yml: items.5.group: "Lead" is not in `groups`')
+  })
+
+  it('fails on a group listed twice, or a group with no service', () => {
+    expect(broken('services.yml', text => text.replace('  - name: AI\n', '  - name: Frontend\n')))
+      .toContain('content/services.yml: groups.1.name: "Frontend" is listed twice')
+    expect(broken('services.yml', text => text.replace('group: Lead', 'group: AI')))
+      .toContain('content/services.yml: groups.2.name: "Lead" has no service')
+  })
+
   it('fails on a file that no collection reads', () => {
     dir = mkdtempSync(join(tmpdir(), 'content-'))
     cpSync(contentDir, dir, { recursive: true })

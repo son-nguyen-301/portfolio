@@ -1,3 +1,13 @@
+# The /services page (PF-015): the intro under the title, then the groups in
+# this order, each with its note, and the services of that group.
+intro: "I lead with frontend. I also build the server side of my apps, and AI workflows for your team."
+groups:
+  - name: Frontend
+    note: "My main work. Senior level."
+  - name: AI
+    note: "For teams that want AI help, with a person checking each step."
+  - name: Lead
+    note: "Part-time, next to your team."
 items:
   - id: speed
     group: Frontend
