@@ -20,12 +20,41 @@ function files(dir: string): string[] {
   })
 }
 
+// Drops comments, so a sentence like "never import values from shared/" is
+// not read as an import. Walks the code once and skips strings, so `//` inside
+// '//cdn.example.com' is not a comment. A template literal counts as one
+// string, `${...}` included; no import is written inside one. A quote inside
+// a regex literal would confuse it; no app file has one before an import.
+function withoutComments(code: string): string {
+  let out = ''
+  let quote = ''
+  for (let i = 0; i < code.length; i++) {
+    const char = code[i]!
+    if (quote) {
+      out += char
+      if (char === '\\') out += code[++i] ?? ''
+      else if (char === quote) quote = ''
+    }
+    else if (char === '/' && code[i + 1] === '/') {
+      while (i < code.length && code[i] !== '\n') i++
+      out += '\n'
+    }
+    else if (char === '/' && code[i + 1] === '*') {
+      const end = code.indexOf('*/', i + 2)
+      i = end === -1 ? code.length : end + 1
+    }
+    else {
+      if (char === '\'' || char === '"' || char === '`') quote = char
+      out += char
+    }
+  }
+  return out
+}
+
 // Every static `import ... from '...'` and `export ... from '...'`, and
 // every dynamic `import('...')`, with whether it is type-only.
 function imports(code: string): Array<{ from: string, typeOnly: boolean }> {
-  // Comments first, so a sentence like "never import values from shared/"
-  // is not read as an import. `://` in a URL is not a comment.
-  const source = code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1')
+  const source = withoutComments(code)
   const found: Array<{ from: string, typeOnly: boolean }> = []
   const statement = /\b(?:import|export)\s+(type\s+)?([^'"`;]*?)\s*from\s*['"]([^'"]+)['"]/g
   for (const match of source.matchAll(statement)) {
@@ -37,6 +66,14 @@ function imports(code: string): Array<{ from: string, typeOnly: boolean }> {
   for (const match of source.matchAll(/\bimport\s+['"]([^'"]+)['"]/g)) found.push({ from: match[1]!, typeOnly: false })
   for (const match of source.matchAll(/\bimport\(\s*['"]([^'"]+)['"]\s*\)/g)) found.push({ from: match[1]!, typeOnly: false })
   return found
+}
+
+// The code to scan: the <script> blocks of a .vue file (template text such as
+// "don't" would read as an open string), or the whole of a .ts file.
+function code(file: string): string {
+  const text = readFileSync(file, 'utf8')
+  if (!file.endsWith('.vue')) return text
+  return [...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(match => match[1]).join('\n')
 }
 
 function intoShared(file: string, from: string): boolean {
@@ -59,6 +96,7 @@ describe('imports from shared/', () => {
       `// never import values from '#shared/comment'`,
       `/* import { i } from '#shared/block' */`,
       `const url = 'https://example.com'`,
+      `const cdn = '//cdn.example.com'; import { j } from '#shared/after-string'`,
     ].join('\n'))
     expect(found).toEqual([
       { from: '../../shared/x', typeOnly: false },
@@ -66,6 +104,7 @@ describe('imports from shared/', () => {
       { from: '#shared/z', typeOnly: true },
       { from: '#shared/w', typeOnly: false },
       { from: '../shared/v', typeOnly: false },
+      { from: '#shared/after-string', typeOnly: false },
       { from: '../shared/side-effect', typeOnly: false },
       { from: '#shared/lazy', typeOnly: false },
     ])
@@ -77,7 +116,7 @@ describe('imports from shared/', () => {
   // every .vue file in app/app, not only app/app/components.
   it.each(appFiles.filter(file => file.endsWith('.vue')).map(file => [relative(root, file), file]))(
     '%s imports no values from shared/', (_name, file) => {
-      const values = imports(readFileSync(file, 'utf8')).filter(item => !item.typeOnly && intoShared(file, item.from))
+      const values = imports(code(file)).filter(item => !item.typeOnly && intoShared(file, item.from))
       expect(values.map(item => item.from)).toEqual([])
     },
   )
@@ -86,7 +125,7 @@ describe('imports from shared/', () => {
   // relative path to shared/, which fails the build.
   it.each(appFiles.filter(file => file.endsWith('.ts')).map(file => [relative(root, file), file]))(
     '%s imports no values from shared/ by a relative path', (_name, file) => {
-      const values = imports(readFileSync(file, 'utf8')).filter(item => !item.typeOnly && item.from.startsWith('.') && intoShared(file, item.from))
+      const values = imports(code(file)).filter(item => !item.typeOnly && item.from.startsWith('.') && intoShared(file, item.from))
       expect(values.map(item => item.from)).toEqual([])
     },
   )

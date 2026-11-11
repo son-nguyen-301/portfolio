@@ -1,5 +1,6 @@
 // The theme choice: light, dark, or follow the system setting.
-// Used by the ThemeSwitch component and by the head script in nuxt.config.ts.
+// Used by useTheme() and by the head script in nuxt.config.ts. ThemeSwitch
+// imports only the type, and gets the list through useTheme() (D-027).
 
 export const themes = ['light', 'dark', 'system'] as const
 export type Theme = typeof themes[number]

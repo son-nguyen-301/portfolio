@@ -10,13 +10,16 @@ const timeline = parse(readFileSync(fileURLToPath(new URL('../../content/timelin
   jobs: Array<{ role: string, company: string, start: string, end: string | null }>
 }
 
+// A company name may hold ".", "(" or "+", which mean something in a RegExp.
+const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 test('the built About page lists every job from timeline.yml, newest first', async ({ page }) => {
   await page.goto('/about/')
   const career = page.getByRole('region', { name: 'Career' })
   const entries = career.locator('.timeline__entry')
   await expect(entries).toHaveCount(timeline.jobs.length)
   await expect(career.getByRole('heading', { level: 3 })).toHaveText(timeline.jobs.map(job => job.role))
-  await expect(entries.locator('.timeline__place')).toHaveText(timeline.jobs.map(job => new RegExp(`^${job.company} · `)))
+  await expect(entries.locator('.timeline__place')).toHaveText(timeline.jobs.map(job => new RegExp(`^${escape(job.company)} · `)))
 })
 
 test('the dates are written in the built HTML, not only after mount', async ({ request }) => {
