@@ -49,6 +49,7 @@ Build `/cv` with a print stylesheet. A script (`pnpm cv:pdf`) prints `/cv` to `a
     "not_found_handling": "404-page",
     "html_handling": "drop-trailing-slash"
   },
+  "previews": {},
   "routes": [
     { "pattern": "me.haisonnguyen.dev", "custom_domain": true }
   ]
@@ -78,7 +79,8 @@ Use **Workers Builds** (Cloudflare's Git integration). Cloudflare builds on ever
 - Repository: `son-nguyen-301/portfolio`, production branch `main`
 - Root directory: `app`
 - Build command: `pnpm install --frozen-lockfile && pnpm generate`
-- Deploy command: `npx wrangler deploy`
+- Deploy command: `npx wrangler deploy` (builds of `main`)
+- Preview command: `npx wrangler preview` (builds of every other branch, for pull requests). This command needs a `previews` block in `wrangler.jsonc`. Ours is empty (`"previews": {}`) because the site has no bindings or variables.
 
 Son connects the repo in the Cloudflare dashboard (Workers & Pages → Create → Import a repository). If he prefers GitHub Actions instead, use `cloudflare/wrangler-action` with a `CLOUDFLARE_API_TOKEN` secret.
 
