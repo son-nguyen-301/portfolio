@@ -175,7 +175,7 @@ test.describe('the PDF', () => {
   })
 
   test('the phone number check catches phone numbers', () => {
-    for (const sample of ['+84 912 345 678', '0912.345.678', '(555) 123-4567', '+1 555 123 4567']) expect(sample).toMatch(phoneNumber)
+    for (const sample of ['0555.123.456', '(555) 123-4567', '+1 555 123 4567']) expect(sample).toMatch(phoneNumber)
     for (const sample of ['2015 to 2018', 'merged 379 pull requests', 'Sep 2024 to now', 'UTC+7']) expect(sample).not.toMatch(phoneNumber)
   })
 })

@@ -49,8 +49,9 @@ describe('banned-words guard', () => {
     expect(formatHits(hits, repo, banned)).toBe('')
   })
 
-  // The guard reads a PDF's file name but not its packed bytes, so the text of
-  // every PDF in app/public, in git and in the build is read here (the CV, PF-018).
+  // The scans above read a PDF's bytes, where its page text is packed, so the
+  // text of every PDF in app/public, in git and in the build is read here too
+  // (the CV, PF-018).
   it('finds nothing in the text of any PDF', async () => {
     const files = [
       ...allFiles([`${root}/public`]),

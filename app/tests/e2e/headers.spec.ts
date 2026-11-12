@@ -71,7 +71,7 @@ test('_headers sets the security headers on every path', () => {
 test('_headers caches /_nuxt/ for a year and never caches the service worker', () => {
   expect(rules.get('/_nuxt/*')).toEqual({ headers: new Map([['cache-control', 'public, max-age=31536000, immutable']]), detach: ['cache-control'] })
   expect(rules.get('/_nuxt-skew-sw.js')).toEqual({ headers: new Map([['cache-control', 'no-cache']]), detach: ['cache-control'] })
-  for (const path of ['/contact-details.json', '/200', '/404']) expect(rules.get(path)?.headers.get('x-robots-tag')).toBe('noindex')
+  for (const path of ['/contact-details.json', '/cv/hai-son-nguyen-cv.pdf', '/200', '/404']) expect(rules.get(path)?.headers.get('x-robots-tag')).toBe('noindex')
 })
 
 test('_headers keeps the Markdown rule that nuxt-ai-ready adds after it', () => {

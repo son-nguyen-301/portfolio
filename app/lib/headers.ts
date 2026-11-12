@@ -113,6 +113,11 @@ export function headerRules(scriptHashes: string[]): HeaderRule[] {
       headers: { 'X-Robots-Tag': 'noindex' },
     },
     {
+      // The CV PDF holds the email too (D-033). Keep it out of search.
+      path: '/cv/hai-son-nguyen-cv.pdf',
+      headers: { 'X-Robots-Tag': 'noindex' },
+    },
+    {
       // The app's fallback page, which Workers serves at /200.
       path: '/200',
       headers: { 'X-Robots-Tag': 'noindex' },
