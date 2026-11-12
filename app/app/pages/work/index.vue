@@ -10,7 +10,7 @@ const { data: work } = await useWorkCards()
 
 useSeoMeta({
   title: 'Work',
-  description: () => profile.value?.workList.intro,
+  description: () => (profile.value ? metaDescription(profile.value.workList.intro) : undefined),
 })
 </script>
 

@@ -45,8 +45,24 @@ const client = computed(() => words(study.value?.client ?? ''))
 
 useSeoMeta({
   title: study.value.title,
-  description: study.value.summary,
+  description: metaDescription(study.value.summary),
 })
+
+// The case study as a schema.org CreativeWork, by Son: its author is the
+// Person node that app.vue adds as the site's identity (D-036). A custom node
+// gets no URL resolving, so its ids are full URLs, as the module writes them.
+const siteUrl = useSiteConfig().url
+const pageUrl = `${siteUrl}${path}`
+useSchemaOrg([{
+  '@type': 'CreativeWork',
+  '@id': `${pageUrl}#creativework`,
+  'name': study.value.title,
+  'description': study.value.summary,
+  'url': pageUrl,
+  'keywords': study.value.stack,
+  'author': { '@id': `${siteUrl}/#identity` },
+  'mainEntityOfPage': { '@id': `${pageUrl}#webpage` },
+}])
 </script>
 
 <template>

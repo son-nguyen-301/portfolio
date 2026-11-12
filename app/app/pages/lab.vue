@@ -5,7 +5,10 @@
 // makes claims that are not in content (D-034).
 const { data: projects } = await useLabProjects()
 
-useSeoMeta({ title: 'Lab' })
+useSeoMeta({
+  title: 'Lab',
+  description: () => labDescription((projects.value ?? []).map(project => project.name)),
+})
 </script>
 
 <template>

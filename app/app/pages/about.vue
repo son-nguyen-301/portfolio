@@ -25,7 +25,7 @@ const xtel = computed(() => (timeline.value ? companyJob(timeline.value.jobs, 'X
 
 useSeoMeta({
   title: 'About',
-  description: () => (profile.value ? aboutParagraphs(profile.value.about)[0] : undefined),
+  description: () => (profile.value ? metaDescription(aboutParagraphs(profile.value.about)[0]) : undefined),
 })
 </script>
 

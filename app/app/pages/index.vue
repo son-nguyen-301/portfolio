@@ -24,7 +24,8 @@ const step = (i: number) => String(i + 1).padStart(2, '0')
 
 useSeoMeta({
   title: () => profile.value?.title,
-  description: () => (profile.value ? `${profile.value.hero.headline} ${profile.value.hero.subline}` : undefined),
+  // The headline and as much of the subline as fits (app/utils/seo.ts).
+  description: () => (profile.value ? metaDescription(profile.value.hero.headline, profile.value.hero.subline) : undefined),
 })
 </script>
 

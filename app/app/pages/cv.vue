@@ -45,7 +45,7 @@ function print() {
 
 useSeoMeta({
   title: 'CV',
-  description: () => profile.value?.hero.subline,
+  description: () => (profile.value ? metaDescription(profile.value.hero.subline) : undefined),
 })
 </script>
 

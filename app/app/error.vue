@@ -9,7 +9,17 @@ const props = defineProps<{ error: NuxtError }>()
 
 const notFound = computed(() => props.error.statusCode === 404)
 
-useSeoMeta({ title: () => (notFound.value ? 'Page not found' : 'Something went wrong'), robots: 'noindex' })
+// The first line of the text, which is also the page's description.
+const firstLine = computed(() => (notFound.value ? 'The link may be old, or there may be a typo in it.' : 'Please try again, or start from the home page.'))
+
+// The SEO module drops the title template on error pages, so the site name is
+// added here (D-036).
+const site = useSiteConfig()
+useSeoMeta({
+  title: () => `${notFound.value ? 'Page not found' : 'Something went wrong'} | ${site.name}`,
+  description: () => firstLine.value,
+  robots: 'noindex',
+})
 </script>
 
 <template>
@@ -20,9 +30,7 @@ useSeoMeta({ title: () => (notFound.value ? 'Page not found' : 'Something went w
       </p>
       <h1>{{ notFound ? 'This page doesn\'t exist' : 'Something went wrong' }}</h1>
       <p class="lead error-page__text">
-        {{ notFound
-          ? 'The link may be old, or there may be a typo in it. These two pages are a good place to start.'
-          : 'Please try again, or start from the home page.' }}
+        {{ notFound ? `${firstLine} These two pages are a good place to start.` : firstLine }}
       </p>
       <div class="error-page__actions">
         <AppButton
