@@ -28,33 +28,40 @@ const PIECE_BREAK = /(?<=\p{Ll})(?=\p{Lu})|(?<=\p{Lu})(?=\p{Lu}\p{Ll})|(?<=\p{L}
 // spaces, dots, dashes, slashes, underscores or brackets between them. The lookbehind skips sums in
 // minified code, like `a+84000000`. Runs after entities and %-codes are decoded,
 // so `&#43;84` and `%2B84` are caught too.
-// A word of 3 or more letters may come right before it (`call+84…`), but not a
-// digit or a name of 1 or 2 letters, which is what minified code uses.
-const VN_PHONE = /(?<![\p{N}_$)\]])(?<!(?:^|[^\p{L}\p{N}_$])[\p{L}$]{1,2})(?:\+|00)\s?84(?:[\s.\-\u2010-\u2015()/_]*\d){8,10}/gu
+// A word of 3 or more letters may come right before `+84` (`call+84…`), but not
+// a digit or a name of 1 or 2 letters, which is what minified code uses. Before
+// `0084` no letter or digit may come, so a hash like `beef0084…` passes.
+const VN_PHONE = /(?:(?<![\p{N}_$)\]])(?<!(?:^|[^\p{L}\p{N}_$])[\p{L}$]{1,2})\+|(?<![\p{L}\p{N}_$)\]])00)\s?84(?:[\s.\-\u2010-\u2015()/_]*\d){8,10}/gu
 // A WhatsApp link to a Vietnamese number: `wa.me/84…` or `phone=84…`, with or
 // without separators between the digits.
 const VN_WHATSAPP = /(?:wa\.me\/|phone=)\+?84(?:[\s.\-\u2010-\u2015()/_]*\d){8,10}/gu
 // Invisible characters, like a zero-width space, a soft hyphen, a variation
 // selector or a Hangul filler, plus the blank Braille pattern.
 const INVISIBLE = /[\p{Default_Ignorable_Code_Point}\u2800]/gu
-// An HTML or XML tag, like `<b>`, `</span>` or `<wbr/>`. Removed in a second
-// pass, so `<b>Exa</b>mple` reads as `Example`.
-const TAG = /<\/?[a-z][\w:-]*(?:\s[^<>]*)?\/?>/gi
+// An HTML or XML tag, like `<b>`, `</span>` or `<wbr/>`, or an HTML comment.
+// A quoted attribute may hold `>`. Removed in a second pass, so `<b>Exa</b>mple`
+// reads as `Example`.
+const TAG = /<!--[\s\S]*?-->|<\/?[a-z][\w:-]*(?:\s(?:[^<>"']|"[^"]*"|'[^']*')*)?\/?>/gi
 // A JS escape (`\u0045`, `\u{45}`, `\x45`) or a CSS escape (`\45 `).
 const ESCAPE = /\\u\{([0-9a-f]{1,6})\}|\\u([0-9a-f]{4})|\\x([0-9a-f]{2})|\\([0-9a-f]{1,6}) ?/gi
 // How many words in a row are joined and checked as one, so `Example Corp`,
-// `EXAMPLE_CORP` and `**Exa**mple` all give `examplecorp`.
+// `EXAMPLE_CORP` and `**Exa**mple` all give `examplecorp`. Always up to 4
+// words. More, up to 16, while the joined word is at most 32 letters long, so
+// `E x a m p l e C o r p` is caught too.
 const MAX_JOINED = 4
+const MAX_JOINED_PIECES = 16
+const MAX_JOINED_LENGTH = 32
 // Anything but a letter, a digit, a space or a soft mark (`-`, `_`, `.`, `*`,
-// `~`, a backtick) ends a stretch of words that may be joined.
-const HARD_BREAK = /[^\p{L}\p{M}\p{N}\s\-_.*~`]+/u
+// `~`, a backtick, a backslash) ends a stretch of words that may be joined.
+const HARD_BREAK = /[^\p{L}\p{M}\p{N}\s\-_.*~`\\]+/u
 
-// Cyrillic and Greek letters that look like Latin ones. NFKC does not fold
-// them, so `Ехаmple` written with Cyrillic letters is folded here.
+// Cyrillic, Greek and Armenian letters that look like Latin ones. NFKC does
+// not fold them, so `Ехаmple` written with Cyrillic letters is folded here.
 const CONFUSABLE: Record<string, string> = {
-  а: 'a', с: 'c', ԁ: 'd', е: 'e', һ: 'h', і: 'i', ј: 'j', к: 'k', ӏ: 'l', о: 'o', р: 'p', ԛ: 'q', ѕ: 's', у: 'y', х: 'x', ԝ: 'w',
-  А: 'A', В: 'B', С: 'C', Е: 'E', Н: 'H', І: 'I', Ј: 'J', К: 'K', М: 'M', О: 'O', Р: 'P', Ԛ: 'Q', Ѕ: 'S', Т: 'T', Х: 'X', У: 'Y', Ԝ: 'W', Ӏ: 'I',
+  а: 'a', с: 'c', ԁ: 'd', е: 'e', һ: 'h', і: 'i', ј: 'j', к: 'k', ӏ: 'l', о: 'o', р: 'p', ԛ: 'q', ѕ: 's', у: 'y', ү: 'y', х: 'x', ԝ: 'w',
+  А: 'A', В: 'B', С: 'C', Е: 'E', Н: 'H', І: 'I', Ј: 'J', К: 'K', М: 'M', О: 'O', Р: 'P', Ԛ: 'Q', Ѕ: 'S', Т: 'T', Х: 'X', У: 'Y', Ԝ: 'W', Ӏ: 'I', Ү: 'Y',
   α: 'a', ϲ: 'c', ε: 'e', ι: 'i', ϳ: 'j', κ: 'k', ν: 'v', ο: 'o', ρ: 'p', υ: 'u', χ: 'x',
+  օ: 'o', ս: 'u', հ: 'h', ո: 'n', ց: 'g', զ: 'q', Օ: 'O', Ս: 'U',
   Α: 'A', Β: 'B', Ϲ: 'C', Ε: 'E', Η: 'H', Ι: 'I', Κ: 'K', Μ: 'M', Ν: 'N', Ο: 'O', Ρ: 'P', Τ: 'T', Υ: 'Y', Χ: 'X', Ζ: 'Z',
 }
 const CONFUSABLES = new RegExp(`[${Object.keys(CONFUSABLE).join('')}]`, 'gu')
@@ -121,7 +128,7 @@ export function decodeEscapes(text: string): string {
   })
 }
 
-/** Folds Cyrillic and Greek letters that look like Latin ones into Latin. */
+/** Folds Cyrillic, Greek and Armenian letters that look like Latin ones into Latin. */
 export function foldConfusables(text: string): string {
   return text.normalize('NFD').replace(CONFUSABLES, letter => CONFUSABLE[letter] ?? letter).normalize('NFC')
 }
@@ -164,14 +171,16 @@ function wordsOf(clean: string): string[] {
 
 /**
  * The ways a line can read once its tricks are undone: the line itself, then
- * with JS and CSS escapes decoded, with tags removed, and with Cyrillic and
- * Greek lookalikes folded to Latin. Each is normalized. A pass is kept beside
+ * with JS and CSS escapes decoded (also when an entity or a %-code hid the
+ * backslash), with tags removed, and with lookalike letters folded to Latin. Each is normalized. A pass is kept beside
  * the line, never in its place, so a word in a tag's attribute or next to a
  * regex `\b` is still read as it is.
  */
 export function readings(text: string): string[] {
-  const found = new Set([normalize(text)])
+  const plain = normalize(text)
+  const found = new Set([plain])
   if (text.includes('\\')) found.add(normalize(decodeEscapes(text)))
+  if (plain.includes('\\')) found.add(normalize(decodeEscapes(plain)))
   for (const clean of [...found]) if (clean.includes('<')) found.add(clean.replace(TAG, ''))
   for (const clean of [...found]) {
     const folded = foldConfusables(clean)
@@ -181,7 +190,7 @@ export function readings(text: string): string[] {
 }
 
 /**
- * Adds up to MAX_JOINED words in a row, joined with nothing and with a space,
+ * Adds runs of words in a row (see MAX_JOINED), joined with nothing and with a space,
  * so a name split by a space, a dash, a dot, an underscore or Markdown marks is
  * still checked whole.
  */
@@ -202,7 +211,9 @@ function addJoinedWords(clean: string, found: Set<string>): void {
     for (let i = 0; i < run.length; i++) {
       let glued = run[i] ?? ''
       let spaced = glued
-      for (let j = i + 1; j < Math.min(i + MAX_JOINED, run.length); j++) {
+      const last = Math.min(i + MAX_JOINED_PIECES, run.length)
+      for (let j = i + 1; j < last; j++) {
+        if (j >= i + MAX_JOINED && glued.length + (run[j]?.length ?? 0) > MAX_JOINED_LENGTH) break
         glued += run[j]
         spaced += ` ${run[j]}`
         found.add(glued)

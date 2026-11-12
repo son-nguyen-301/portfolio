@@ -80,6 +80,7 @@ describe('decodeEscapes', () => {
 describe('foldConfusables', () => {
   it('folds Cyrillic and Greek letters that look like Latin ones', () => {
     expect(foldConfusables('\u0415\u0445\u0430mple \u03BFk')).toBe('Example ok')
+    expect(foldConfusables('\u04AF\u0585\u057D')).toBe('you')
   })
 
   it('keeps Vietnamese letters as they are', () => {
@@ -105,7 +106,11 @@ describe('candidates', () => {
     expect(candidates('one two-three_four five')).toEqual(expect.arrayContaining([
       'onetwo', 'one two', 'onetwothreefour', 'one two three four', 'twothreefourfive',
     ]))
-    expect(candidates('one two three four five')).not.toContain('onetwothreefourfive')
+  })
+
+  it('joins more than four words only while the joined word is short', () => {
+    expect(candidates('e x a m p l e c o r p')).toContain('examplecorp')
+    expect(candidates('alphabet bravissimo charlieee deltaforce echo')).not.toContain('alphabetbravissimocharlieeedeltaforceecho')
   })
 
   it('does not join words across code marks', () => {
@@ -170,6 +175,14 @@ describe('scanText', () => {
     ['twice-encoded %-codes', 'https://x.test/?q=%2545xampleCorp'],
     ['twice-encoded entities', '&amp;#69;xampleCorp'],
     ['a regex word break', 'const re = /\\bExampleCorp/'],
+    ['dashes between five pieces', 'ex-am-ple-co-rp'],
+    ['Markdown bold on five pieces', '**Ex**am**ple**Co**rp**'],
+    ['a space after every letter', 'E x a m p l e C o r p'],
+    ['an HTML comment', 'Exa<!-- -->mpleCorp'],
+    ['a > inside a quoted attribute', 'Exa<span data-x="1>2">mple</span>Corp'],
+    ['a Markdown escape', 'Example\\_Corp'],
+    ['an Armenian letter', 'examplec\u0585rp'],
+    ['an escape hidden by an entity', '&#92;u0045xampleCorp'],
   ])('fails on a banned word hidden by %s', (_, text) => {
     expect(scanText(text, banned).map(hit => hit.detail)).toContain(sha256(SAMPLE))
   })
@@ -214,6 +227,9 @@ describe('scanText', () => {
     'f(1)+841234567',
     'id=1008412345678',
     'n=ab+840000000',
+    'deadbeef008412345678',
+    'sha:9c00841234567890ab',
+    'id: "d5e0084123-4567-8901"',
   ])('passes %s', (text) => {
     expect(scanText(text, banned)).toEqual([])
   })
