@@ -33,6 +33,8 @@ Check current docs before adding modules (for example with the Context7 tool). V
 
 Build `/cv` with a print stylesheet. A script (`pnpm cv:pdf`) prints `/cv` to `app/public/cv/hai-son-nguyen-cv.pdf` with Playwright. The PDF shows the email but never the phone number. The download link is hidden in Upwork mode.
 
+Built by PF-018 (D-033). Make the PDF after any change to the CV's content: `pnpm generate`, then `pnpm cv:pdf`, then `pnpm generate` again, and commit the PDF. `pnpm cv:pdf` (`app/scripts/cv-pdf.ts`) serves `.output/public`, opens `/cv` in Chromium in the light theme, waits for the email and prints the page as A4. `tests/e2e/cv.spec.ts` fails when the PDF's text differs from the printed page, so an old PDF can't reach `main`.
+
 ## Hosting on Cloudflare
 
 ### Worker config
