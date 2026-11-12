@@ -2,6 +2,8 @@
 // The repo is public, so the words to block are stored only as SHA-256 hashes
 // (head/DECISIONS.md D-004). Reports name the file, the line and the hash,
 // never the plain word, so CI logs don't leak it either.
+// The hashes stop a name from slipping in by mistake. They don't keep the list
+// secret: anyone who guesses a word can hash it and compare (D-041).
 import { createHash } from 'node:crypto'
 import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { extname, join, relative } from 'node:path'

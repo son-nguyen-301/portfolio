@@ -10,7 +10,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | Sprint 2 - Trust and home | #2 | PF-007 to PF-011, PF-023, PF-035, PF-039 | PF-025 | Done. Milestone closed on 2026-11-11. |
 | Sprint 3 - Proof pages | #3 | PF-012 to PF-016 | PF-029, PF-030 | Runner tasks done on 2026-11-11. Waits on Son's review and the manual tasks PF-029 and PF-030. |
 | Sprint 4 - Remaining pages and sharing | #4 | PF-017 to PF-021, PF-054 | | Runner tasks done on 2026-11-12. Waits on Son's review. |
-| Sprint 5 - Quality and launch | #5 | PF-022, PF-024, PF-031, PF-036, PF-037, PF-038 | PF-026, PF-027 | In progress. PF-022, PF-024 and PF-036 done on 2026-11-12. |
+| Sprint 5 - Quality and launch | #5 | PF-022, PF-024, PF-031, PF-036, PF-037, PF-038 | PF-026, PF-027 | In progress. PF-022, PF-024, PF-036 and PF-037 done on 2026-11-12. |
 
 ## Tasks
 
@@ -45,6 +45,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | PF-055 | #112 | Done 2026-11-12 | #113 | Closed by PF-022: with `zeroRuntime` on, the browser JavaScript holds no build path, and `tests/e2e/seo.spec.ts` checks it. The image tags no longer follow a client-side navigation, as Son accepted. |
 | PF-024 | #50 | Done 2026-11-12 | #114 | The footer reads "Lighthouse 100, 110 KB of JavaScript" from `siteStats` in `profile.yml`, and `pnpm test:quality` fails when the home page drifts more than 5 from it. A link checker over the built site runs in `pnpm test:e2e` (815 links, 0 problems). `pnpm report:todo` lists the TODOs and drafts left, and `docs/open-items.md` must match it. The root README has the final commands (D-039). 3 review rounds. |
 | PF-036 | #66 | Done 2026-11-12 | #117 | The banned-words guard reads each line also with escapes decoded, tags and comments removed and lookalike letters folded, decodes up to 3 rounds, and joins words split by spaces, dashes, dots, underscores and Markdown marks (D-040). 2 review rounds. |
+| PF-037 | #67 | Done 2026-11-12 | #119 | Son's pick (a): the banned-words hashes stay in the repo. D-041 says they stop a name from slipping in by mistake but don't keep the list secret, and D-004, `tests/guard.ts` and `app/README.md` point to it. 1 review round. |
 
 ## Live checks Son still owes
 
@@ -75,6 +76,8 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - PF-021: after deploy, open the home page and one case study, view the page source, and open the `og:image` link: the image shows, so Workers Builds drew it. Check both pages in LinkedIn Post Inspector: the image, title and description show. Paste one link into an Upwork message draft (do not send) and check the preview. Say if you want the job title left off the home image, where the label already says it.
 - PF-022: after launch, run Lighthouse mobile on the live home page and one case study: the scores should match PR #113. In DevTools, check the home page's script transfer size with the encoding the browser gets: under 115 KB. Check one page in LinkedIn Post Inspector: the preview image still shows. Add `pnpm test:quality` to `head/LOOP.md` section 9 in a flow PR (task PRs never edit it).
 - PF-024: after launch, run Lighthouse mobile on the live home page and check its script transfer size in DevTools. If either is more than 5 from the footer, update `siteStats` in `app/content/profile.yml`. Look at the footer on a real phone and a desktop, in light and dark. Run `pnpm report:todo` after each content change and keep `docs/open-items.md` in step.
+- PF-036: none.
+- PF-037: none.
 
 ## Close pending
 
@@ -109,3 +112,4 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - 2026-11-12: Sprint 5 started. PF-022 merged (#113), and it closes PF-055 (#112). Son answered twice in the PR. First he chose a brotli budget and `zeroRuntime` on. Round 1 then found that Cloudflare sends brotli at quality 4 (checked on the live site), not 11, so the home page is 109.5 KB, not 96.3 KB. He then chose a 115 KB ceiling and accepted that the 404 page's SEO is not counted. Round 2: both reviewers approved. The small items are fixed in the approve commit. An outside account also commented "Option 1" before Son did; it was not acted on.
 - 2026-11-12: PF-024 merged (#114). Round 1: both approved; small link checker fixes (a broken %-escape, ids in scripts, one site URL constant). Round 2: both approved; the checker also reads `xlink:href` and the schema.org URLs. Opened #115 (PF-056, P2, Backlog): a docs-only PR that edits `docs/open-items.md` skips the test that checks it. Round 3: the security reviewer approved; the other asked for the PF-056 queue row (added in the approve commit) and listed six small edge cases with no hit on today's site, which went to #116 (PF-057, P3, Backlog) because no review round was left to check new code. Noted on #78 that the phone menu test fails in most local full runs, on `main` too. "Workers Builds: portfolio" passed on this PR's commits. Next: PF-036 (#66), then PF-037 and PF-038. PF-031 waits on PF-029 and PF-030.
 - 2026-11-12: PF-036 merged (#117). Round 1: changes needed; a hash like `beef0084…` gave a phone hit, and D-040 was missing. Both fixed, with longer joins, HTML comments, quoted `>`, Armenian lookalikes and escapes hidden by entities. Round 2: approved; comment cleanup and more D-040 limits in the approve commit. Opened #118 (PF-058, P3, Backlog): Unicode dashes and the phone de-duplication. One local e2e run had one failure that passed on rerun, likely #78. Next: PF-037 (#67), then PF-038 (#71). PF-031 waits on PF-029 and PF-030.
+- 2026-11-12: PF-037 merged (#119). Son had picked option (a) in #67. Round 1 approved; its two wording fixes (D-041 names joined words, emails and domains too, and its Replaces column is "—") are in the approve commit.
