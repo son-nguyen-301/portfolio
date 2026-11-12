@@ -103,9 +103,12 @@ describe('headersFile', () => {
     }
   })
 
-  it('keeps the contact file out of search', () => {
-    const at = lines.indexOf('/contact-details.json')
-    expect(lines[at + 1]).toBe('  X-Robots-Tag: noindex')
+  it('keeps the contact file and the CV PDF out of search', () => {
+    for (const path of ['/contact-details.json', '/cv/hai-son-nguyen-cv.pdf']) {
+      const at = lines.indexOf(path)
+      expect(at, path).toBeGreaterThan(-1)
+      expect(lines[at + 1]).toBe('  X-Robots-Tag: noindex')
+    }
   })
 
   it('keeps the fallback and 404 pages out of search', () => {

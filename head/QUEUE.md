@@ -25,7 +25,7 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 
 | Pos | Sprint | Priority | ID | Issue | Needs | Added by | Why here |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 4 | P1 | PF-018 | #44 | #42, #33 | head | CV page for recruiters |
+| 1 | 4 | P0 | PF-054 | #106 | none | loop | Found in PR #105. `main` fails the guard test; the CV PDF needs `noindex` |
 | 2 | 4 | P2 | PF-017 | #43 | #40 | head | P2, moved above P1 PF-020 because SEO covers every page |
 | 3 | 4 | P2 | PF-019 | #45 | #34, #36 | head | P2, moved above P1 PF-020 because SEO covers every page |
 | 4 | 4 | P1 | PF-020 | #46 | #39, #41, #42, #43, #44, #45 | head | SEO once every page exists |

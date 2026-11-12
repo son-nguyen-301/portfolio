@@ -39,12 +39,13 @@ const NAMED_ENTITIES: Record<string, string> = {
   amp: '&', lt: '<', gt: '>', quot: '"', apos: '\'', nbsp: ' ', shy: '\u00AD', plus: '+', period: '.', commat: '@',
 }
 
-// Files we can't read as text. Everything else is scanned. A PDF's text is
-// packed, so tests/unit/banned-words.test.ts reads it with tests/pdf.ts.
+// Files we can't read as text. Everything else is scanned. A PDF is scanned
+// too, for its link addresses and title, which are plain bytes. Its page text
+// is packed, so tests/unit/banned-words.test.ts reads that with tests/pdf.ts.
 const BINARY = new Set([
   '.ico', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif',
   '.woff', '.woff2', '.ttf', '.otf', '.eot',
-  '.mp4', '.webm', '.mp3', '.zip', '.gz', '.br', '.wasm', '.pdf',
+  '.mp4', '.webm', '.mp3', '.zip', '.gz', '.br', '.wasm',
 ])
 
 export function sha256(text: string): string {
