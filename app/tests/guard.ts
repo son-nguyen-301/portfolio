@@ -25,12 +25,12 @@ const DOTTED = /[\p{L}\p{N}]+(?:\.[\p{L}\p{N}]+)+/gu
 // `ACMEWidget` splits into `ACME` and `Widget`.
 const PIECE_BREAK = /(?<=\p{Ll})(?=\p{Lu})|(?<=\p{Lu})(?=\p{Lu}\p{Ll})|(?<=\p{L})(?=\p{N})|(?<=\p{N})(?=\p{L})/u
 // A Vietnamese phone number: +84 or 0084, then 8 to 10 digits, with optional
-// spaces, dots, dashes, slashes, underscores or brackets between them. The lookbehind skips sums in
-// minified code, like `a+84000000`. Runs after entities and %-codes are decoded,
-// so `&#43;84` and `%2B84` are caught too.
-// A word of 3 or more letters may come right before `+84` (`call+84…`), but not
-// a digit or a name of 1 or 2 letters, which is what minified code uses. Before
-// `0084` no letter or digit may come, so a hash like `beef0084…` passes.
+// spaces, dots, dashes, slashes, underscores or brackets between them. Runs
+// after entities and %-codes are decoded, so `&#43;84` and `%2B84` are caught
+// too. A word of 3 or more letters may come right before `+84` (`call+84…`),
+// but not a digit or a name of 1 or 2 letters, so sums in minified code like
+// `a+84000000` pass. Before `0084` no letter or digit may come, so a hash like
+// `beef0084…` passes.
 const VN_PHONE = /(?:(?<![\p{N}_$)\]])(?<!(?:^|[^\p{L}\p{N}_$])[\p{L}$]{1,2})\+|(?<![\p{L}\p{N}_$)\]])00)\s?84(?:[\s.\-\u2010-\u2015()/_]*\d){8,10}/gu
 // A WhatsApp link to a Vietnamese number: `wa.me/84…` or `phone=84…`, with or
 // without separators between the digits.
@@ -172,9 +172,9 @@ function wordsOf(clean: string): string[] {
 /**
  * The ways a line can read once its tricks are undone: the line itself, then
  * with JS and CSS escapes decoded (also when an entity or a %-code hid the
- * backslash), with tags removed, and with lookalike letters folded to Latin. Each is normalized. A pass is kept beside
- * the line, never in its place, so a word in a tag's attribute or next to a
- * regex `\b` is still read as it is.
+ * backslash), with tags removed, and with lookalike letters folded to Latin.
+ * Each is normalized. A pass is kept beside the line, never in its place, so a
+ * word in a tag's attribute or next to a regex `\b` is still read as it is.
  */
 export function readings(text: string): string[] {
   const plain = normalize(text)
@@ -317,8 +317,8 @@ export function scanFiles(files: string[], banned: ReadonlySet<string>, root = '
 /**
  * One line per hit. In the path, any folder or file name that holds a banned
  * word is shown as `<hidden>`, so the report never prints the word. When the
- * hit is spread over more than one name, like a phone number split over folder names, the whole
- * path is hidden.
+ * hit is spread over more than one name, like a phone number split over folder
+ * names, the whole path is hidden.
  */
 export function formatHits(hits: Hit[], root: string, banned: ReadonlySet<string>): string {
   const hide = (path: string) => {
