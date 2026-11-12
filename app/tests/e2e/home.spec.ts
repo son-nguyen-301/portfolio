@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { parse } from 'yaml'
+import { metaDescription } from '../../app/utils/seo'
 
 const content = fileURLToPath(new URL('../../content', import.meta.url))
 const read = (file: string) => parse(readFileSync(join(content, file), 'utf8'))
@@ -45,7 +46,7 @@ test('the home page has its title, description and main heading', async ({ page 
   const response = await page.goto('/')
   expect(response?.status()).toBe(200)
   await expect(page).toHaveTitle(`${profile.title} | Hai Son Nguyen`)
-  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', `${profile.hero.headline} ${profile.hero.subline}`)
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', metaDescription(profile.hero.headline, profile.hero.subline))
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(profile.hero.headline)
 })
 

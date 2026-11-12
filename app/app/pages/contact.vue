@@ -12,7 +12,10 @@ const { data: profile } = await useProfile('location', 'utcOffset', 'hours', 're
 
 const city = computed(() => locationCity(profile.value?.location ?? ''))
 
-useSeoMeta({ title: 'Contact' })
+useSeoMeta({
+  title: 'Contact',
+  description: () => (profile.value ? metaDescription(profile.value.pricing, profile.value.replyPromise) : undefined),
+})
 </script>
 
 <template>

@@ -43,7 +43,7 @@ test('the services page has its title, intro and pricing line', async ({ page })
   await expect(page).toHaveTitle('Services | Hai Son Nguyen')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vue and Nuxt work, from a fix to a full app')
   await expect(page.locator('main .lead')).toHaveText(`${services.intro} ${profile.pricing}`)
-  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', `${services.intro} ${profile.pricing}`)
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', services.intro)
 })
 
 test('the 6 services sit under their groups, in the order of services.yml', async ({ page }) => {

@@ -43,7 +43,7 @@ test('404.html holds the page, not an empty app shell', () => {
   expect(notFoundHtml).toContain('This page doesn&#39;t exist')
   expect(notFoundHtml).toContain('Go to the home page')
   expect(notFoundHtml).toMatch(/<meta name="robots" content="noindex/)
-  expect(notFoundHtml).toContain('<title>Page not found')
+  expect(notFoundHtml).toContain('<title>Page not found | Hai Son Nguyen</title>')
 })
 
 test('with JavaScript off, the 404 page shows its message and both links', async ({ browser }) => {
@@ -68,7 +68,7 @@ test('a missing path shows the 404 page, logs no error, and its links work', asy
   const response = await page.goto('/no-such-page')
   expect(response?.status()).toBe(404)
   await expectNotFoundPage(page)
-  await expect(page).toHaveTitle(/Page not found/)
+  await expect(page).toHaveTitle('Page not found | Hai Son Nguyen')
   await expect(page).toHaveURL(/\/no-such-page$/)
   await page.waitForLoadState('networkidle')
   expect(errors).toEqual([])

@@ -34,7 +34,9 @@ const step = (i: number) => String(i + 1).padStart(2, '0')
 
 useSeoMeta({
   title: 'Services',
-  description: () => (services.value && profile.value ? `${services.value.intro} ${profile.value.pricing}` : undefined),
+  // Only the intro: with the pricing line it runs past what search results
+  // show, and cut there it ends on "No hourly rates here." (app/utils/seo.ts).
+  description: () => (services.value ? metaDescription(services.value.intro) : undefined),
 })
 </script>
 
