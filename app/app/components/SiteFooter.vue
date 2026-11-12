@@ -12,6 +12,8 @@ const props = defineProps<{
   location: string
   // profile.links. Never the email or the booking link (CLAUDE.md hard rule 4).
   links: { linkedin: string, github: string, upwork: string }
+  // profile.siteStats: numbers from a measured run (D-039).
+  stats: { lighthouse: number, javascriptKb: number }
   year: number
 }>()
 
@@ -35,9 +37,8 @@ const elsewhere = [
         <p class="small site-footer__muted">
           {{ title }} in {{ location }}. Vue, Nuxt, the server side of my apps, and AI workflows.
         </p>
-        <!-- PF-024 fills in the real numbers after launch (docs/design.md, Other UX details). -->
         <p class="site-footer__stats">
-          This site: Lighthouse TODO, TODO KB of JavaScript, built with Nuxt.
+          This site: Lighthouse {{ stats.lighthouse }}, {{ stats.javascriptKb }} KB of JavaScript, built with Nuxt.
         </p>
       </div>
 

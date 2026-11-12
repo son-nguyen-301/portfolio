@@ -11,6 +11,7 @@ import { join } from 'node:path'
 import { chromium, expect, test, type Browser } from '@playwright/test'
 import lighthouse from 'lighthouse'
 import { builtPages, missingPath } from './pages'
+import { siteStats, statsDrift } from './stats'
 
 const categories = ['performance', 'accessibility', 'best-practices', 'seo'] as const
 type Category = typeof categories[number]
@@ -104,5 +105,9 @@ for (const page of builtPages()) {
     writeFileSync(join(out, `${name}.json`), JSON.stringify({ path, scores, runs }))
 
     for (const id of scored) expect.soft(scores[id], `${id} on ${path}; failing audits:\n${failing.join('\n')}`).toBeGreaterThanOrEqual(minimum[id])
+    // The footer says "Lighthouse N" from content/profile.yml (D-039).
+    if (path === '/') {
+      expect.soft(Math.abs(scores.performance - siteStats.lighthouse), `siteStats.lighthouse in content/profile.yml is ${siteStats.lighthouse}; this run measured ${scores.performance}. Update it.`).toBeLessThanOrEqual(statsDrift)
+    }
   })
 }

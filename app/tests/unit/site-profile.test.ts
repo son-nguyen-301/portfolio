@@ -12,10 +12,11 @@ const profile = profileSchema.parse(parse(readFileSync(file, 'utf8')))
 describe('pickSiteProfile', () => {
   it('takes only the header and footer fields', () => {
     const picked = pickSiteProfile(profile)
-    expect(Object.keys(picked).sort()).toEqual(['hours', 'links', 'location', 'name', 'replyPromise', 'title'])
+    expect(Object.keys(picked).sort()).toEqual(['hours', 'links', 'location', 'name', 'replyPromise', 'stats', 'title'])
     expect(Object.keys(picked.links).sort()).toEqual(['github', 'linkedin', 'upwork'])
     expect(picked.name).toBe(profile.name)
     expect(picked.hours).toBe(profile.hours.label)
+    expect(picked.stats).toEqual({ lighthouse: profile.siteStats.lighthouse, javascriptKb: profile.siteStats.javascriptKb })
   })
 
   it('never holds the email or the booking link', () => {

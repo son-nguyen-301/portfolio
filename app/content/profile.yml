@@ -71,3 +71,12 @@ pricing: "No hourly rates here. You get a fixed price after a 30-minute call."
 workList:
   intro: "Each one says what was wrong, what I did, and what changed. Pick the one closest to your project."
   more: "Side projects, and the client work I led from 2019 to 2021."
+
+# The footer's stats line, from a measured `pnpm test:quality` run on the
+# built site: the home page's Lighthouse mobile Performance score and its
+# JavaScript as Cloudflare sends it (brotli), in whole KB. Never guess these.
+# The quality checks fail when the home page drifts more than 5 from them.
+siteStats:
+  lighthouse: 100
+  javascriptKb: 110
+  measured: "2026-11-12"

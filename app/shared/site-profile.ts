@@ -13,6 +13,8 @@ export interface SiteProfile {
   hours: string
   replyPromise: string
   links: { linkedin: string, github: string, upwork: string }
+  // profile.siteStats, without the day: the footer's stats line.
+  stats: { lighthouse: number, javascriptKb: number }
 }
 
 export function pickSiteProfile(profile: Profile): SiteProfile {
@@ -26,6 +28,10 @@ export function pickSiteProfile(profile: Profile): SiteProfile {
       linkedin: profile.links.linkedin,
       github: profile.links.github,
       upwork: profile.links.upwork,
+    },
+    stats: {
+      lighthouse: profile.siteStats.lighthouse,
+      javascriptKb: profile.siteStats.javascriptKb,
     },
   }
 }

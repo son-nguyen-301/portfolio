@@ -22,6 +22,7 @@ const footerProps = {
   title: 'Sample title',
   location: 'Sample place',
   links: { linkedin: 'https://example.com/linkedin', github: 'https://example.com/github', upwork: 'https://example.com/upwork' },
+  stats: { lighthouse: 91, javascriptKb: 123 },
   year: 2030,
 }
 
@@ -124,12 +125,12 @@ describe('SiteHeader', () => {
 })
 
 describe('SiteFooter', () => {
-  it('shows who Son is from the props, the stats placeholder and the copyright', () => {
+  it('shows who Son is, the stats line and the copyright from the props', () => {
     const footer = mount(SiteFooter, { props: footerProps, global })
     expect(footer.find('.site-footer__name').text()).toBe('Sample Name.')
     expect(footer.text()).toContain('Sample title in Sample place.')
-    // The numbers are filled in after launch (PF-024), never made up.
-    expect(footer.find('.site-footer__stats').text()).toBe('This site: Lighthouse TODO, TODO KB of JavaScript, built with Nuxt.')
+    // The numbers come from profile.siteStats, a measured run (D-039).
+    expect(footer.find('.site-footer__stats').text()).toBe('This site: Lighthouse 91, 123 KB of JavaScript, built with Nuxt.')
     expect(footer.find('.site-footer__copyright').text()).toBe('© 2030 Sample Name')
   })
 
