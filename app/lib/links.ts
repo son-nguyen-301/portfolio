@@ -59,7 +59,7 @@ function htmlLinks(html: string): string[] {
   const markup = markupOnly(html)
   const links: string[] = []
   for (const [tag] of markup.matchAll(/<[a-z][^>]*>/gi)) {
-    for (const name of ['href', 'src', 'poster', 'action']) links.push(...attributeValues(tag, name))
+    for (const name of ['href', 'xlink:href', 'src', 'poster', 'action']) links.push(...attributeValues(tag, name))
     for (const name of ['srcset', 'imagesrcset']) {
       for (const set of attributeValues(tag, name)) {
         links.push(...set.split(',').map(item => item.trim().split(/\s+/)[0]!).filter(Boolean))
@@ -69,6 +69,10 @@ function htmlLinks(html: string): string[] {
       const names = [...attributeValues(tag, 'property'), ...attributeValues(tag, 'name')]
       if (names.some(name => linkMeta.test(name))) links.push(...attributeValues(tag, 'content'))
     }
+  }
+  // The schema.org graph is a script, but its URLs are links to check.
+  for (const [, body] of html.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<script\b[^>]*type\s*=\s*["']?application\/ld\+json["']?[^>]*>([\s\S]*?)<\/script>/gi)) {
+    links.push(...textLinks(body!.replace(/\\\//g, '/')))
   }
   // Inline styles can point at assets too.
   for (const [, body] of html.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) links.push(...cssLinks(body!))
@@ -80,13 +84,14 @@ function cssLinks(css: string): string[] {
   return [...css.matchAll(/url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s]*))\s*\)/gi)].map(match => match[1] ?? match[2] ?? match[3] ?? '')
 }
 
-// Markdown links and bare URLs. A bare URL loses the punctuation that ends
-// its sentence. The Markdown copies carry the schema.org graph, whose `@id`
-// values are names (`https://me.haisonnguyen.dev/#identity`), not links.
+// Markdown links and bare URLs. A URL may hold one level of brackets, as in
+// `a_(b)`. A bare URL loses the punctuation that ends its sentence. The pages
+// and Markdown copies carry the schema.org graph, whose `@id` values are
+// names (`https://me.haisonnguyen.dev/#identity`), not links.
 function textLinks(text: string): string[] {
-  const links = [...text.matchAll(/\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)/g)].map(match => match[1]!)
+  const links = [...text.matchAll(/\]\(\s*<?((?:[^()\s>]|\([^()\s>]*\))+)>?(?:\s+"[^"]*")?\s*\)/g)].map(match => match[1]!)
   const prose = text.replace(/"@id"\s*:\s*"[^"]*"/g, '')
-  for (const [url] of prose.matchAll(/\bhttps?:\/\/[^\s<>"'`)\]]+/gi)) links.push(url.replace(/[.,;:!?*_]+$/, ''))
+  for (const [url] of prose.matchAll(/\bhttps?:\/\/(?:[^\s<>"'`()[\]]|\([^\s<>"'`()[\]]*\))+/gi)) links.push(url.replace(/[.,;:!?*_]+$/, ''))
   return links
 }
 

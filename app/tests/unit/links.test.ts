@@ -37,6 +37,12 @@ describe('findLinks', () => {
     expect(findLinks(html, 'html')).toEqual(['/s.js', '/bg.png', '/div.png'])
   })
 
+  it('reads SVG xlink:href and the URLs in the schema.org graph, but not its ids', () => {
+    const html = `<svg><use xlink:href="/icons.svg#x"></use></svg>
+      <script type="application/ld+json">{"@id":"https://example.com/#identity","url":"http:\\/\\/example.com\\/","sameAs":["https://github.com/someone"]}</script>`
+    expect(findLinks(html, 'html')).toEqual(['/icons.svg#x', 'http://example.com/', 'https://github.com/someone'])
+  })
+
   it('finds url() in stylesheets', () => {
     expect(findLinks('@font-face{src:url(/_fonts/a.woff2) format("woff2"),url("/b.woff")}a{b:url( \'/c.png\' )}', 'css'))
       .toEqual(['/_fonts/a.woff2', '/b.woff', '/c.png'])
@@ -45,6 +51,11 @@ describe('findLinks', () => {
   it('finds Markdown links and bare URLs, without the end of the sentence', () => {
     const md = 'See [Work](https://example.com/work "Work") and https://example.com/lab. Or <https://example.com/cv>.'
     expect(findLinks(md, 'markdown')).toEqual(['https://example.com/work', 'https://example.com/lab', 'https://example.com/cv'])
+  })
+
+  it('keeps one level of brackets in a URL', () => {
+    expect(findLinks('[a](https://example.com/a_(b)) and https://example.com/c_(d).', 'markdown'))
+      .toEqual(['https://example.com/a_(b)', 'https://example.com/c_(d)'])
   })
 
   it('skips schema.org ids, which are names and not links', () => {
