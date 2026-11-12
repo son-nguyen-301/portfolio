@@ -3,6 +3,7 @@
 import { themeHeadScript } from './shared/theme'
 import { upworkHeadScript } from './app/utils/upwork'
 import { ogImageSize } from './app/utils/og'
+import { siteUrl } from './shared/site'
 
 export default defineNuxtConfig({
   modules: [
@@ -38,7 +39,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/tokens.css', '~/assets/css/base.css', '~/assets/css/diagrams.css'],
 
   site: {
-    url: 'https://me.haisonnguyen.dev',
+    url: siteUrl,
     name: 'Hai Son Nguyen',
     defaultLocale: 'en',
   },

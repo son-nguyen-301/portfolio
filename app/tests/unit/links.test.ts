@@ -62,6 +62,10 @@ describe('findIds', () => {
   it('finds ids and the names of anchors', () => {
     expect([...findIds('<main id="main"><h2 id=\'earlier\'>x</h2><a name="old"></a><input name="q"></main>')]).toEqual(['main', 'earlier', 'old'])
   })
+
+  it('skips ids inside inline scripts and comments', () => {
+    expect([...findIds('<script>const a = \'<p id="in-script">\'</script><!-- <p id="in-comment"> --><p id="real">')]).toEqual(['real'])
+  })
 })
 
 describe('servedPath', () => {
@@ -94,6 +98,7 @@ describe('checkLink', () => {
     expect(check('#main')).toBeUndefined()
     expect(check('/about#later')).toBe('no element with id "later" on /about')
     expect(check('/_fonts/inter.woff2#iefix')).toBeUndefined()
+    expect(check('/about#%E0%A4%A')).toBe('not a valid URL')
   })
 
   it('needs https for every link that leaves the site, and for the site itself', () => {

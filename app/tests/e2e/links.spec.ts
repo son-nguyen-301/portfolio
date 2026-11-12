@@ -7,9 +7,9 @@ import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 import { checkLink, fileKind, findIds, findLinks } from '../../lib/links'
+import { siteUrl as site } from '../../shared/site'
 
 const built = fileURLToPath(new URL('../../.output/public', import.meta.url))
-const site = 'https://me.haisonnguyen.dev'
 
 function builtFiles(): string[] {
   return readdirSync(built, { withFileTypes: true, recursive: true })

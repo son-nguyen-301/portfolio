@@ -15,7 +15,7 @@ pnpm install --frozen-lockfile
 pnpm dev            # the dev server
 ```
 
-The checks, in the order CI runs them:
+The checks, in the order CI runs them for a change to the app (a docs-only change runs just `pnpm test:guard`):
 
 ```bash
 pnpm lint           # ESLint

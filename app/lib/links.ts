@@ -46,12 +46,17 @@ function attributeValues(tag: string, name: string): string[] {
 // The meta tags whose `content` is a link: the preview image and page URL.
 const linkMeta = /^(?:og:image(?::secure_url)?|og:url|twitter:image)$/i
 
-function htmlLinks(html: string): string[] {
-  // Inline scripts and styles are code, not markup: keep only their tags.
-  const markup = html
+// Inline scripts and styles are code, not markup, and comments are not shown:
+// keep only the script and style tags themselves.
+function markupOnly(html: string): string {
+  return html
+    .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/(<script\b[^>]*>)[\s\S]*?<\/script>/gi, '$1</script>')
     .replace(/(<style\b[^>]*>)[\s\S]*?<\/style>/gi, '$1</style>')
-    .replace(/<!--[\s\S]*?-->/g, '')
+}
+
+function htmlLinks(html: string): string[] {
+  const markup = markupOnly(html)
   const links: string[] = []
   for (const [tag] of markup.matchAll(/<[a-z][^>]*>/gi)) {
     for (const name of ['href', 'src', 'poster', 'action']) links.push(...attributeValues(tag, name))
@@ -66,7 +71,7 @@ function htmlLinks(html: string): string[] {
     }
   }
   // Inline styles can point at assets too.
-  for (const [, body] of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) links.push(...cssLinks(body!))
+  for (const [, body] of html.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) links.push(...cssLinks(body!))
   for (const style of [...markup.matchAll(attribute('style'))]) links.push(...cssLinks(decodeEntities(style[1] ?? style[2] ?? style[3] ?? '')))
   return links
 }
@@ -104,7 +109,7 @@ export function findLinks(text: string, kind: FileKind): string[] {
 // The ids a page's elements carry (and old-style `<a name>`), for `#part` links.
 export function findIds(html: string): Set<string> {
   const ids = new Set<string>()
-  for (const [tag] of html.matchAll(/<[a-z][^>]*>/gi)) {
+  for (const [tag] of markupOnly(html).matchAll(/<[a-z][^>]*>/gi)) {
     for (const id of attributeValues(tag, 'id')) ids.add(id)
     if (/^<a\b/i.test(tag)) for (const name of attributeValues(tag, 'name')) ids.add(name)
   }
@@ -160,7 +165,13 @@ export function checkLink(link: string, from: string, context: LinkContext): str
   const resolved = resolveAsset(path, context.exists)
   if (resolved.kind === 'redirect') return `redirects to ${resolved.location}`
   if (resolved.status === 404) return 'not found'
-  const part = decodeURIComponent(url.hash.slice(1))
+  let part: string
+  try {
+    part = decodeURIComponent(url.hash.slice(1))
+  }
+  catch {
+    return 'not a valid URL'
+  }
   if (part && resolved.file.endsWith('.html') && !context.ids(resolved.file).has(part)) {
     return `no element with id "${part}" on ${servedPath(resolved.file)}`
   }
