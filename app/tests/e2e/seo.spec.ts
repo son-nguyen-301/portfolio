@@ -131,6 +131,9 @@ test('every page has its own link preview image: a 1200 x 630 PNG in the build',
     if (JSON.stringify(metaContents(html, 'name', 'twitter:image')) !== JSON.stringify([url])) found.push('twitter:image is not the og:image')
     if (metaContents(html, 'property', 'og:image:width').join() !== '1200') found.push('og:image:width is not 1200')
     if (metaContents(html, 'property', 'og:image:height').join() !== '630') found.push('og:image:height is not 630')
+    const alts = metaContents(html, 'property', 'og:image:alt')
+    if (alts.length !== 1 || !alts[0]?.endsWith(` · ${profile.name}`)) found.push(`og:image:alt ${JSON.stringify(alts)}`)
+    else if (JSON.stringify(metaContents(html, 'name', 'twitter:image:alt')) !== JSON.stringify(alts)) found.push('twitter:image:alt is not the og:image:alt')
     const path = join(built, url.slice(siteUrl.length))
     const size = existsSync(path) ? pngSize(path) : undefined
     if (!size) found.push(`${url} is not a PNG in the build`)

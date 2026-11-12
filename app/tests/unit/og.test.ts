@@ -1,9 +1,10 @@
 // Link preview images (PF-021, D-037): the size, the colors the template copies
-// from tokens.css, the weights and the heading sizes.
+// from tokens.css, the weights, the heading sizes, the alt text and
+// the arguments usePageOgImage() passes on.
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { ogColors, ogColorTokens, ogImageSize, ogTitleSize, ogWeight } from '../../app/utils/og'
+import { ogColors, ogColorTokens, ogImageAlt, ogImageArgs, ogImageSize, ogTitleSize, ogWeight } from '../../app/utils/og'
 
 const css = readFileSync(fileURLToPath(new URL('../../app/assets/css/tokens.css', import.meta.url)), 'utf8')
   .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -46,5 +47,37 @@ describe('ogTitleSize', () => {
     expect(ogTitleSize('x'.repeat(41))).toBe(64)
     expect(ogTitleSize('x'.repeat(70))).toBe(64)
     expect(ogTitleSize('x'.repeat(71))).toBe(54)
+  })
+})
+
+describe('ogImageAlt', () => {
+  it('says what the image shows', () => {
+    expect(ogImageAlt({ label: 'Case study', title: 'A sample', metric: 'Sample result' }, 'Sample Name')).toBe('Case study: A sample · Sample result · Sample Name')
+    expect(ogImageAlt({ label: 'Lab', title: 'Side projects' }, 'Sample Name')).toBe('Lab: Side projects · Sample Name')
+  })
+})
+
+describe('ogImageArgs', () => {
+  // The whole profile, as useSiteProfile() gives it: only the name and the job
+  // title may reach the image.
+  const profile = {
+    name: 'Sample Name',
+    title: 'Sample Title',
+    location: 'Sample City',
+    hours: 'sample hours',
+    replyPromise: 'I reply soon.',
+    links: { linkedin: 'https://example.com/in', github: 'https://example.com/gh', upwork: 'https://example.com/up' },
+  }
+
+  it('adds only the name, the job title and the host to the card', () => {
+    expect(ogImageArgs({ label: 'Case study', title: 'A sample', metric: 'Sample result' }, profile, 'https://sample.example.com')).toEqual({
+      props: { label: 'Case study', title: 'A sample', metric: 'Sample result', name: 'Sample Name', jobTitle: 'Sample Title', host: 'sample.example.com' },
+      alt: 'Case study: A sample · Sample result · Sample Name',
+    })
+  })
+
+  it('stops the build when the label or the heading is missing', () => {
+    expect(() => ogImageArgs({ label: 'About', title: undefined }, profile, 'https://sample.example.com')).toThrow(/needs a label and a heading/)
+    expect(() => ogImageArgs({ label: '', title: 'Side projects' }, profile, 'https://sample.example.com')).toThrow(/needs a label and a heading/)
   })
 })
