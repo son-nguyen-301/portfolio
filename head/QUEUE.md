@@ -38,8 +38,10 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 | 11 | Backlog | P2 | PF-047 | #89 | #65 | loop | Found in PR #87. The runner may merge on a skipped CI check left from a draft |
 | 12 | Backlog | P2 | PF-048 | #90 | #28 | loop | Found in PR #87. The guard skips the names of broken symlinks |
 | 13 | Backlog | P2 | PF-050 | #97 | none | loop | Found in PR #96. The page scrolls back to the top while it loads |
-| 14 | Backlog | P3 | PF-042 | #81 | none | loop | Found in PR #80. Four more renamed zones for the clock label |
-| 15 | Backlog | P3 | PF-049 | #93 | none | loop | Found in PR #92. The import test misses the `~~/shared` and `@@/shared` aliases |
-| 16 | Backlog | P3 | PF-051 | #100 | none | loop | Found in PR #99. `docs/design.md` names four service groups, the content has three |
-| 17 | Backlog | P3 | PF-052 | #101 | none | loop | Found in PR #99. Step numbers run into the step text in the Markdown copies |
-| 18 | Backlog | P3 | PF-053 | #103 | none | loop | Found in PR #102. The work cards show no image or diagram, though `docs/design.md` says they do |
+| 14 | Backlog | P2 | PF-056 | #115 | #50 | loop | Found in PR #114. A docs-only PR that edits `docs/open-items.md` skips the test that checks it |
+| 15 | Backlog | P3 | PF-042 | #81 | none | loop | Found in PR #80. Four more renamed zones for the clock label |
+| 16 | Backlog | P3 | PF-049 | #93 | none | loop | Found in PR #92. The import test misses the `~~/shared` and `@@/shared` aliases |
+| 17 | Backlog | P3 | PF-051 | #100 | none | loop | Found in PR #99. `docs/design.md` names four service groups, the content has three |
+| 18 | Backlog | P3 | PF-052 | #101 | none | loop | Found in PR #99. Step numbers run into the step text in the Markdown copies |
+| 19 | Backlog | P3 | PF-053 | #103 | none | loop | Found in PR #102. The work cards show no image or diagram, though `docs/design.md` says they do |
+| 20 | Backlog | P3 | PF-057 | #116 | #50 | loop | Found in PR #114. Six small gaps in the link checker and the TODO report |
