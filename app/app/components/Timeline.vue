@@ -13,7 +13,8 @@ withDefaults(defineProps<{
   heading?: 'h2' | 'h3'
   // `rows` starts each entry with a thin rule and, from 760 px up, puts the
   // dates in a column beside the rest, as on docs/design/About.dc.html.
-  layout?: 'list' | 'rows'
+  // `compact` has no rule at all and smaller titles, for the CV page.
+  layout?: 'list' | 'rows' | 'compact'
 }>(), {
   education: () => [],
   heading: 'h3',
@@ -145,6 +146,20 @@ withDefaults(defineProps<{
   color: var(--muted);
 }
 
+/* Compact: no rules, smaller titles, for the CV. */
+.timeline--compact {
+  gap: 20px;
+}
+
+.timeline--compact .timeline__entry {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.timeline--compact .timeline__role {
+  font-size: 1.0625rem;
+}
+
 /* From 760 px up the dates sit in a 200 px column, the rest beside them. */
 @media (min-width: 760px) {
   .timeline--rows .timeline__entry {
@@ -165,6 +180,26 @@ withDefaults(defineProps<{
 
   .timeline--rows .timeline__role {
     font-size: 1.375rem;
+  }
+}
+
+/* A job never splits over two printed pages. */
+@media print {
+  .timeline__entry {
+    break-inside: avoid;
+  }
+
+  .timeline--compact {
+    gap: 12px;
+  }
+
+  .timeline--compact .timeline__role {
+    font-size: 11pt;
+  }
+
+  .timeline__points {
+    margin-top: 2px;
+    gap: 1px;
   }
 }
 </style>

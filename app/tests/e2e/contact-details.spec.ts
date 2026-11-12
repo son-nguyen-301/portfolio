@@ -14,8 +14,13 @@ const built = join(root, '.output/public')
 const profile = parse(readFileSync(join(root, 'content/profile.yml'), 'utf8')) as { email: string, booking: { url: string, label: string }, hero: { headline: string } }
 
 // The one file that holds them (app/utils/contact.ts). Only ContactBlock
-// downloads it, after it has found that the visit is not in Upwork mode.
+// and the CV page download it, after they have found that the visit is not in
+// Upwork mode.
 const contactFile = 'contact-details.json'
+// The CV PDF shows the email (docs/brief.md, docs/architecture.md). Only the
+// CV page links to it, after mount and never in Upwork mode, and
+// tests/e2e/cv.spec.ts checks its text (D-033).
+const cvPdf = 'cv/hai-son-nguyen-cv.pdf'
 
 function files(dir: string, prefix = ''): string[] {
   return readdirSync(join(dir, prefix), { withFileTypes: true }).flatMap((item) => {
@@ -45,13 +50,24 @@ const secrets: [string, string][] = [
 ]
 
 test('no built file but the contact file holds the email or the booking link', () => {
-  const scanned = files(built).filter(file => file !== contactFile)
+  const all = files(built)
+  expect(all).toContain(cvPdf)
+  const scanned = all.filter(file => file !== contactFile && file !== cvPdf)
   expect(scanned).toContain('_payload.json')
   expect(scanned.some(file => file.endsWith('/sql_dump.txt'))).toBe(true)
   const hits = scanned.flatMap((file) => {
     const text = readBuilt(file).toLowerCase()
     return secrets.filter(([, secret]) => text.includes(secret.toLowerCase())).map(([name]) => `${file}: ${name}`)
   })
+  expect(hits).toEqual([])
+})
+
+// The PDF holds the email, so no built page or page data may link to it. The
+// CV page adds the link after mount, outside Upwork mode.
+test('no built page or page data links to the CV PDF', () => {
+  const hits = files(built)
+    .filter(file => /\.(?:html|json|md|txt|xml)$/.test(file))
+    .filter(file => readBuilt(file).includes(cvPdf))
   expect(hits).toEqual([])
 })
 

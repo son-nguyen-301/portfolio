@@ -73,6 +73,11 @@ test('Upwork mode stays on for the other pages of the visit', async ({ page }) =
     await expectUpworkHeader(page)
     await expectUpworkFooter(page)
   }
+  // The CV page shows no link to its PDF, which holds the email (PF-018).
+  await page.goto('/cv/')
+  await page.waitForLoadState('networkidle')
+  await expect(page.getByRole('button', { name: 'Print' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Download PDF' })).toHaveCount(0)
 })
 
 test('a new tab without ?from=upwork is a normal visit', async ({ browser }) => {

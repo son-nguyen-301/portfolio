@@ -83,3 +83,24 @@
   --amber-soft: #33270F;
   --on-jade: #0E1216;
 }
+
+/* Print uses the light colors in any theme, so dark text never lands on
+   white paper. Keep these the same as the :root block above;
+   tests/unit/tokens.test.ts checks it. */
+@media print {
+  :root:not([data-theme="light"]),
+  :root[data-theme] {
+    color-scheme: light;
+
+    --paper: #F5F7F8;
+    --surface: #FFFFFF;
+    --ink: #141A22;
+    --muted: #5A6472;
+    --line: #DCE1E6;
+    --jade: #0D7663;
+    --jade-soft: #DCEFEA;
+    --amber: #A86A12;
+    --amber-soft: #F6EBD9;
+    --on-jade: #FFFFFF;
+  }
+}

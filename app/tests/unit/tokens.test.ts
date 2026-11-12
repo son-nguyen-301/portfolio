@@ -20,6 +20,8 @@ function colorsIn(selector: RegExp): Record<string, string> {
 const light = colorsIn(/^:root\s*\{/m)
 const darkSystem = colorsIn(/:root:not\(\[data-theme="light"\]\)\s*\{/)
 const darkForced = colorsIn(/:root\[data-theme="dark"\]\s*\{/)
+// The print block: light colors in any theme (PF-018).
+const print = colorsIn(/@media print\s*\{[^{]*:root\[data-theme\]\s*\{/)
 
 function luminance(hex: string): number {
   const [r, g, b] = [1, 3, 5].map((i) => {
@@ -72,6 +74,10 @@ describe('color tokens', () => {
 
   it('sets the same dark colors for the system setting and the switch', () => {
     expect(darkSystem).toEqual(darkForced)
+  })
+
+  it('prints with the light colors in any theme', () => {
+    expect(print).toEqual(light)
   })
 
   it('redefines every light color in dark mode', () => {

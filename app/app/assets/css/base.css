@@ -187,3 +187,31 @@ hr {
     scroll-behavior: auto !important;
   }
 }
+
+/* Print (the CV and its PDF, PF-018): only the page itself, on white A4
+   paper. The light colors come from the print block in tokens.css. */
+@page {
+  size: A4;
+  margin: 14mm 16mm;
+}
+
+@media print {
+  .skip-link,
+  .site-header,
+  .site-footer {
+    display: none !important;
+  }
+
+  /* Inter swaps in other glyphs for punctuation next to capitals, as in
+     "(UTC+7)". Some PDF readers copy those as nothing, so print uses the
+     plain glyphs. */
+  body {
+    background: none;
+    font-variant-ligatures: no-contextual;
+  }
+
+  #main {
+    max-width: none;
+    padding: 0;
+  }
+}
