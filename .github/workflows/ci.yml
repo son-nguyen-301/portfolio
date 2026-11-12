@@ -127,6 +127,21 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-chromium-shell
 
+      # Both install steps below use apt. The runner's own Ubuntu mirror
+      # (azure.archive.ubuntu.com) stopped resolving on 2026-11-11 and failed
+      # every run there, so apt uses the main Ubuntu archive instead. The
+      # runner lists its mirrors in apt-mirrors.txt; older images name the
+      # mirror in the source files, so those are rewritten too.
+      - name: Use the main Ubuntu archive for apt
+        if: steps.scope.outputs.app != 'false'
+        run: |
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            echo 'http://archive.ubuntu.com/ubuntu/' | sudo tee /etc/apt/apt-mirrors.txt > /dev/null
+          fi
+          sudo find /etc/apt -maxdepth 2 \( -name '*.list' -o -name '*.sources' \) \
+            -exec sed -i 's#https\?://azure\.archive\.ubuntu\.com/ubuntu#http://archive.ubuntu.com/ubuntu#g' {} +
+          ! sudo grep -rqs 'azure\.archive\.ubuntu\.com' /etc/apt
+
       - name: Install the Playwright browser
         if: steps.scope.outputs.app != 'false' && steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps --only-shell chromium

@@ -170,6 +170,20 @@ describe('ci workflow', () => {
     expect(Math.max(...stage1)).toBeLessThan(Math.min(...stage2))
   })
 
+  it('points apt at the main Ubuntu archive before anything installs with apt', () => {
+    const index = (name: string) => steps.findIndex(step => step.name === name)
+    const mirror = steps[index('Use the main Ubuntu archive for apt')]!
+    expect(mirror.if).toBe('steps.scope.outputs.app != \'false\'')
+    expect(mirror.run).toContain('http://archive.ubuntu.com/ubuntu/')
+    for (const name of ['Install the Playwright browser', 'Install the browser\'s system libraries']) {
+      expect(index(name), name).toBeGreaterThan(index('Use the main Ubuntu archive for apt'))
+    }
+    // Every step that runs apt comes after it.
+    const apt = steps.filter(step => step !== mirror && /--with-deps|install-deps|apt-get|apt install/.test(step.run ?? ''))
+    expect(apt.map(step => step.name)).toEqual(['Install the Playwright browser', 'Install the browser\'s system libraries'])
+    for (const step of apt) expect(steps.indexOf(step), step.name).toBeGreaterThan(steps.indexOf(mirror))
+  })
+
   it('scans the built site with a missing build failing the run', () => {
     const guard = steps.find(step => step.name === 'Banned-words guard on the built site')!
     expect(guard.env).toEqual({ GUARD_REQUIRE_BUILD: '1' })
