@@ -11,6 +11,8 @@ const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use lowercase words
 const route = z.string().regex(/^\/[a-z0-9/-]*$/, 'Use a path that starts with "/"')
 // A month such as "2024-09".
 const yearMonth = z.string().regex(/^\d{4}-(?:0[1-9]|1[0-2])$/, 'Use YYYY-MM')
+// A day such as "2026-11-12".
+const day = z.string().regex(/^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/, 'Use YYYY-MM-DD')
 
 const timeZone = text.refine((zone) => {
   try {
@@ -67,6 +69,17 @@ export const profileSchema = z.strictObject({
   // The words of the /work page: the intro line, and the line about the Lab
   // and the earlier projects under the cards.
   workList: z.strictObject({ intro: text, more: text }),
+  // The footer's stats line (docs/design.md, Other UX details), from one
+  // measured `pnpm test:quality` run. Never guessed: `pnpm test:quality` fails
+  // when the home page drifts more than 5 from these numbers (D-039).
+  siteStats: z.strictObject({
+    // The home page's Lighthouse mobile Performance score.
+    lighthouse: z.number().int().min(0).max(100),
+    // The home page's JavaScript as Cloudflare sends it (brotli), in whole KB.
+    javascriptKb: z.number().int().positive(),
+    // The day of the run.
+    measured: day,
+  }),
 })
 
 const serviceGroup = z.enum(['Frontend', 'AI', 'Lead'])

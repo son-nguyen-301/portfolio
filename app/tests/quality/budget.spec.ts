@@ -15,6 +15,7 @@
 // with Save-Data. The output also gives the size without Save-Data.
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib'
 import { expect, test, type Page, type Response } from '@playwright/test'
+import { siteStats, statsDrift } from './stats'
 
 const budget = 115 * 1024
 const cloudflareQuality = 4
@@ -63,4 +64,6 @@ test('the home page loads under 115 KB of JavaScript, brotli', async ({ browser 
   ].join('\n'))
   expect(own.sizes.length).toBeGreaterThan(0)
   expect(own.brotli, list.join('\n')).toBeLessThan(budget)
+  // The footer says "N KB of JavaScript" from content/profile.yml (D-039).
+  expect(Math.abs(own.brotli / 1024 - siteStats.javascriptKb), `siteStats.javascriptKb in content/profile.yml is ${siteStats.javascriptKb}; this run measured ${kb(own.brotli)}. Update it.`).toBeLessThanOrEqual(statsDrift)
 })

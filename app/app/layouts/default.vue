@@ -37,6 +37,7 @@ const year = useState('footer-year', () => new Date().getFullYear())
       :title="profile.title"
       :location="profile.location"
       :links="profile.links"
+      :stats="profile.stats"
       :year="year"
     />
   </div>
