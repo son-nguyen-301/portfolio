@@ -1,18 +1,28 @@
-// "No component has a hard-coded color" (PF-005). Every color in a .vue file
-// must come from a token in app/assets/css/tokens.css, as var(--name).
+// "No component has a hard-coded color" (PF-005, PF-038). Every color in a
+// .vue file, and in the code under app/app, must come from a token in
+// app/assets/css/tokens.css, as var(--name).
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
 
 const appDir = fileURLToPath(new URL('../../app', import.meta.url))
 
-function vueFiles(dir: string): string[] {
+function sourceFiles(dir: string, pattern: RegExp): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name)
-    if (entry.isDirectory()) return vueFiles(path)
-    return entry.name.endsWith('.vue') ? [path] : []
+    if (entry.isDirectory()) return sourceFiles(path, pattern)
+    return pattern.test(entry.name) ? [path] : []
   })
+}
+
+// Code files that may hold colors, with the reason. Each one must still hold
+// a color, so a stale entry fails the test.
+const allowedCodeFiles: Record<string, string> = {
+  // The link preview renderer can't read tokens.css (D-037).
+  // tests/unit/og.test.ts keeps each value equal to its light token.
+  'utils/og.ts': 'ogColors copies the light tokens for the preview images',
 }
 
 // Every CSS color name. `transparent`, `currentColor` and `inherit` are
@@ -42,15 +52,39 @@ const colorPattern = new RegExp(
   'i',
 )
 
-// SVG and HTML attributes that take a color.
-// Values in double or single quotes; bound as `:fill` or `v-bind:fill`.
-const colorAttributes = /(?:^|\s)(?::|v-bind:)?(?:fill|stroke|stop-color|flood-color|lighting-color|color|bgcolor)=(["'])(.*?)\1/gs
+// An attribute value: in double or single quotes, or unquoted (`fill=red`).
+const attributeValue = '=(?:(["\'])(.*?)\\1|([^\\s"\'=<>`/]+))'
+// SVG and HTML attributes that take a color, also bound as `:fill` or
+// `v-bind:fill`.
+const colorAttributes = new RegExp(`(?:^|\\s)(?::|v-bind:)?(?:fill|stroke|stop-color|flood-color|lighting-color|color|bgcolor)${attributeValue}`, 'gs')
+const styleAttributes = new RegExp(`\\bstyle${attributeValue}`, 'gs')
 
-// The colors set in a file: <style> blocks, inline style attributes and
-// color attributes such as an SVG `fill`.
+// The text of every string in a piece of JavaScript or TypeScript: quoted
+// strings and the fixed parts of template literals. Comments don't count, nor
+// do the paths in `import` and `export ... from`.
+function stringLiterals(code: string): string[] {
+  const file = ts.createSourceFile('code.ts', code, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS)
+  const found: string[] = []
+  const visit = (node: ts.Node) => {
+    if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) return
+    if (ts.isStringLiteralLike(node) || ts.isTemplateLiteralToken(node)) found.push(node.text)
+    ts.forEachChild(node, visit)
+  }
+  visit(file)
+  return found
+}
+
+// The colors written in strings in a piece of code.
+function codeColors(code: string): string[] {
+  return stringLiterals(code).filter(text => colorPattern.test(text))
+}
+
+// The colors set in a .vue file: <style> blocks, inline style attributes,
+// color attributes such as an SVG `fill`, and strings in <script> blocks, such
+// as `const c = '#0D7663'` used as `:fill="c"`.
 function hardCodedColors(source: string): string[] {
   const styles = [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(match => match[1]!)
-  const inline = [...source.matchAll(/\bstyle=(["'])(.*?)\1/gs)].map(match => match[2]!)
+  const inline = [...source.matchAll(styleAttributes)].map(match => match[2] ?? match[3]!)
   const found: string[] = []
   for (const css of [...styles, ...inline]) {
     const clean = css.replace(/\/\*[\s\S]*?\*\//g, '')
@@ -62,8 +96,11 @@ function hardCodedColors(source: string): string[] {
   }
   const template = source.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '').replace(/<script[^>]*>[\s\S]*?<\/script>/g, '')
   for (const match of template.matchAll(colorAttributes)) {
-    const value = match[2]!.trim()
+    const value = (match[2] ?? match[3]!).trim()
     if (colorPattern.test(value)) found.push(value)
+  }
+  for (const script of source.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)) {
+    found.push(...codeColors(script[1]!))
   }
   return found
 }
@@ -84,7 +121,32 @@ describe('component colors', () => {
     expect(hardCodedColors(`<template><path v-bind:fill="'red'" /></template>`)).toEqual(['\'red\''])
   })
 
-  const files = vueFiles(appDir)
+  it('finds unquoted color attributes', () => {
+    expect(hardCodedColors('<template><path fill=red /></template>')).toEqual(['red'])
+    expect(hardCodedColors('<template><path stroke=#0D7663/></template>')).toEqual(['#0D7663'])
+    expect(hardCodedColors('<template><p style=color:red>x</p></template>')).toEqual(['red'])
+    expect(hardCodedColors('<template><path fill=currentColor /></template>')).toEqual([])
+  })
+
+  it('finds colors in <script> blocks', () => {
+    const vue = (script: string) => `<script setup lang="ts">${script}</script><template><path :fill="c" /></template>`
+    expect(hardCodedColors(vue(`const c = '#0D7663'`))).toEqual(['#0D7663'])
+    expect(hardCodedColors(vue(`const c = "white"`))).toEqual(['white'])
+    expect(hardCodedColors(vue('const c = `rgb(0 0 0 / ${alpha})`'))).toEqual(['rgb(0 0 0 / '])
+    expect(hardCodedColors(vue(`const style = { color: 'red' }`))).toEqual(['red'])
+    expect(hardCodedColors(`<script>export default { data: () => ({ c: 'black' }) }</script>`)).toEqual(['black'])
+    // Comments, import paths and words that only contain a color name don't count.
+    expect(hardCodedColors(vue(`// was '#0D7663'\n/* red */\nimport x from './red'\nconst c = 'var(--jade)'\nconst w = 'white-space'`))).toEqual([])
+  })
+
+  it('finds colors in code files', () => {
+    expect(codeColors(`export const jade = '#0D7663'`)).toEqual(['#0D7663'])
+    expect(codeColors(`export function tone() { return 'hsl(170 80% 26%)' }`)).toEqual(['hsl(170 80% 26%)'])
+    expect(codeColors(`export const tones = { ok: 'green', late: \`orange\` }`)).toEqual(['green', 'orange'])
+    expect(codeColors(`export { a } from './white'\n// #fff\nexport const t = 'var(--ink)'`)).toEqual([])
+  })
+
+  const files = sourceFiles(appDir, /\.vue$/)
 
   it('has .vue files to check', () => {
     expect(files.length).toBeGreaterThan(0)
@@ -92,5 +154,22 @@ describe('component colors', () => {
 
   it.each(files.map(file => [relative(appDir, file), file]))('%s uses only color tokens', (_name, file) => {
     expect(hardCodedColors(readFileSync(file, 'utf8'))).toEqual([])
+  })
+
+  const codeFiles = sourceFiles(appDir, /\.[cm]?[jt]s$/)
+
+  it('has code files to check', () => {
+    expect(codeFiles.length).toBeGreaterThan(0)
+  })
+
+  it.each(codeFiles.map(file => [relative(appDir, file), file]))('%s uses only color tokens', (name, file) => {
+    const colors = codeColors(readFileSync(file, 'utf8'))
+    if (name in allowedCodeFiles) expect(colors.length, allowedCodeFiles[name]).toBeGreaterThan(0)
+    else expect(colors).toEqual([])
+  })
+
+  it('allows only code files that exist', () => {
+    const names = codeFiles.map(file => relative(appDir, file))
+    for (const name of Object.keys(allowedCodeFiles)) expect(names).toContain(name)
   })
 })
