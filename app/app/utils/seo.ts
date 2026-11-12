@@ -20,7 +20,7 @@ export function metaDescription(...parts: ReadonlyArray<string | undefined>): st
   return description
 }
 
-// "Side projects: GitHub task runner, hydra-claude, Looper and Homereel."
+// "Side projects: hydra-claude, GitHub task runner, Looper and Homereel."
 // "Side projects" is the page heading; the names come from content.
 export function labDescription(names: ReadonlyArray<string>): string {
   if (names.length === 0) return 'Side projects.'

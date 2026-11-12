@@ -9,7 +9,7 @@ useSchemaOrg([
   definePerson({
     name: profile.name,
     jobTitle: profile.title,
-    url: '/',
+    url: `${useSiteConfig().url}/`,
     sameAs: [profile.links.linkedin, profile.links.github, profile.links.upwork],
   }),
 ])
