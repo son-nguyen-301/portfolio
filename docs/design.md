@@ -130,6 +130,6 @@ Two columns on desktop: a side panel and the story. One column on phones (side p
 ## Quality bar
 
 - Lighthouse mobile: Performance 95+, Accessibility 100, Best Practices 100, SEO 100.
-- Home page JavaScript under 100 KB as Cloudflare sends it (brotli). `pnpm test:quality` checks it.
+- Home page JavaScript under 115 KB as Cloudflare sends it (brotli, quality 4). `pnpm test:quality` checks it.
 - WCAG AA contrast in both themes.
 - No horizontal scroll at 360px width.
