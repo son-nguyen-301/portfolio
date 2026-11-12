@@ -1,6 +1,6 @@
 // ContactBlock on a normal visit and in Upwork mode (PF-008, docs/brief.md).
-// The block is on /contact until PF-011 and PF-019 put it on the home and
-// contact pages. Run `pnpm generate` first.
+// The block is on the home page and on /contact; these tests use /contact.
+// Run `pnpm generate` first.
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'

@@ -90,8 +90,8 @@ test('the home page opened from Upwork shows no email or booking link', async ({
 })
 
 // A content query in the browser downloads the whole profile collection, the
-// email and the booking link included. 404.html has no prerendered page data,
-// so it is the page where that would happen first.
+// email and the booking link included. 404.html is shown for every missing
+// path, so it is checked too, with the pages opened from it.
 test('no page downloads the profile collection', async ({ page }) => {
   const dumps: string[] = []
   page.on('request', (request) => {

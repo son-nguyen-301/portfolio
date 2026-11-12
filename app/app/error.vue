@@ -1,6 +1,8 @@
 <script setup lang="ts">
-// The page for a missing route (404.html in the build) and for any other
-// error, inside the normal layout. PF-019 finishes the 404 page.
+// The page for a missing route and for any other error, inside the normal
+// layout (docs/design/NotFound.dc.html). The build renders it into 404.html
+// (experimental.prerenderErrorPages in nuxt.config.ts), so it shows without
+// JavaScript (D-035).
 import type { NuxtError } from '#app'
 
 const props = defineProps<{ error: NuxtError }>()
