@@ -3,7 +3,7 @@ import { gzipSync } from 'node:zlib'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
-import { allFiles, formatHits, normalize, readText, scanFiles, scanText, sha256, words } from '../guard'
+import { allFiles, candidates, decodeEscapes, foldConfusables, formatHits, normalize, readings, readText, scanFiles, scanText, sha256, words } from '../guard'
 
 // A made-up name that stands in for a banned word in these tests.
 const SAMPLE = 'examplecorp'
@@ -58,12 +58,74 @@ describe('normalize', () => {
     expect(normalize('ex\u200Bam\u00ADple\u2060corp')).toBe('examplecorp')
   })
 
+  it('decodes text that was encoded twice', () => {
+    expect(normalize('%2545xample &amp;#67;orp')).toBe('Example Corp')
+  })
+
   it('leaves broken codes alone', () => {
     expect(normalize('100% sure, %E0%A4%A and &bogus;')).toBe('100% sure, %E0%A4%A and &bogus;')
   })
 })
 
+describe('decodeEscapes', () => {
+  it('decodes JS and CSS escapes', () => {
+    expect(decodeEscapes('\\u0045x \\u{45}x \\x45x \\45 x')).toBe('Ex Ex Ex Ex')
+  })
+
+  it('leaves text without escapes alone', () => {
+    expect(decodeEscapes('no escapes here')).toBe('no escapes here')
+  })
+})
+
+describe('foldConfusables', () => {
+  it('folds Cyrillic and Greek letters that look like Latin ones', () => {
+    expect(foldConfusables('\u0415\u0445\u0430mple \u03BFk')).toBe('Example ok')
+    expect(foldConfusables('\u04AF\u0585\u057D')).toBe('you')
+  })
+
+  it('keeps Vietnamese letters as they are', () => {
+    expect(foldConfusables('Nguyễn Hải Sơn')).toBe('Nguyễn Hải Sơn')
+  })
+})
+
+describe('readings', () => {
+  it('keeps the line as it is beside each decoded form', () => {
+    const forms = readings('<b>Exa</b>mple \\x41')
+    expect(forms).toContain('<b>Exa</b>mple \\x41')
+    expect(forms).toContain('Example \\x41')
+    expect(forms).toContain('<b>Exa</b>mple A')
+  })
+
+  it('gives one reading for plain text', () => {
+    expect(readings('plain text')).toEqual(['plain text'])
+  })
+})
+
+describe('candidates', () => {
+  it('joins up to four words in a row, with nothing and with a space', () => {
+    expect(candidates('one two-three_four five')).toEqual(expect.arrayContaining([
+      'onetwo', 'one two', 'onetwothreefour', 'one two three four', 'twothreefourfive',
+    ]))
+  })
+
+  it('joins more than four words only while the joined word is short', () => {
+    expect(candidates('e x a m p l e c o r p')).toContain('examplecorp')
+    expect(candidates('alphabet bravissimo charlieee deltaforce echo')).not.toContain('alphabetbravissimocharlieeedeltaforceecho')
+  })
+
+  it('does not join words across code marks', () => {
+    expect(candidates('a(b)')).not.toContain('ab')
+    expect(candidates('x=y')).not.toContain('xy')
+  })
+})
+
 describe('scanText', () => {
+  // The acceptance check of PF-036, with a made-up sample word.
+  it.each(['<b>Exa</b>mple', '**Exa**mple'])('fails on the sample word split by markup in %s', (text) => {
+    const sample = new Set([sha256('example')])
+    expect(scanText(text, sample).map(hit => hit.detail)).toEqual([sha256('example')])
+  })
+
   it('fails on a banned word in any case, and reports the hash, not the word', () => {
     const hits = scanText(`first line\nI worked at ExampleCorp.`, banned, 'fixture.md')
     expect(hits).toEqual([{ file: 'fixture.md', line: 2, kind: 'banned-word', detail: sha256(SAMPLE) }])
@@ -94,6 +156,33 @@ describe('scanText', () => {
     ['a supplement variation selector', 'example\u{E0100}corp'],
     ['a Mongolian variation selector', 'example\u180Bcorp'],
     ['a strikethrough mark', 'examplec\u0336orp'],
+    ['a bold tag', '<b>Exa</b>mplecorp'],
+    ['a tag with attributes', 'Exa<span class="x">mple</span>Corp'],
+    ['a word break tag', 'Example<wbr>Corp'],
+    ['Markdown bold', '**Exa**mple**Corp**'],
+    ['Markdown code', '`example`corp'],
+    ['a space', 'Example Corp'],
+    ['a non-breaking space', 'example\u00A0corp'],
+    ['an underscore', 'EXAMPLE_CORP'],
+    ['a dash', 'example-corp'],
+    ['a dot', 'example.corp'],
+    ['Cyrillic letters', '\u0415\u0445\u0430mplecorp'],
+    ['a Greek letter', 'examplec\u03BFrp'],
+    ['a JS escape', '"\\u0045xampleCorp"'],
+    ['a braced JS escape', '"\\u{45}xampleCorp"'],
+    ['a hex escape', '"\\x45xampleCorp"'],
+    ['a CSS escape', 'content: "\\45 xampleCorp"'],
+    ['twice-encoded %-codes', 'https://x.test/?q=%2545xampleCorp'],
+    ['twice-encoded entities', '&amp;#69;xampleCorp'],
+    ['a regex word break', 'const re = /\\bExampleCorp/'],
+    ['dashes between five pieces', 'ex-am-ple-co-rp'],
+    ['Markdown bold on five pieces', '**Ex**am**ple**Co**rp**'],
+    ['a space after every letter', 'E x a m p l e C o r p'],
+    ['an HTML comment', 'Exa<!-- -->mpleCorp'],
+    ['a > inside a quoted attribute', 'Exa<span data-x="1>2">mple</span>Corp'],
+    ['a Markdown escape', 'Example\\_Corp'],
+    ['an Armenian letter', 'examplec\u0585rp'],
+    ['an escape hidden by an entity', '&#92;u0045xampleCorp'],
   ])('fails on a banned word hidden by %s', (_, text) => {
     expect(scanText(text, banned).map(hit => hit.detail)).toContain(sha256(SAMPLE))
   })
@@ -118,6 +207,12 @@ describe('scanText', () => {
     '+84/900/000/000',
     '+84_900_000_000',
     '+84\u2013900\u2013000\u2013000',
+    'call+84 900 000 000',
+    'zalo+84900000000',
+    'https://wa.me/84-900-000-000',
+    'https://wa.me/+84900000000',
+    '"\\u002B84900000000"',
+    'tel:%252B84900000000',
   ])('fails on the Vietnamese phone number %s', (text) => {
     const hits = scanText(text, banned)
     expect(hits).toHaveLength(1)
@@ -131,6 +226,10 @@ describe('scanText', () => {
     'x=a+840000000',
     'f(1)+841234567',
     'id=1008412345678',
+    'n=ab+840000000',
+    'deadbeef008412345678',
+    'sha:9c00841234567890ab',
+    'id: "d5e0084123-4567-8901"',
   ])('passes %s', (text) => {
     expect(scanText(text, banned)).toEqual([])
   })
@@ -163,6 +262,16 @@ describe('scanFiles', () => {
     expect(formatHits(hits, dir, banned).toLowerCase()).not.toContain(SAMPLE)
     expect(formatHits(hits, dir, banned)).toContain('<hidden>')
     rmSync(named)
+  })
+
+  it('hides the whole path when a hit is spread over folder names', () => {
+    const named = join(dir, '+84', '900', '000', '000.png')
+    mkdirSync(join(named, '..'), { recursive: true })
+    writeFileSync(named, '')
+    const hits = scanFiles([named], banned, dir)
+    expect(hits.map(hit => [hit.line, hit.kind])).toEqual([[0, 'vn-phone']])
+    expect(formatHits(hits, dir, banned)).toBe('<hidden>:0 vn-phone +84…')
+    rmSync(join(dir, '+84'), { recursive: true })
   })
 
   it('checks the name of a broken symlink without following it', () => {
