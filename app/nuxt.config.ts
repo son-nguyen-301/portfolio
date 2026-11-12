@@ -98,10 +98,20 @@ export default defineNuxtConfig({
 
   // Link preview images (D-037): every page calls usePageOgImage(), and the
   // build renders app/components/OgImage/PageCard.takumi.vue into a PNG under
-  // /_og/s/. The site is static, so no image is drawn at request time. Not
-  // `zeroRuntime`: with it the browser keeps the first page's image tags after
-  // a client-side navigation.
+  // /_og/s/. The site is static, so no image is drawn at request time.
+  // `zeroRuntime` (Son's choice in PF-022): the module ships no code to the
+  // browser, so after a click to another page the image tags in the browser
+  // stay the first page's. Link previews are not affected: LinkedIn and
+  // Upwork load each page's built HTML.
   ogImage: {
+    zeroRuntime: true,
     defaults: { ...ogImageSize },
+  },
+
+  // The skew service worker stays (D-008). Its multi-tab plugin only passes a
+  // reload prompt between open tabs, and the site shows no such prompt, so it
+  // is off: 1.4 KB gzip less JavaScript on every page (PF-022).
+  skewProtection: {
+    multiTab: false,
   },
 })

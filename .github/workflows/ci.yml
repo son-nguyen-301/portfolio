@@ -8,7 +8,7 @@
 # - Anything else, or a scope the script did not print, in two stages.
 #   Stage 1: lint, types and unit tests (the guard included). Stage 2, only
 #   once stage 1 passed: the static build, a dry run of the Workers config,
-#   the guard on the built site, and browser tests.
+#   the guard on the built site, browser tests and the quality checks.
 #
 # A draft PR runs nothing (the check shows as skipped, which GitHub counts as
 # passing). Marking it ready for review starts the run. A new commit cancels
@@ -34,7 +34,8 @@ jobs:
   check:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # The quality checks (Lighthouse on every page, axe) add about 5 minutes.
+    timeout-minutes: 25
     defaults:
       run:
         shell: bash
@@ -154,3 +155,9 @@ jobs:
       - name: Browser tests
         if: steps.scope.outputs.app != 'false'
         run: pnpm test:e2e
+
+      # Lighthouse on every page, axe in both themes, 360 px and the home
+      # page's JavaScript budget (docs/design.md, Quality bar).
+      - name: Quality checks
+        if: steps.scope.outputs.app != 'false'
+        run: pnpm test:quality

@@ -152,7 +152,7 @@ describe('ci workflow', () => {
       'steps.scope.outputs.app != \'false\'',
     ])
     // `!= 'false'`: a missing or odd scope runs everything instead of nothing.
-    for (const command of ['pnpm lint', 'pnpm typecheck', 'pnpm test', 'pnpm generate', 'pnpm deploy:check', 'pnpm test:e2e']) {
+    for (const command of ['pnpm lint', 'pnpm typecheck', 'pnpm test', 'pnpm generate', 'pnpm deploy:check', 'pnpm test:e2e', 'pnpm test:quality']) {
       expect(run(command).map(step => step.if), command).toEqual(['steps.scope.outputs.app != \'false\''])
     }
     for (const step of steps.filter(step => step.if?.includes('steps.scope.outputs.app'))) {
@@ -165,7 +165,7 @@ describe('ci workflow', () => {
   it('runs stage 1 before the build and the browser tests', () => {
     const index = (command: string) => steps.findIndex(step => step.run?.trim() === command)
     const stage1 = ['pnpm lint', 'pnpm typecheck', 'pnpm test'].map(index)
-    const stage2 = ['pnpm generate', 'pnpm deploy:check', 'pnpm test:e2e'].map(index)
+    const stage2 = ['pnpm generate', 'pnpm deploy:check', 'pnpm test:e2e', 'pnpm test:quality'].map(index)
     for (const i of [...stage1, ...stage2]) expect(i).toBeGreaterThan(-1)
     expect(Math.max(...stage1)).toBeLessThan(Math.min(...stage2))
   })
