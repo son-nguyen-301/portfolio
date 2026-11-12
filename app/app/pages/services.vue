@@ -32,12 +32,18 @@ const roles = computed(() => (profile.value ? `${orList(profile.value.roles)}. R
 // "01", "02", ...
 const step = (i: number) => String(i + 1).padStart(2, '0')
 
+// The page heading, also on the link preview image.
+const heading = 'Vue and Nuxt work, from a fix to a full app'
+
 useSeoMeta({
   title: 'Services',
   // Only the intro: with the pricing line it runs past what search results
   // show, and cut there it ends on "No hourly rates here." (app/utils/seo.ts).
   description: () => (services.value ? metaDescription(services.value.intro) : undefined),
 })
+
+// The link preview image (D-037): the page label and heading.
+defineOgImage('Page', { label: 'Services', title: heading })
 </script>
 
 <template>
@@ -49,7 +55,7 @@ useSeoMeta({
       <p class="label">
         Services
       </p>
-      <h1>Vue and Nuxt work, from a fix to a full app</h1>
+      <h1>{{ heading }}</h1>
       <p class="lead">
         {{ services.intro }} {{ profile.pricing }}
       </p>

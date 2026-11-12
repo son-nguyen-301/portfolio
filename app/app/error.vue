@@ -20,6 +20,11 @@ useSeoMeta({
   description: () => firstLine.value,
   robots: 'noindex',
 })
+
+// The link preview image (D-037): the status code and the heading, as on the
+// page.
+const heading = computed(() => (notFound.value ? 'This page doesn\'t exist' : 'Something went wrong'))
+defineOgImage('Page', { label: String(props.error.statusCode), title: heading.value })
 </script>
 
 <template>
@@ -28,7 +33,7 @@ useSeoMeta({
       <p class="num error-page__code">
         {{ error.statusCode }}
       </p>
-      <h1>{{ notFound ? 'This page doesn\'t exist' : 'Something went wrong' }}</h1>
+      <h1>{{ heading }}</h1>
       <p class="lead error-page__text">
         {{ notFound ? `${firstLine} These two pages are a good place to start.` : firstLine }}
       </p>
