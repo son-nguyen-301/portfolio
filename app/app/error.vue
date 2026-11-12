@@ -19,7 +19,7 @@ useSeoMeta({ title: () => (notFound.value ? 'Page not found' : 'Something went w
         {{ error.statusCode }}
       </p>
       <h1>{{ notFound ? 'This page doesn\'t exist' : 'Something went wrong' }}</h1>
-      <p class="lead">
+      <p class="lead error-page__text">
         {{ notFound
           ? 'The link may be old, or there may be a typo in it. These two pages are a good place to start.'
           : 'Please try again, or start from the home page.' }}
@@ -53,6 +53,10 @@ useSeoMeta({ title: () => (notFound.value ? 'Page not found' : 'Something went w
 .error-page__code {
   font-size: 4rem;
   line-height: 1;
+}
+
+.error-page__text {
+  max-width: 52ch;
 }
 
 .error-page__actions {
