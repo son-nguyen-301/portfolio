@@ -12,8 +12,8 @@ declare module 'nuxt/schema' {
 
 // The profile fields the header and footer show: name, title, location, hours,
 // reply promise and the LinkedIn, GitHub and Upwork links. They come from app
-// config, not a content query, so they work on 404.html too, which has no
-// prerendered page data. Never the email or the booking link.
+// config, not a content query, so they work on every page, 404.html too.
+// Never the email or the booking link.
 export function useSiteProfile(): SiteProfile {
   return useAppConfig().siteProfile
 }

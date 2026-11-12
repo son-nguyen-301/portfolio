@@ -55,6 +55,13 @@ export default defineNuxtConfig({
     },
   },
 
+  // Render 404.html at build time from app/error.vue, so the page shows
+  // without JavaScript. Without this, Nuxt writes 404.html as an empty app
+  // shell (D-035).
+  experimental: {
+    prerenderErrorPages: [404],
+  },
+
   compatibilityDate: '2026-09-30',
 
   // Always a static build. Workers Builds sets WORKERS_CI, and without this

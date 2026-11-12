@@ -1,6 +1,8 @@
 <script setup lang="ts">
-// The page for a missing route (404.html in the build) and for any other
-// error, inside the normal layout. PF-019 finishes the 404 page.
+// The page for a missing route and for any other error, inside the normal
+// layout (docs/design/NotFound.dc.html). The build renders it into 404.html
+// (experimental.prerenderErrorPages in nuxt.config.ts), so it shows without
+// JavaScript (D-035).
 import type { NuxtError } from '#app'
 
 const props = defineProps<{ error: NuxtError }>()
@@ -17,7 +19,7 @@ useSeoMeta({ title: () => (notFound.value ? 'Page not found' : 'Something went w
         {{ error.statusCode }}
       </p>
       <h1>{{ notFound ? 'This page doesn\'t exist' : 'Something went wrong' }}</h1>
-      <p class="lead">
+      <p class="lead error-page__text">
         {{ notFound
           ? 'The link may be old, or there may be a typo in it. These two pages are a good place to start.'
           : 'Please try again, or start from the home page.' }}
@@ -51,6 +53,10 @@ useSeoMeta({ title: () => (notFound.value ? 'Page not found' : 'Something went w
 .error-page__code {
   font-size: 4rem;
   line-height: 1;
+}
+
+.error-page__text {
+  max-width: 52ch;
 }
 
 .error-page__actions {

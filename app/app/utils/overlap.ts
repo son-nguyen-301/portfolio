@@ -60,6 +60,11 @@ const renamedCities: Record<string, string> = {
   Ulan_Bator: 'Ulaanbaatar',
 }
 
+// Son's city for the clock, from profile.location: "Hanoi, Vietnam" -> "Hanoi".
+export function locationCity(location: string): string {
+  return location.split(',')[0]?.trim() ?? ''
+}
+
 // A city name from an IANA zone: "America/New_York" -> "New York",
 // "Asia/Calcutta" -> "Kolkata". Empty when the browser gives no zone.
 export function zoneCity(zone: string | undefined): string {
