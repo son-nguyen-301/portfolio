@@ -6,7 +6,7 @@
 // Performance moves a little from run to run. When a page's first score is
 // under the bar, Lighthouse runs twice more and the median of the three
 // counts, as Lighthouse's own docs advise for noisy machines.
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { chromium, expect, test, type Browser } from '@playwright/test'
 import lighthouse from 'lighthouse'
@@ -41,7 +41,8 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
   await browser?.close()
   // Every page tested so far, in this run (Playwright empties test-results
-  // when a run starts).
+  // when a run starts). None when every audit failed before it wrote one.
+  if (!existsSync(out)) return
   const results = readdirSync(out).filter(file => file.endsWith('.json'))
     .map(file => JSON.parse(readFileSync(join(out, file), 'utf8')) as { path: string, scores: Scores, runs: number[] })
     .sort((a, b) => a.path.localeCompare(b.path))

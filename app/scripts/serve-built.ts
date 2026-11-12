@@ -8,7 +8,7 @@
 // not the browser tests' 4173, so both can run at once).
 import { createServer } from 'node:http'
 import { existsSync, readFileSync, statSync } from 'node:fs'
-import { join, normalize } from 'node:path'
+import { join, normalize, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 import { contentType, headersFor, isCompressible, readHeaderRules, resolveAsset } from '../lib/workers-assets.ts'
@@ -26,7 +26,7 @@ const rules = existsSync(headersFile) ? readHeaderRules(readFileSync(headersFile
 
 function exists(file: string): boolean {
   const full = normalize(join(root, file))
-  if (!full.startsWith(root)) return false
+  if (!full.startsWith(root + sep)) return false
   return existsSync(full) && statSync(full).isFile()
 }
 
