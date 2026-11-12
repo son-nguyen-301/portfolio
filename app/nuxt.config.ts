@@ -104,4 +104,11 @@ export default defineNuxtConfig({
   ogImage: {
     defaults: { ...ogImageSize },
   },
+
+  // The skew service worker stays (D-008). Its multi-tab plugin only passes a
+  // reload prompt between open tabs, and the site shows no such prompt, so it
+  // is off: 1.4 KB gzip less JavaScript on every page (PF-022).
+  skewProtection: {
+    multiTab: false,
+  },
 })
