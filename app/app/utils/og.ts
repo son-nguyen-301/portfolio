@@ -54,10 +54,11 @@ export function ogWeight(weight: 400 | 500 | 600 | 700): { fontWeight: number, f
   return { fontWeight: weight, fontVariationSettings: `'wght' ${weight}` }
 }
 
-// The image's alt text, from the same words it shows:
-// "Case study: <title> · <result line> · Hai Son Nguyen".
-export function ogImageAlt(card: { label: string, title: string, metric?: string }, name: string): string {
-  return [`${card.label}: ${card.title}`, card.metric, name].filter(Boolean).join(' · ')
+// The image's alt text, from the same words it shows: the heading, the result
+// line and the name ("<heading> · <result line> · Hai Son Nguyen"). The name
+// is left out when it is the heading, as on the CV.
+export function ogImageAlt(card: { title: string, metric?: string }, name: string): string {
+  return [card.title, card.metric, card.title === name ? undefined : name].filter(Boolean).join(' · ')
 }
 
 // The template's props and the alt text for one page (usePageOgImage()). Only

@@ -8,8 +8,10 @@
 import type { OgCard } from '~/utils/og'
 
 export function usePageOgImage(card: OgCard): void {
-  // The images are drawn only in the build, so the browser has nothing to do.
-  if (import.meta.client) return
+  // In the browser a missing heading only skips the tags; the build already
+  // stopped on it. Otherwise this runs on every navigation, so the head points
+  // to the new page's image.
+  if (import.meta.client && (!card.label || !card.title)) return
   const { props, alt } = ogImageArgs(card, useSiteProfile(), useSiteConfig().url)
   defineOgImage('PageCard', props, { alt })
 }

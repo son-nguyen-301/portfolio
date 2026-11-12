@@ -98,9 +98,10 @@ export default defineNuxtConfig({
 
   // Link preview images (D-037): every page calls usePageOgImage(), and the
   // build renders app/components/OgImage/PageCard.takumi.vue into a PNG under
-  // /_og/s/. The site is static, so there is no runtime renderer.
+  // /_og/s/. The site is static, so no image is drawn at request time. Not
+  // `zeroRuntime`: with it the browser keeps the first page's image tags after
+  // a client-side navigation.
   ogImage: {
-    zeroRuntime: true,
     defaults: { ...ogImageSize },
   },
 })

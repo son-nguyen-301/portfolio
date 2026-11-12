@@ -52,8 +52,12 @@ describe('ogTitleSize', () => {
 
 describe('ogImageAlt', () => {
   it('says what the image shows', () => {
-    expect(ogImageAlt({ label: 'Case study', title: 'A sample', metric: 'Sample result' }, 'Sample Name')).toBe('Case study: A sample · Sample result · Sample Name')
-    expect(ogImageAlt({ label: 'Lab', title: 'Side projects' }, 'Sample Name')).toBe('Lab: Side projects · Sample Name')
+    expect(ogImageAlt({ title: 'A sample', metric: 'Sample result' }, 'Sample Name')).toBe('A sample · Sample result · Sample Name')
+    expect(ogImageAlt({ title: 'Side projects' }, 'Sample Name')).toBe('Side projects · Sample Name')
+  })
+
+  it('names Son once when the heading is the name', () => {
+    expect(ogImageAlt({ title: 'Sample Name' }, 'Sample Name')).toBe('Sample Name')
   })
 })
 
@@ -72,7 +76,7 @@ describe('ogImageArgs', () => {
   it('adds only the name, the job title and the host to the card', () => {
     expect(ogImageArgs({ label: 'Case study', title: 'A sample', metric: 'Sample result' }, profile, 'https://sample.example.com')).toEqual({
       props: { label: 'Case study', title: 'A sample', metric: 'Sample result', name: 'Sample Name', jobTitle: 'Sample Title', host: 'sample.example.com' },
-      alt: 'Case study: A sample · Sample result · Sample Name',
+      alt: 'A sample · Sample result · Sample Name',
     })
   })
 

@@ -119,4 +119,4 @@ Web Analytics has no custom events (its FAQ, checked on 2026-11-11). The buttons
 
 LinkedIn and Upwork read Open Graph tags from the HTML. Every page needs a title, a description and a 1200 × 630 PNG image. Before sharing a link, check it with LinkedIn's Post Inspector, because LinkedIn caches the first version it sees.
 
-The images are drawn at build time. Each page calls `usePageOgImage()`, and `nuxt-og-image` renders `app/components/OgImage/PageCard.takumi.vue` with Takumi into `/_og/s/*.png` (D-037). There is no image renderer at request time.
+The images are drawn at build time. Each page calls `usePageOgImage()`, and `nuxt-og-image` renders `app/components/OgImage/PageCard.takumi.vue` with Takumi into `/_og/s/*.png` (D-037). No image is drawn at request time; in the browser the module only points the tags to the right file after a client-side navigation.
