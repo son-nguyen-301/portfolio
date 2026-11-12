@@ -15,8 +15,7 @@ const { data: work } = await useWorkCards()
 // "e-commerce" (app/utils/words.ts).
 const headline = computed(() => words(profile.value?.hero.headline ?? ''))
 
-// "Hanoi, Vietnam" -> "Hanoi"
-const city = computed(() => profile.value?.location.split(',')[0]?.trim() ?? '')
+const city = computed(() => locationCity(profile.value?.location ?? ''))
 const featured = computed(() => (work.value ?? []).filter(study => study.featured))
 const quotes = computed(() => (work.value ?? []).flatMap(study => (study.quote ? [study.quote] : [])))
 

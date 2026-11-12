@@ -10,8 +10,7 @@
 // mode the block shows only "Message me on Upwork".
 const { data: profile } = await useProfile('location', 'utcOffset', 'hours', 'replyPromise', 'links', 'pricing')
 
-// "Hanoi, Vietnam" -> "Hanoi"
-const city = computed(() => profile.value?.location.split(',')[0]?.trim() ?? '')
+const city = computed(() => locationCity(profile.value?.location ?? ''))
 
 useSeoMeta({ title: 'Contact' })
 </script>

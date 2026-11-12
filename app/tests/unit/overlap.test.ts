@@ -12,6 +12,7 @@ import {
   shortOverlapText,
   visitorOffsetAt,
   workHoursText,
+  locationCity,
   zoneCity,
 } from '../../app/utils/overlap'
 
@@ -149,5 +150,13 @@ describe('barParts', () => {
   it('draws a full day and nothing', () => {
     expect(barParts({ start: 0, end: 0, hours: 24 })).toEqual([{ left: 0, width: 100 }])
     expect(barParts({ start: 5, end: 5, hours: 0 })).toEqual([])
+  })
+})
+
+describe('locationCity', () => {
+  it('takes the part of the location before the comma', () => {
+    expect(locationCity('Hanoi, Vietnam')).toBe('Hanoi')
+    expect(locationCity('  Hanoi  ')).toBe('Hanoi')
+    expect(locationCity('')).toBe('')
   })
 })
