@@ -147,23 +147,26 @@ test('every page has its own link preview image: a 1200 x 630 PNG in the build',
   expect(images.size).toBe(pages.length)
 })
 
-test('the image tags follow the page on client-side navigation', async ({ page }) => {
-  await page.goto('/')
-  // Wait until the app has hydrated, so the click is a client-side navigation.
-  await page.waitForFunction(() => Boolean((document.querySelector('#__nuxt') as { __vue_app__?: unknown } | null)?.__vue_app__))
-  await page.evaluate(() => {
-    (window as { sameVisit?: boolean }).sameVisit = true
-  })
-  await page.locator('header a[href="/work"]').first().click()
-  await expect(page).toHaveURL(/\/work$/)
-  // The same image file as the built page. In the browser the module joins
-  // the path to the page's own origin, which here is the test server.
-  const built = head('work/index.html')
-  const image = new URL(metaContents(built, 'property', 'og:image')[0]!).pathname
-  await expect.poll(async () => new URL(await page.locator('meta[property="og:image"]').getAttribute('content') ?? '', page.url()).pathname).toBe(image)
-  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', metaContents(built, 'property', 'og:image:alt')[0]!)
-  // No full page load happened.
-  expect(await page.evaluate(() => (window as { sameVisit?: boolean }).sameVisit)).toBe(true)
+// `ogImage.zeroRuntime` is on (PF-022, Son's choice): the image tags live in
+// the built HTML only, and the browser JavaScript holds none of the module's
+// code, so no path from the build machine either (#112). Only this build's
+// files count: skew protection keeps earlier builds' files in `_nuxt/` for
+// tabs that are still open (D-008).
+test('no browser JavaScript holds the image module or a build path', () => {
+  const dir = join(built, '_nuxt')
+  const queue = [...new Set(all.flatMap(file => [...readFileSync(join(built, file), 'utf8').matchAll(/\/_nuxt\/([\w-]+\.js)/g)].map(match => match[1]!)))]
+  const seen = new Set<string>()
+  const hits: string[] = []
+  while (queue.length) {
+    const file = queue.pop()!
+    if (seen.has(file)) continue
+    seen.add(file)
+    const js = readFileSync(join(dir, file), 'utf8')
+    if (js.includes(root) || js.includes('OgImage/') || js.includes('nuxt-og-image') || js.includes('/_og/s/')) hits.push(file)
+    for (const match of js.matchAll(/["'`]\.\/([\w-]+\.js)["'`]/g)) queue.push(match[1]!)
+  }
+  expect(seen.size).toBeGreaterThan(20)
+  expect(hits).toEqual([])
 })
 
 test('the build ships no fallback fonts for the image renderer', () => {

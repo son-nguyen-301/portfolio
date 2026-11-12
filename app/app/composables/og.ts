@@ -7,11 +7,12 @@
 // app/components/OgImage/PageCard.takumi.vue into a PNG.
 import type { OgCard } from '~/utils/og'
 
+//
+// `ogImage.zeroRuntime` is on (PF-022), so the image tags exist only in the
+// built HTML. In the browser this does nothing, and the build leaves the code
+// out of the browser JavaScript.
 export function usePageOgImage(card: OgCard): void {
-  // In the browser a missing heading only skips the tags; the build already
-  // stopped on it. Otherwise this runs on every navigation, so the head points
-  // to the new page's image.
-  if (import.meta.client && (!card.label || !card.title)) return
+  if (import.meta.client) return
   const { props, alt } = ogImageArgs(card, useSiteProfile(), useSiteConfig().url)
   defineOgImage('PageCard', props, { alt })
 }
