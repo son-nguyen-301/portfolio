@@ -8,10 +8,16 @@
 const { data: profile } = await useProfile('workList')
 const { data: work } = await useWorkCards()
 
+// The page heading, also on the link preview image.
+const heading = 'Case studies'
+
 useSeoMeta({
   title: 'Work',
   description: () => (profile.value ? metaDescription(profile.value.workList.intro) : undefined),
 })
+
+// The link preview image (D-037): the page label and heading.
+usePageOgImage({ label: 'Work', title: heading })
 </script>
 
 <template>
@@ -20,7 +26,7 @@ useSeoMeta({
       <p class="label">
         Work
       </p>
-      <h1>Case studies</h1>
+      <h1>{{ heading }}</h1>
       <p
         v-if="profile"
         class="lead"

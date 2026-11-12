@@ -48,6 +48,9 @@ useSeoMeta({
   description: metaDescription(study.value.summary),
 })
 
+// The link preview image (D-037): the title and the card's result line.
+usePageOgImage({ label: 'Case study', title: study.value.title, metric: study.value.cardMetric })
+
 // The case study as a schema.org CreativeWork, by Son: its author is the
 // Person node that app.vue adds as the site's identity (D-036). A custom node
 // gets no URL resolving, so its ids are full URLs, as the module writes them.

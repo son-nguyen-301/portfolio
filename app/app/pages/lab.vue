@@ -5,10 +5,16 @@
 // makes claims that are not in content (D-034).
 const { data: projects } = await useLabProjects()
 
+// The page heading, also on the link preview image.
+const heading = 'Side projects'
+
 useSeoMeta({
   title: 'Lab',
   description: () => labDescription((projects.value ?? []).map(project => project.name)),
 })
+
+// The link preview image (D-037): the page label and heading.
+usePageOgImage({ label: 'Lab', title: heading })
 </script>
 
 <template>
@@ -17,7 +23,7 @@ useSeoMeta({
       <p class="label">
         Lab
       </p>
-      <h1>Side projects</h1>
+      <h1>{{ heading }}</h1>
     </div>
 
     <ul

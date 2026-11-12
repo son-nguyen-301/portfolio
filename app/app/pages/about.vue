@@ -27,6 +27,9 @@ useSeoMeta({
   title: 'About',
   description: () => (profile.value ? metaDescription(aboutParagraphs(profile.value.about)[0]) : undefined),
 })
+
+// The link preview image (D-037): the page label and heading.
+usePageOgImage({ label: 'About', title: about.value?.headline })
 </script>
 
 <template>

@@ -27,6 +27,9 @@ useSeoMeta({
   // The headline and as much of the subline as fits (app/utils/seo.ts).
   description: () => (profile.value ? metaDescription(profile.value.hero.headline, profile.value.hero.subline) : undefined),
 })
+
+// The link preview image (D-037): the hero label and headline.
+usePageOgImage({ label: profile.value?.hero.label, title: profile.value?.hero.headline })
 </script>
 
 <template>

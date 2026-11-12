@@ -47,6 +47,9 @@ useSeoMeta({
   title: 'CV',
   description: () => (profile.value ? metaDescription(profile.value.hero.subline) : undefined),
 })
+
+// The link preview image (D-037): "CV" and the name, the page heading.
+usePageOgImage({ label: 'CV', title: profile.value?.name })
 </script>
 
 <template>

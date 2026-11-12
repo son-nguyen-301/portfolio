@@ -2,6 +2,7 @@
 // The site is fully static: build it with `pnpm generate` (see docs/architecture.md).
 import { themeHeadScript } from './shared/theme'
 import { upworkHeadScript } from './app/utils/upwork'
+import { ogImageSize } from './app/utils/og'
 
 export default defineNuxtConfig({
   modules: [
@@ -13,8 +14,8 @@ export default defineNuxtConfig({
   ],
 
   // OG images are off in `nuxt dev` only: with the site fonts in use, the
-  // og-image module makes every dev page render hang. `nuxt generate` is not
-  // affected. PF-021 (#47) builds the OG images and revisits this.
+  // og-image module makes every dev page render hang (D-017). `nuxt generate`
+  // is not affected.
   $development: {
     ogImage: { enabled: false },
   },
@@ -82,15 +83,25 @@ export default defineNuxtConfig({
   },
 
   // Self-hosted at build time from Google Fonts. Fallback stacks are in tokens.css.
+  // `global: true` also hands each family to the OG image renderer (D-037).
   fonts: {
     families: [
-      { name: 'Bricolage Grotesque', provider: 'google', weights: [500, 700] },
-      { name: 'Inter', provider: 'google', weights: [400, 500, 600] },
-      { name: 'JetBrains Mono', provider: 'google', weights: [400, 600] },
+      { name: 'Bricolage Grotesque', provider: 'google', weights: [500, 700], global: true },
+      { name: 'Inter', provider: 'google', weights: [400, 500, 600], global: true },
+      { name: 'JetBrains Mono', provider: 'google', weights: [400, 600], global: true },
     ],
     defaults: {
       styles: ['normal'],
       subsets: ['latin', 'latin-ext'],
     },
+  },
+
+  // Link preview images (D-037): every page calls usePageOgImage(), and the
+  // build renders app/components/OgImage/PageCard.takumi.vue into a PNG under
+  // /_og/s/. The site is static, so no image is drawn at request time. Not
+  // `zeroRuntime`: with it the browser keeps the first page's image tags after
+  // a client-side navigation.
+  ogImage: {
+    defaults: { ...ogImageSize },
   },
 })

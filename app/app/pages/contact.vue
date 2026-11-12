@@ -12,10 +12,16 @@ const { data: profile } = await useProfile('location', 'utcOffset', 'hours', 're
 
 const city = computed(() => locationCity(profile.value?.location ?? ''))
 
+// The page heading, also on the link preview image.
+const heading = 'Tell me what you are building'
+
 useSeoMeta({
   title: 'Contact',
   description: () => (profile.value ? metaDescription(profile.value.pricing, profile.value.replyPromise) : undefined),
 })
+
+// The link preview image (D-037): the page label and heading.
+usePageOgImage({ label: 'Contact', title: heading })
 </script>
 
 <template>
@@ -27,7 +33,7 @@ useSeoMeta({
       <p class="label">
         Contact
       </p>
-      <h1>Tell me what you are building</h1>
+      <h1>{{ heading }}</h1>
       <p class="lead">
         {{ profile.pricing }}
       </p>
