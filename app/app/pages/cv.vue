@@ -49,7 +49,7 @@ useSeoMeta({
 })
 
 // The link preview image (D-037): "CV" and the name, the page heading.
-defineOgImage('Page', { label: 'CV', title: profile.value?.name })
+usePageOgImage({ label: 'CV', title: profile.value?.name })
 </script>
 
 <template>

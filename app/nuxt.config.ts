@@ -20,14 +20,6 @@ export default defineNuxtConfig({
     ogImage: { enabled: false },
   },
 
-  // Link preview images (D-037): every page calls defineOgImage('Page', ...),
-  // and the build renders app/components/OgImage/Page.takumi.vue into a PNG
-  // under /_og/s/. The site is static, so there is no runtime renderer.
-  ogImage: {
-    zeroRuntime: true,
-    defaults: { ...ogImageSize },
-  },
-
   devtools: { enabled: true },
 
   app: {
@@ -102,5 +94,13 @@ export default defineNuxtConfig({
       styles: ['normal'],
       subsets: ['latin', 'latin-ext'],
     },
+  },
+
+  // Link preview images (D-037): every page calls usePageOgImage(), and the
+  // build renders app/components/OgImage/PageCard.takumi.vue into a PNG under
+  // /_og/s/. The site is static, so there is no runtime renderer.
+  ogImage: {
+    zeroRuntime: true,
+    defaults: { ...ogImageSize },
   },
 })

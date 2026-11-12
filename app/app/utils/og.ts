@@ -1,19 +1,20 @@
-// Link preview images (PF-021, D-037). Every page calls `defineOgImage('Page',
-// props)` with an `OgCard`, and the build renders
-// app/components/OgImage/Page.takumi.vue into a 1200 x 630 PNG under /_og/s/.
-// No imports from `shared/` (D-027), so a test can load it.
+// Link preview images (PF-021, D-037). Every page calls `usePageOgImage()`
+// (app/composables/og.ts) with an `OgCard`, and the build renders
+// app/components/OgImage/PageCard.takumi.vue into a 1200 x 630 PNG under
+// /_og/s/. No imports from `shared/` (D-027), so a test can load it.
 
 // The size LinkedIn and Upwork expect (docs/architecture.md, Link previews).
 // `ogImage.defaults` in nuxt.config.ts uses it.
 export const ogImageSize = { width: 1200, height: 630 } as const
 
 // What one preview image shows. Every word comes from content or is the page's
-// own label or heading, as on the page (D-024).
+// own label or heading, as on the page (D-024). A page passes its content as it
+// has it; usePageOgImage() stops the build if the label or the heading is gone.
 export interface OgCard {
   // The small mono line at the top, such as "Case study".
-  label: string
+  label?: string
   // The page heading.
-  title: string
+  title?: string
   // Case studies only: the card's result line (`cardMetric`).
   metric?: string
 }

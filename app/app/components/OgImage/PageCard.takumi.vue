@@ -1,24 +1,24 @@
 <script setup lang="ts">
 // The link preview image of every page (PF-021, D-037): 1200 x 630, light
 // theme, the site's fonts. The page's label on top, its heading, the result
-// line on case studies, and Son's name, title and the site's host at the
-// bottom. The build renders it with Takumi into a PNG under /_og/s/.
+// line on case studies, and Son's name, job title and the site's host at the
+// bottom. Pages call usePageOgImage() (app/composables/og.ts), which fills in
+// the name, job title and host, and the build renders this with Takumi into a
+// PNG under /_og/s/.
 //
 // The renderer can't read tokens.css, so the colors come from `ogColors`
-// (app/utils/og.ts), which a test keeps equal to the light tokens. The name and
-// title come from app config (useSiteProfile), never the email or the booking
-// link (CLAUDE.md hard rule 4).
-import { siteHost } from '../../utils/cv'
+// (app/utils/og.ts), which a test keeps equal to the light tokens.
 import { ogColors as colors, ogFonts as fonts, ogTitleSize, ogWeight as weight } from '../../utils/og'
 
-const { label = '', title = '', metric = '' } = defineProps<{
+const { label = '', title = '', metric = '', name = '', jobTitle = '', host = '' } = defineProps<{
   label?: string
   title?: string
   metric?: string
+  name?: string
+  jobTitle?: string
+  host?: string
 }>()
 
-const profile = useSiteProfile()
-const host = siteHost(useSiteConfig().url)
 const titleSize = ogTitleSize(title)
 </script>
 
@@ -65,13 +65,13 @@ const titleSize = ogTitleSize(title)
             class="flex"
             :style="{ fontFamily: fonts.display, fontSize: '34px', ...weight(700), color: colors.ink }"
           >
-            {{ profile.name }}
+            {{ name }}
           </div>
           <div
             class="flex"
             :style="{ marginTop: '6px', fontSize: '26px', ...weight(500), color: colors.muted }"
           >
-            {{ profile.title }}
+            {{ jobTitle }}
           </div>
         </div>
         <div

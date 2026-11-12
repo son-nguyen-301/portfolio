@@ -29,7 +29,7 @@ useSeoMeta({
 })
 
 // The link preview image (D-037): the hero label and headline.
-defineOgImage('Page', { label: profile.value?.hero.label, title: profile.value?.hero.headline })
+usePageOgImage({ label: profile.value?.hero.label, title: profile.value?.hero.headline })
 </script>
 
 <template>

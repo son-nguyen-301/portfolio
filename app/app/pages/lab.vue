@@ -14,7 +14,7 @@ useSeoMeta({
 })
 
 // The link preview image (D-037): the page label and heading.
-defineOgImage('Page', { label: 'Lab', title: heading })
+usePageOgImage({ label: 'Lab', title: heading })
 </script>
 
 <template>
