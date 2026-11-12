@@ -6,6 +6,7 @@ import { join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
+import { ogColors } from '../../app/utils/og'
 
 const appDir = fileURLToPath(new URL('../../app', import.meta.url))
 
@@ -17,12 +18,12 @@ function sourceFiles(dir: string, pattern: RegExp): string[] {
   })
 }
 
-// Code files that may hold colors, with the reason. Each one must still hold
-// a color, so a stale entry fails the test.
-const allowedCodeFiles: Record<string, string> = {
+// Code files that may hold colors: the only colors each one may hold, and
+// why. Any other color in the file fails, and so does a file that is gone.
+const allowedCodeFiles: Record<string, { colors: string[], reason: string }> = {
   // The link preview renderer can't read tokens.css (D-037).
   // tests/unit/og.test.ts keeps each value equal to its light token.
-  'utils/og.ts': 'ogColors copies the light tokens for the preview images',
+  'utils/og.ts': { colors: Object.values(ogColors), reason: 'ogColors copies the light tokens for the preview images' },
 }
 
 // Every CSS color name. `transparent`, `currentColor` and `inherit` are
@@ -61,12 +62,18 @@ const styleAttributes = new RegExp(`\\bstyle${attributeValue}`, 'gs')
 
 // The text of every string in a piece of JavaScript or TypeScript: quoted
 // strings and the fixed parts of template literals. Comments don't count, nor
-// do the paths in `import` and `export ... from`.
+// do module paths (`import`, `export ... from`, `import()`, `require()`) or
+// types such as `type T = 'red'`.
 function stringLiterals(code: string): string[] {
-  const file = ts.createSourceFile('code.ts', code, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS)
+  const file = ts.createSourceFile('code.ts', code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
   const found: string[] = []
+  const isModulePath = (node: ts.Node) => node.parent !== undefined && ts.isCallExpression(node.parent)
+    && node.parent.arguments[0] === node
+    && (node.parent.expression.kind === ts.SyntaxKind.ImportKeyword
+      || (ts.isIdentifier(node.parent.expression) && node.parent.expression.text === 'require'))
   const visit = (node: ts.Node) => {
-    if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) return
+    if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node) || ts.isTypeNode(node) || ts.isImportEqualsDeclaration(node)) return
+    if (isModulePath(node)) return
     if (ts.isStringLiteralLike(node) || ts.isTemplateLiteralToken(node)) found.push(node.text)
     ts.forEachChild(node, visit)
   }
@@ -144,6 +151,8 @@ describe('component colors', () => {
     expect(codeColors(`export function tone() { return 'hsl(170 80% 26%)' }`)).toEqual(['hsl(170 80% 26%)'])
     expect(codeColors(`export const tones = { ok: 'green', late: \`orange\` }`)).toEqual(['green', 'orange'])
     expect(codeColors(`export { a } from './white'\n// #fff\nexport const t = 'var(--ink)'`)).toEqual([])
+    expect(codeColors(`const a = import('./red')\nconst b = require('./white')\ntype T = 'red' | 'blue'\nlet c: { tone: 'green' }`)).toEqual([])
+    expect(codeColors(`const a = load('./red')`)).toEqual(['./red'])
   })
 
   const files = sourceFiles(appDir, /\.vue$/)
@@ -164,7 +173,8 @@ describe('component colors', () => {
 
   it.each(codeFiles.map(file => [relative(appDir, file), file]))('%s uses only color tokens', (name, file) => {
     const colors = codeColors(readFileSync(file, 'utf8'))
-    if (name in allowedCodeFiles) expect(colors.length, allowedCodeFiles[name]).toBeGreaterThan(0)
+    const allowed = allowedCodeFiles[name]
+    if (allowed) expect(colors.sort(), allowed.reason).toEqual([...allowed.colors].sort())
     else expect(colors).toEqual([])
   })
 
