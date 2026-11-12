@@ -2,9 +2,12 @@
 // and Vietnamese phone numbers. CLAUDE.md hard rules 1 and 3.
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
+import { extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { allFiles, formatHits, scanFiles } from '../guard'
+import { allFiles, formatHits, scanFiles, scanText } from '../guard'
+import type { Hit } from '../guard'
+import { pdfText } from '../pdf'
 
 const root = fileURLToPath(new URL('../..', import.meta.url)).replace(/\/$/, '')
 const banned = new Set<string>(JSON.parse(readFileSync(`${root}/tests/banned-words.json`, 'utf8')))
@@ -43,6 +46,21 @@ describe('banned-words guard', () => {
     const files = tracked.map(file => `${repo}/${file}`).filter(file => existsSync(file))
     const hits = scanFiles(files, banned, repo)
       .filter(hit => !(hit.file === fixtures && hit.kind === 'vn-phone'))
+    expect(formatHits(hits, repo, banned)).toBe('')
+  })
+
+  // The guard reads a PDF's file name but not its packed bytes, so the text of
+  // every PDF in app/public, in git and in the build is read here (the CV, PF-018).
+  it('finds nothing in the text of any PDF', async () => {
+    const files = [
+      ...allFiles([`${root}/public`]),
+      ...tracked.map(file => `${repo}/${file}`).filter(file => existsSync(file)),
+      ...allFiles([built]),
+    ]
+    const pdfs = [...new Set(files)].filter(file => extname(file).toLowerCase() === '.pdf')
+    expect(pdfs).toContain(`${root}/public/cv/hai-son-nguyen-cv.pdf`)
+    const hits: Hit[] = []
+    for (const file of pdfs) hits.push(...scanText(await pdfText(file), banned, file))
     expect(formatHits(hits, repo, banned)).toBe('')
   })
 
