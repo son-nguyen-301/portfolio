@@ -5,9 +5,9 @@
 // its brotli size. The output also lists the gzip size.
 //
 // Cloudflare compresses at brotli quality 4, not Node's default of 11: on
-// 2026-11-12 the live site sent four of these files at exactly their
-// quality 4 size. Quality 11 would count about 12% fewer bytes than visitors
-// download.
+// 2026-11-12 the live site sent these files within 0.5% of their quality 4
+// size (the small ones exactly). Quality 11 would count about 12% fewer bytes
+// than visitors download.
 //
 // The budget is checked with Save-Data on. Once the browser is idle, Nuxt
 // fetches the code of the pages that visible links point to, so a click
@@ -49,8 +49,12 @@ async function homeScripts(page: Page, saveData: boolean) {
 const kb = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`
 
 test('the home page loads under 115 KB of JavaScript, brotli', async ({ browser }) => {
-  const own = await homeScripts(await browser.newPage(), true)
-  const all = await homeScripts(await browser.newPage(), false)
+  const ownPage = await browser.newPage()
+  const own = await homeScripts(ownPage, true)
+  await ownPage.close()
+  const allPage = await browser.newPage()
+  const all = await homeScripts(allPage, false)
+  await allPage.close()
   const list = own.sizes.map(item => `${kb(item.brotli)} ${item.url}`)
   console.log([
     `Home page JavaScript: ${kb(own.brotli)} brotli (${kb(own.gzip)} gzip) in ${own.sizes.length} files.`,
