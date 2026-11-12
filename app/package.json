@@ -14,7 +14,8 @@
     "test:quality": "playwright test -c playwright.quality.config.ts",
     "test:guard": "vitest run tests/unit/banned-words.test.ts",
     "deploy:check": "wrangler deploy --dry-run",
-    "cv:pdf": "node --experimental-strip-types scripts/cv-pdf.ts"
+    "cv:pdf": "node --experimental-strip-types scripts/cv-pdf.ts",
+    "report:todo": "node --experimental-strip-types scripts/report-todo.ts"
   },
   "dependencies": {
     "@nuxt/content": "^3.16.2",

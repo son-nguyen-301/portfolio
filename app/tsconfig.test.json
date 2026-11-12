@@ -2,6 +2,6 @@
   // Type checks the unit tests, browser tests, quality checks, scripts and
   // their config files.
   "extends": "./.nuxt/tsconfig.node.json",
-  "include": ["tests/**/*.ts", "scripts/**/*.ts", "lib/workers-assets.ts", "vitest.config.ts", "playwright.config.ts", "playwright.quality.config.ts"],
+  "include": ["tests/**/*.ts", "scripts/**/*.ts", "lib/workers-assets.ts", "lib/links.ts", "lib/todo.ts", "vitest.config.ts", "playwright.config.ts", "playwright.quality.config.ts"],
   "exclude": ["node_modules"]
 }
