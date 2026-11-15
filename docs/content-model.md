@@ -31,6 +31,6 @@ Every fact in these files is approved for the public site. Do not add facts in c
 | `cardMetric` | string | Short result line for the card, for example "UI library CSS −65%". Optional. |
 | `metrics` | `{ value, label }[]` | Result tiles. Empty when there are no numbers. |
 | `quote` | `{ text, role }` or `null` | `null` until a written quote exists |
-| `media` | `{ type: image or diagram, src?, alt, caption? }[]` | Diagrams are inline SVG components named in `src` |
+| `media` | `{ type: image or diagram, src?, alt, caption? }[]` | Use `diagram`: an inline SVG component named in `src`. No screenshots (D-043). `image` is still read, but no content uses it. |
 
 Body sections, always in this order, as `##` headings: "The problem", "What I did", "The result". Optional "Hard choice" callout inside "What I did".

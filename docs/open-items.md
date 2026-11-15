@@ -1,17 +1,16 @@
 # Open items
 
-Most of these are now `manual` tasks on the board (PF-025 to PF-030 and PF-032 to PF-034). Close them there.
+Most of these are now `manual` tasks on the board (PF-025 to PF-029 and PF-032 to PF-034). Close them there. PF-030 (screenshots) was dropped on 2026-11-15.
 
-Things that wait on Son. The build goes ahead with placeholders: a quote is `null` and hidden, an image has a `TODO` caption and shows a neutral placeholder.
+Things that wait on Son. The build goes ahead with placeholders: a quote is `null` and hidden, and a media slot with a `TODO` shows a neutral placeholder until its diagram is built.
 
 ## Proof
 
 - [ ] **Quotes from the NZ company:** the IT team leader and the project lead. Son has a ready message to send.
 - [ ] **LinkedIn recommendations from Aspire.** Son has asked his former teammates. Use a quote only after it is written.
 - [ ] **Paymentwall / Terminal3:** is there someone (PM or the other frontend developer) Son could ask for a recommendation?
-- [ ] **Terminal3 screenshots:** Son opens the Internet Archive copies (Nov 2021 and Apr 2022) and takes 2 or 3 screenshots, or we keep the diagram.
-- [ ] **NZ storefront screenshots** from staging with a test account: room home page with hero, UI kit gallery, Favourites page, CI test results comment. Blur the company name, logo, prices, customer and coworker names, repo and pull request numbers.
-- [ ] **Lab media:** short screen videos or screenshots of hydra-claude and the task runner (no company data), a Looper screenshot, a Homereel TV home screen (app screens only).
+
+No screenshots. Son decided on 2026-11-15 that case studies and Lab projects use diagrams instead (D-043). PF-059 and PF-060 build the ones still missing.
 
 ## Facts to check
 
@@ -29,11 +28,11 @@ Things that wait on Son. The build goes ahead with placeholders: a quote is `nul
 
 `pnpm report:todo` (run from `app/`) lists every `TODO` in `app/content/`, every case study with `status: draft`, and every `TODO` a visitor sees on the built pages. This list matches it: `tests/unit/todo.test.ts` fails when a `TODO` or a draft in content is missing here, or when one listed here is gone from content. When you fix one, delete its line. No built page shows a `TODO` (report of 2026-11-12).
 
-- [ ] `app/content/lab/homereel.yml`: "TODO: screenshot of the TV home screen" (Lab media above)
-- [ ] `app/content/lab/hydra-claude.yml`: "TODO: screenshot or short video of a saved rule being applied" (Lab media above)
-- [ ] `app/content/lab/looper.yml`: "TODO: screenshot of the Looper UI" (Lab media above)
-- [ ] `app/content/work/nz-storefront-speed-ui-swap.md`: "TODO: screenshot from staging, company name and prices blurred" (NZ storefront screenshots above)
-- [ ] `app/content/work/nz-storefront-speed-ui-swap.md`: "TODO: screenshot from staging" (NZ storefront screenshots above)
+- [ ] `app/content/lab/homereel.yml`: "TODO: screenshot of the TV home screen" (diagram: PF-060)
+- [ ] `app/content/lab/hydra-claude.yml`: "TODO: screenshot or short video of a saved rule being applied" (diagram: PF-060)
+- [ ] `app/content/lab/looper.yml`: "TODO: screenshot of the Looper UI" (diagram: PF-060)
+- [ ] `app/content/work/nz-storefront-speed-ui-swap.md`: "TODO: screenshot from staging, company name and prices blurred" (diagram: PF-059)
+- [ ] `app/content/work/nz-storefront-speed-ui-swap.md`: "TODO: screenshot from staging" (diagram: PF-059)
 - [ ] `app/content/work/aspire-multi-currency.md`: `status: draft` (Facts to check above)
 - [ ] `app/content/work/aspire-redesign.md`: `status: draft` (Facts to check above)
 - [ ] `app/content/work/paymentwall-terminal3.md`: `status: draft` (Facts to check above)

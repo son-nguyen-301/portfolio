@@ -125,7 +125,7 @@ Two columns on desktop: a side panel and the story. One column on phones (side p
 - **Motion:** one short fade-up on first load for the hero only. Respect `prefers-reduced-motion`. Content is visible without JavaScript.
 - **Focus:** visible 2px jade outline on all interactive elements.
 - **Images:** `@nuxt/image`, lazy except the hero, fixed width and height to avoid layout shift.
-- **Diagrams** for work without screenshots (Aspire, Paymentwall, AI pipeline, task runner): simple inline SVG, colored from tokens, readable in both themes.
+- **Diagrams, not screenshots,** for every case study and Lab project (D-043): simple inline SVG, colored from tokens, readable in both themes. A diagram draws only what its content file says.
 
 ## Quality bar
 

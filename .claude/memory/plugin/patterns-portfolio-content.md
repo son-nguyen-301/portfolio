@@ -12,6 +12,8 @@ triggers:
     - "case study"
     - "portfolio content"
     - "employer"
+    - "screenshot"
+    - "diagram"
 ---
 
 ## Never name the current employer; publish only sourced, manager-approved numbers
@@ -55,3 +57,12 @@ freshness: 365d
 **Why:** Son's answers on 2026-11-10.
 
 ---
+
+---
+
+## Case studies and Lab projects use diagrams, not screenshots
+class: directive
+
+Every case study and Lab `media` entry is an inline SVG diagram (`type: diagram`, a component in `app/app/utils/diagrams.ts`). Never ask Son for screenshots and never plan a task that needs one; a missing image becomes a diagram task. A diagram draws only what its content file says, with no new facts. Recorded as D-043 in `head/DECISIONS.md`.
+
+**Why:** Son decided on 2026-11-15 to use diagrams instead of screenshots. Diagrams need nothing from his accounts or staging and never show a company name, price or coworker.

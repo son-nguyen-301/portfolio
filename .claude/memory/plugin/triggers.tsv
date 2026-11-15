@@ -4,6 +4,8 @@ patterns-portfolio-content.md	path	app/app/components/**	directive
 patterns-portfolio-content.md	keyword	case study	directive
 patterns-portfolio-content.md	keyword	portfolio content	directive
 patterns-portfolio-content.md	keyword	employer	directive
+patterns-portfolio-content.md	keyword	screenshot	directive
+patterns-portfolio-content.md	keyword	diagram	directive
 patterns-site-decisions.md	keyword	hero	pattern
 patterns-site-decisions.md	keyword	design direction	pattern
 patterns-site-decisions.md	keyword	contact	pattern

@@ -8,9 +8,9 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | --- | --- | --- | --- | --- |
 | Sprint 1 - Foundation | #1 | PF-001 to PF-006 | PF-028, PF-032, PF-033, PF-034 | Done. Son reviewed it on 2026-11-11. |
 | Sprint 2 - Trust and home | #2 | PF-007 to PF-011, PF-023, PF-035, PF-039 | PF-025 | Done. Milestone closed on 2026-11-11. |
-| Sprint 3 - Proof pages | #3 | PF-012 to PF-016 | PF-029, PF-030 | Runner tasks done on 2026-11-11. Waits on Son's review and the manual tasks PF-029 and PF-030. |
+| Sprint 3 - Proof pages | #3 | PF-012 to PF-016 | PF-029, PF-030 | Runner tasks done on 2026-11-11. Waits on Son's review and the manual task PF-029. PF-030 was dropped on 2026-11-15 (D-043). |
 | Sprint 4 - Remaining pages and sharing | #4 | PF-017 to PF-021, PF-054 | | Runner tasks done on 2026-11-12. Waits on Son's review. |
-| Sprint 5 - Quality and launch | #5 | PF-022, PF-024, PF-031, PF-036, PF-037, PF-038 | PF-026, PF-027 | In progress. PF-022, PF-024, PF-036, PF-037 and PF-038 done on 2026-11-12. PF-031 waits on Son's manual tasks PF-029 and PF-030. |
+| Sprint 5 - Quality and launch | #5 | PF-022, PF-024, PF-031, PF-036, PF-037, PF-038, PF-059, PF-060 | PF-026, PF-027 | In progress. PF-022, PF-024, PF-036, PF-037 and PF-038 done on 2026-11-12. PF-059 and PF-060 added on 2026-11-15. PF-031 waits on Son's manual task PF-029. |
 
 ## Tasks
 
@@ -116,3 +116,4 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - 2026-11-12: PF-036 merged (#117). Round 1: changes needed; a hash like `beef0084…` gave a phone hit, and D-040 was missing. Both fixed, with longer joins, HTML comments, quoted `>`, Armenian lookalikes and escapes hidden by entities. Round 2: approved; comment cleanup and more D-040 limits in the approve commit. Opened #118 (PF-058, P3, Backlog): Unicode dashes and the phone de-duplication. One local e2e run had one failure that passed on rerun, likely #78. Next: PF-037 (#67), then PF-038 (#71). PF-031 waits on PF-029 and PF-030.
 - 2026-11-12: PF-037 merged (#119). Son had picked option (a) in #67. Round 1 approved; its two wording fixes (D-041 names joined words, emails and domains too, and its Replaces column is "—") are in the approve commit.
 - 2026-11-12: PF-038 merged (#120). Round 1 approved; its finding that any color in `utils/og.ts` would pass is fixed, and `import()`, `require()` and type literals no longer count. Round 2 approved; the limits it named are in D-042. One e2e run in each round had one failure from the #78 race; reruns passed, and the race in `headers.spec.ts` is noted on #78. Next: none ready. PF-031 waits on PF-029 and PF-030.
+- 2026-11-15: Son chose diagrams instead of screenshots (D-043). Added PF-059 (#121, NZ storefront speed case study) and PF-060 (#122, Lab page) to Sprint 5. Closed PF-030 (#57) as not planned. PF-031 (#51) no longer moves images and now waits only on PF-029.
