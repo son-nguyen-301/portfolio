@@ -13,7 +13,7 @@ The build is a small Scrum project. GitHub is the board. The Portfolio task runn
 
 - A **story** is written from a person's side: a visitor, a client, a recruiter or Son. It says what they can do when the story is done.
 - A **task** is one pull request that a runner can build, test and review in one run. Tasks carry the real work.
-- A `manual` task is work only Son can do (accounts, dashboards, quotes, screenshots). The runner never builds, edits or closes it. A runner task can need a `manual` task; it then waits until Son closes it.
+- A `manual` task is work only Son can do (accounts, dashboards, quotes). The runner never builds, edits or closes it. A runner task can need a `manual` task; it then waits until Son closes it.
 - Bugs and extra work the runner finds become tasks with `found-by-loop`.
 
 ## Task size

@@ -166,6 +166,7 @@ Short and plain: the task and PR, review rounds, merged or not, what closed upwa
 - Never close or edit a `manual` issue. Son closes those.
 - Never publish a release or push a tag.
 - Never change `head/LOOP.md` or `docs/scrum.md` inside a task PR. The flow changes only through its own PR.
+- Case study and Lab media are diagrams, not screenshots (D-043). Never ask Son for a screenshot and never open a task that needs one. A missing image becomes a diagram task. A diagram draws only what its content file says.
 
 ## 13. Prompt and report template
 
