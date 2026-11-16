@@ -10,7 +10,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | Sprint 2 - Trust and home | #2 | PF-007 to PF-011, PF-023, PF-035, PF-039 | PF-025 | Done. Milestone closed on 2026-11-11. |
 | Sprint 3 - Proof pages | #3 | PF-012 to PF-016 | PF-029, PF-030 | Runner tasks done on 2026-11-11. Waits on Son's review and the manual task PF-029. PF-030 was dropped on 2026-11-15 (D-043). |
 | Sprint 4 - Remaining pages and sharing | #4 | PF-017 to PF-021, PF-054 | | Runner tasks done on 2026-11-12. Waits on Son's review. |
-| Sprint 5 - Quality and launch | #5 | PF-022, PF-024, PF-031, PF-036, PF-037, PF-038, PF-059, PF-060 | PF-026, PF-027 | In progress. PF-022, PF-024, PF-036, PF-037 and PF-038 done on 2026-11-12. PF-059 and PF-060 added on 2026-11-15. PF-059 done on 2026-11-16. PF-031 waits on Son's manual task PF-029. |
+| Sprint 5 - Quality and launch | #5 | PF-022, PF-024, PF-031, PF-036, PF-037, PF-038, PF-059, PF-060 | PF-026, PF-027 | In progress. PF-022, PF-024, PF-036, PF-037 and PF-038 done on 2026-11-12. PF-059 and PF-060 added on 2026-11-15. PF-059 and PF-060 done on 2026-11-16. PF-031 waits on Son's manual task PF-029. |
 
 ## Tasks
 
@@ -48,6 +48,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 | PF-037 | #67 | Done 2026-11-12 | #119 | Son's pick (a): the banned-words hashes stay in the repo. D-041 says they stop a name from slipping in by mistake but don't keep the list secret, and D-004, `tests/guard.ts` and `app/README.md` point to it. 1 review round. |
 | PF-038 | #71 | Done 2026-11-12 | #120 | The color test also reads the strings in `<script>` blocks and in every code file under `app/app` with the TypeScript parser, and unquoted attributes such as `fill=red`. `utils/og.ts` may hold only the `ogColors` values (D-042). 2 review rounds. |
 | PF-059 | #121 | Done 2026-11-16 | #124 | Two diagrams replace the screenshot slots on the NZ storefront speed case study: `DiagramCssCut` (the UI library CSS as two bars to scale, 419,729 and 145,215 bytes, −65%) and `DiagramUiSwap` (pages, our own component layer, old library swapped for the new one, about 60 small pull requests). `tests/e2e/diagrams.spec.ts` now checks every diagram on a page and fails when two labels overlap. The old screenshot text is gone from tests and mockups (D-044). 3 review rounds. |
+| PF-060 | #122 | Done 2026-11-16 | #127 | All four Lab cards show a diagram: `DiagramHydraClaude` (Claude Code saves corrections, rules and decisions to a memory for each repo, which brings them back), `DiagramLooper` (idea to fix and back to build, with Claude Code and Risk levels beside it) and `DiagramHomereel` (the home server and the two apps only). The three Lab TODOs left `docs/open-items.md`. The diagram text checks moved to `tests/e2e/diagram-text.ts`, gained `textOutOfBox`, and now run on the Lab page too (D-045). 2 review rounds. |
 
 ## Live checks Son still owes
 
@@ -82,6 +83,7 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - PF-037: none.
 - PF-038: none.
 - PF-059: open `/work/nz-storefront-speed-ui-swap` on a real phone, also inside the LinkedIn app, and on a desktop, in light and dark: both diagrams fit, their words read clearly, and the two bars are easy to tell apart.
+- PF-060: open `/lab` on a real phone and on a desktop, in light and dark: all four diagrams fit and their words read clearly.
 
 ## Close pending
 
@@ -120,3 +122,4 @@ The runner updates this file in the PR it merges. GitHub Issues win when they di
 - 2026-11-12: PF-038 merged (#120). Round 1 approved; its finding that any color in `utils/og.ts` would pass is fixed, and `import()`, `require()` and type literals no longer count. Round 2 approved; the limits it named are in D-042. One e2e run in each round had one failure from the #78 race; reruns passed, and the race in `headers.spec.ts` is noted on #78. Next: none ready. PF-031 waits on PF-029 and PF-030.
 - 2026-11-15: Son chose diagrams instead of screenshots (D-043). Added PF-059 (#121, NZ storefront speed case study) and PF-060 (#122, Lab page) to Sprint 5. Closed PF-030 (#57) as not planned. PF-031 (#51) no longer moves images and now waits only on PF-029.
 - 2026-11-16: PF-059 merged (#124). Round 1: both reviewers approved; their small items (a guessed label offset, only the first diagram measured, no overlap test, a passive alt text, the old alt text in a test and two mockups) are fixed. Round 2: one more mockup still held the old text; fixed with the other small items. Round 3: both approved. Opened #125 (PF-061, P3, Backlog: the word test also reads the alt text) and #126 (PF-062, P3, Backlog: mockups still show screenshot slots). Commented on #78 (flaky click tests seen again). Next: PF-060 (#122). PF-031 waits on PF-029.
+- 2026-11-16: PF-060 merged (#127). Round 1: both reviewers approved; their small items (Risk levels not joined to Claude Code, a test comment, a test header, the PR body's e2e count and mockup claim) are fixed. Round 2: both approved. The Lab mockup labels now say Diagram; the slot style is left to PF-062 (#126). Commented on #125, #126 and #78. No new issues. Next: PF-031 (#51) waits on Son's manual task PF-029 (#56), so Sprint 5 has no ready runner task.
