@@ -79,15 +79,16 @@ for (const colorScheme of ['light', 'dark'] as const) {
           expect(box!.x, study.slug).toBeGreaterThanOrEqual(0)
           expect(box!.x + box!.width, study.slug).toBeLessThanOrEqual(360)
         }
-        const svg = svgs.first()
         expect(await page.evaluate(() => document.documentElement.scrollWidth), study.slug).toBeLessThanOrEqual(360)
         expect(await textOutside(page), study.slug).toEqual([])
         expect(await textOverlaps(page), study.slug).toEqual([])
-        const [fill, ink] = await svg.evaluate(node => [
-          getComputedStyle(node.querySelector('text:not(.diagram__label)')!).fill,
-          getComputedStyle(document.body).color,
-        ])
-        expect(fill, study.slug).toBe(ink)
+        for (const svg of await svgs.all()) {
+          const [fill, ink] = await svg.evaluate(node => [
+            getComputedStyle(node.querySelector('text:not(.diagram__label)')!).fill,
+            getComputedStyle(document.body).color,
+          ])
+          expect(fill, study.slug).toBe(ink)
+        }
       }
     })
   })
@@ -97,7 +98,9 @@ test('diagrams stay at most 400 px wide on a desktop', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   for (const study of studies) {
     await page.goto(`/work/${study.slug}`)
-    const box = await page.locator('[data-section="media"] svg.diagram').first().boundingBox()
-    expect(box!.width, study.slug).toBeLessThanOrEqual(400)
+    for (const svg of await page.locator('[data-section="media"] svg.diagram').all()) {
+      const box = await svg.boundingBox()
+      expect(box!.width, study.slug).toBeLessThanOrEqual(400)
+    }
   }
 })

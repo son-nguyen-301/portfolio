@@ -23,10 +23,10 @@ quote: null
 media:
   - type: diagram
     src: DiagramCssCut
-    alt: "UI library CSS cut from 419,729 to 145,215 bytes (−65%) by loading only the 20 UI components the site uses"
+    alt: "I cut the UI library CSS from 419,729 to 145,215 bytes (−65%) by loading only the 20 UI components the site uses"
   - type: diagram
     src: DiagramUiSwap
-    alt: "Pages use our own component layer. Behind it, I swapped old library components for new ones one at a time, in about 60 small pull requests checked against screenshots."
+    alt: "Pages use our own component layer. Behind it, I swapped old library components for new ones one at a time, in about 60 small pull requests checked against screenshots"
 ---
 
 ## The problem
