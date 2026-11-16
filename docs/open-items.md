@@ -10,7 +10,7 @@ Things that wait on Son. The build goes ahead with placeholders: a quote is `nul
 - [ ] **LinkedIn recommendations from Aspire.** Son has asked his former teammates. Use a quote only after it is written.
 - [ ] **Paymentwall / Terminal3:** is there someone (PM or the other frontend developer) Son could ask for a recommendation?
 
-No screenshots. Son decided on 2026-11-15 that case studies and Lab projects use diagrams instead (D-043). PF-059 and PF-060 build the ones still missing.
+No screenshots. Son decided on 2026-11-15 that case studies and Lab projects use diagrams instead (D-043). PF-059 built the two on the NZ storefront speed case study; PF-060 builds the ones still missing on the Lab page.
 
 ## Facts to check
 
@@ -31,8 +31,6 @@ No screenshots. Son decided on 2026-11-15 that case studies and Lab projects use
 - [ ] `app/content/lab/homereel.yml`: "TODO: screenshot of the TV home screen" (diagram: PF-060)
 - [ ] `app/content/lab/hydra-claude.yml`: "TODO: screenshot or short video of a saved rule being applied" (diagram: PF-060)
 - [ ] `app/content/lab/looper.yml`: "TODO: screenshot of the Looper UI" (diagram: PF-060)
-- [ ] `app/content/work/nz-storefront-speed-ui-swap.md`: "TODO: screenshot from staging, company name and prices blurred" (diagram: PF-059)
-- [ ] `app/content/work/nz-storefront-speed-ui-swap.md`: "TODO: screenshot from staging" (diagram: PF-059)
 - [ ] `app/content/work/aspire-multi-currency.md`: `status: draft` (Facts to check above)
 - [ ] `app/content/work/aspire-redesign.md`: `status: draft` (Facts to check above)
 - [ ] `app/content/work/paymentwall-terminal3.md`: `status: draft` (Facts to check above)

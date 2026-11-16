@@ -46,7 +46,7 @@ This is the original outline. The live plan is on GitHub: 5 sprints (milestones)
 ## 7. Work pages
 
 - `/work` list and `/work/[slug]` template with side panel, story, metrics, media (images or diagram components), quote (hidden when `null`), next and previous links.
-- Diagram components named in the content files: `DiagramAiPipeline`, `DiagramRoomsByUrl`, `DiagramMultiCurrency`, `DiagramFeatureFlag`, `DiagramCmsPages`, `DiagramTaskRunner`. Inline SVG, colors from tokens.
+- Diagram components named in the content files: `DiagramAiPipeline`, `DiagramRoomsByUrl`, `DiagramMultiCurrency`, `DiagramFeatureFlag`, `DiagramCmsPages`, `DiagramCssCut`, `DiagramUiSwap`, `DiagramTaskRunner`. Inline SVG, colors from tokens.
 - Image slots with a `TODO` caption show a neutral placeholder, never a broken image.
 
 **Done when:** all 6 case studies render, the current employer's name appears nowhere in the built HTML (add a test that searches `.output/public`), and each page has its own Open Graph image.
