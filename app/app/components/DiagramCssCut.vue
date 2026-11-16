@@ -58,9 +58,10 @@ const bytes = (value: number) => `${value.toLocaleString('en-US')} bytes`
     </g>
     <text
       class="diagram__strong diagram__accent"
-      :x="full.x + bar(after) + 104"
+      x="304"
       :y="rows[1]!.top + 30"
       dy="0.35em"
+      text-anchor="end"
     >{{ cut }}</text>
   </svg>
 </template>

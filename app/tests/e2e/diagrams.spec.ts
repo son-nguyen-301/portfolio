@@ -17,6 +17,20 @@ const studies = readdirSync(join(content, 'work'))
   })
   .filter(study => study.diagrams.length)
 
+// Every pair of <text> boxes in one diagram that overlap, after the fonts load,
+// so two labels that run into each other show up. A text box is taller than
+// its letters, so two stacked lines may share up to 3 units.
+async function textOverlaps(page: Page) {
+  await page.evaluate(() => document.fonts.ready)
+  return page.locator('[data-section="media"] svg.diagram').evaluateAll(svgs => svgs.flatMap((svg) => {
+    const boxes = [...svg.querySelectorAll('text')].map(text => ({ text: text.textContent, b: text.getBBox() }))
+    return boxes.flatMap((one, i) => boxes.slice(i + 1)
+      .filter(({ b }) => one.b.x < b.x + b.width && b.x < one.b.x + one.b.width
+        && Math.min(one.b.y + one.b.height, b.y + b.height) - Math.max(one.b.y, b.y) > 3)
+      .map(other => `${one.text} | ${other.text}`))
+  }))
+}
+
 // Every <text> of every diagram, measured in its SVG's own units after the
 // fonts load, so a word that runs out of the drawing shows up.
 async function textOutside(page: Page) {
@@ -54,16 +68,21 @@ for (const colorScheme of ['light', 'dark'] as const) {
   test.describe(`on a 360 px phone, ${colorScheme}`, () => {
     test.use({ viewport: { width: 360, height: 740 }, colorScheme })
 
-    test('every diagram fits, keeps its words inside, and draws text in the ink color', async ({ page }) => {
+    test('every diagram fits, keeps its words inside and apart, and draws text in the ink color', async ({ page }) => {
       for (const study of studies) {
         await page.goto(`/work/${study.slug}`)
-        const svg = page.locator('[data-section="media"] svg.diagram').first()
-        await svg.scrollIntoViewIfNeeded()
-        const box = await svg.boundingBox()
-        expect(box!.x, study.slug).toBeGreaterThanOrEqual(0)
-        expect(box!.x + box!.width, study.slug).toBeLessThanOrEqual(360)
+        const svgs = page.locator('[data-section="media"] svg.diagram')
+        expect(await svgs.count(), study.slug).toBe(study.diagrams.length)
+        for (const one of await svgs.all()) {
+          await one.scrollIntoViewIfNeeded()
+          const box = await one.boundingBox()
+          expect(box!.x, study.slug).toBeGreaterThanOrEqual(0)
+          expect(box!.x + box!.width, study.slug).toBeLessThanOrEqual(360)
+        }
+        const svg = svgs.first()
         expect(await page.evaluate(() => document.documentElement.scrollWidth), study.slug).toBeLessThanOrEqual(360)
         expect(await textOutside(page), study.slug).toEqual([])
+        expect(await textOverlaps(page), study.slug).toEqual([])
         const [fill, ink] = await svg.evaluate(node => [
           getComputedStyle(node.querySelector('text:not(.diagram__label)')!).fill,
           getComputedStyle(document.body).color,

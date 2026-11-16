@@ -21,11 +21,11 @@ describe('CaseStudyMedia', () => {
   it('shows a placeholder, with the alt text as caption, for a screenshot that is a TODO', () => {
     const wrapper = mount(CaseStudyMedia, {
       ...stubs,
-      props: { items: [{ type: 'image', alt: 'Room home page', caption: 'TODO: screenshot from staging' }] },
+      props: { items: [{ type: 'image', alt: 'Home page', caption: 'TODO: screenshot from staging' }] },
     })
     expect(wrapper.find('img').exists()).toBe(false)
     expect(wrapper.find('.case-media__placeholder').text()).toBe('Screenshot coming')
-    expect(wrapper.find('figcaption').text()).toBe('Room home page')
+    expect(wrapper.find('figcaption').text()).toBe('Home page')
     expect(wrapper.text()).not.toContain('TODO')
   })
 
