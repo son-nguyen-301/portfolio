@@ -45,3 +45,4 @@ The order in which the runner picks work. Top first. GitHub Issues say what is o
 | 18 | Backlog | P3 | PF-057 | #116 | #50 | loop | Found in PR #114. Six small gaps in the link checker and the TODO report |
 | 19 | Backlog | P3 | PF-058 | #118 | #66 | loop | Found in PR #117. The guard does not join words around Unicode dashes |
 | 20 | Backlog | P3 | PF-061 | #125 | none | loop | Found in PR #124. The diagram word test also reads the alt text |
+| 21 | Backlog | P3 | PF-062 | #126 | none | loop | Found in PR #124. Some design mockups still show screenshot slots |
