@@ -3,8 +3,8 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
-import type { Page } from '@playwright/test'
 import { parse } from 'yaml'
+import { textOutOfBox, textOutside, textOverlaps } from './diagram-text'
 
 const content = fileURLToPath(new URL('../../content', import.meta.url))
 type Media = { type: string, src?: string, alt: string }
@@ -17,33 +17,7 @@ const studies = readdirSync(join(content, 'work'))
   })
   .filter(study => study.diagrams.length)
 
-// Every pair of <text> boxes in one diagram that overlap, after the fonts load,
-// so two labels that run into each other show up. A text box is taller than
-// its letters, so two stacked lines may share up to 3 units.
-async function textOverlaps(page: Page) {
-  await page.evaluate(() => document.fonts.ready)
-  return page.locator('[data-section="media"] svg.diagram').evaluateAll(svgs => svgs.flatMap((svg) => {
-    const boxes = [...svg.querySelectorAll('text')].map(text => ({ text: text.textContent, b: text.getBBox() }))
-    return boxes.flatMap((one, i) => boxes.slice(i + 1)
-      .filter(({ b }) => one.b.x < b.x + b.width && b.x < one.b.x + one.b.width
-        && Math.min(one.b.y + one.b.height, b.y + b.height) - Math.max(one.b.y, b.y) > 3)
-      .map(other => `${one.text} | ${other.text}`))
-  }))
-}
-
-// Every <text> of every diagram, measured in its SVG's own units after the
-// fonts load, so a word that runs out of the drawing shows up.
-async function textOutside(page: Page) {
-  await page.evaluate(() => document.fonts.ready)
-  return page.locator('[data-section="media"] svg.diagram').evaluateAll(svgs => svgs.flatMap((svg) => {
-    const box = (svg as SVGSVGElement).viewBox.baseVal
-    return [...svg.querySelectorAll('text')].flatMap((text) => {
-      const b = text.getBBox()
-      const inside = b.x >= box.x && b.y >= box.y && b.x + b.width <= box.x + box.width && b.y + b.height <= box.y + box.height
-      return inside ? [] : [text.textContent]
-    })
-  }))
-}
+const selector = '[data-section="media"] svg.diagram'
 
 test('six case studies have a diagram', () => {
   expect(studies).toHaveLength(6)
@@ -60,7 +34,8 @@ for (const study of studies) {
       await expect(svg).toHaveClass(/diagram/)
       await expect(svg.locator('title')).toHaveText(item.alt)
     }
-    expect(await textOutside(page)).toEqual([])
+    expect(await textOutside(page, selector)).toEqual([])
+    expect(await textOutOfBox(page, selector)).toEqual([])
   })
 }
 
@@ -80,8 +55,8 @@ for (const colorScheme of ['light', 'dark'] as const) {
           expect(box!.x + box!.width, study.slug).toBeLessThanOrEqual(360)
         }
         expect(await page.evaluate(() => document.documentElement.scrollWidth), study.slug).toBeLessThanOrEqual(360)
-        expect(await textOutside(page), study.slug).toEqual([])
-        expect(await textOverlaps(page), study.slug).toEqual([])
+        expect(await textOutside(page, selector), study.slug).toEqual([])
+        expect(await textOverlaps(page, selector), study.slug).toEqual([])
         for (const svg of await svgs.all()) {
           const [fill, ink] = await svg.evaluate(node => [
             getComputedStyle(node.querySelector('text:not(.diagram__label)')!).fill,

@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-// The diagrams (PF-014, PF-059). Each one is named in content, has a <title> for
+// The diagrams (PF-014, PF-059, PF-060). Each one is named in content, has a <title> for
 // screen readers, and draws only words that are in the content file that
 // names it (CLAUDE.md hard rule 2).
 import { readdirSync, readFileSync } from 'node:fs'
@@ -22,7 +22,7 @@ const words = (text: string) => text.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [
 describe('diagrams', () => {
   it('has a component for every diagram named in content, and none more', () => {
     expect([...namedIn.keys()].sort()).toEqual(Object.keys(diagrams).sort())
-    expect(namedIn.size).toBe(8)
+    expect(namedIn.size).toBe(11)
   })
 
   it.each(Object.keys(diagrams))('%s is an SVG image with the title it is given', (name) => {

@@ -57,10 +57,10 @@ class Component extends DCLogic {
 renderVals() {
 const theme = this.props.theme ?? 'light';
 const lab = [
-{ name: 'hydra-claude', status: 'Public, in use', live: true, summary: 'A Claude Code plugin that gives Claude a memory for each repo. It saves corrections, rules and decisions, and brings them back when they matter.', stack: ['Claude Code plugin', 'Hooks', 'Skills', 'Bash'], link: 'https://github.com/son-nguyen-301/hydra-claude', media: 'Screenshot · a saved rule applied' },
+{ name: 'hydra-claude', status: 'Public, in use', live: true, summary: 'A Claude Code plugin that gives Claude a memory for each repo. It saves corrections, rules and decisions, and brings them back when they matter.', stack: ['Claude Code plugin', 'Hooks', 'Skills', 'Bash'], link: 'https://github.com/son-nguyen-301/hydra-claude', media: 'Diagram · saved to memory, brought back' },
 { name: 'GitHub task runner', status: 'Running', live: true, summary: 'A chain of Claude Code cloud sessions that works through a repo’s GitHub issues one at a time: build, review by a second agent, merge, then start the next run.', stack: ['Claude Code', 'Subagents', 'GitHub API'], link: '', media: 'Diagram · issue to merge' },
-{ name: 'Looper', status: 'Build in progress', live: false, summary: 'A web app that takes one builder from idea to live app and keeps fixing it after launch. Claude Code does the building, and risk levels decide what it may do alone.', stack: ['Nuxt 4', 'PostgreSQL', 'Claude Code'], link: '', media: 'Screenshot · Looper board' },
-{ name: 'Homereel', status: 'Live', live: true, summary: 'My own TV and phone app for watching movies and shows from my home server, on Google TV and Android.', stack: ['Kotlin', 'Jetpack Compose', 'Android TV'], link: '', media: 'Screenshot · TV home screen' }
+{ name: 'Looper', status: 'Build in progress', live: false, summary: 'A web app that takes one builder from idea to live app and keeps fixing it after launch. Claude Code does the building, and risk levels decide what it may do alone.', stack: ['Nuxt 4', 'PostgreSQL', 'Claude Code'], link: '', media: 'Diagram · idea to fix' },
+{ name: 'Homereel', status: 'Live', live: true, summary: 'My own TV and phone app for watching movies and shows from my home server, on Google TV and Android.', stack: ['Kotlin', 'Jetpack Compose', 'Android TV'], link: '', media: 'Diagram · home server to TV and phone' }
 ].map(l => ({ ...l, hasLink: !!l.link, pillCls: l.live ? 'live' : '' }));
 return { theme, upwork: !!this.props.upwork, themeClass: theme === 'dark' ? 'dark' : '', lab };
 }
