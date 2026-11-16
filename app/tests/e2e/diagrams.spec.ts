@@ -31,8 +31,8 @@ async function textOutside(page: Page) {
   }))
 }
 
-test('five case studies have a diagram', () => {
-  expect(studies).toHaveLength(5)
+test('six case studies have a diagram', () => {
+  expect(studies).toHaveLength(6)
 })
 
 for (const study of studies) {

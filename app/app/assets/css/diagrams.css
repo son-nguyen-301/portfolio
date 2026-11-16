@@ -62,6 +62,11 @@
   fill: var(--jade-soft);
 }
 
+/* A bar whose length is a number, so it needs contrast in both themes. */
+.diagram__bar--muted {
+  fill: var(--muted);
+}
+
 .diagram__line {
   fill: none;
   stroke: var(--muted);

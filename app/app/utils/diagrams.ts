@@ -5,16 +5,20 @@
 import type { Component } from 'vue'
 import DiagramAiPipeline from '../components/DiagramAiPipeline.vue'
 import DiagramCmsPages from '../components/DiagramCmsPages.vue'
+import DiagramCssCut from '../components/DiagramCssCut.vue'
 import DiagramFeatureFlag from '../components/DiagramFeatureFlag.vue'
 import DiagramMultiCurrency from '../components/DiagramMultiCurrency.vue'
 import DiagramRoomsByUrl from '../components/DiagramRoomsByUrl.vue'
 import DiagramTaskRunner from '../components/DiagramTaskRunner.vue'
+import DiagramUiSwap from '../components/DiagramUiSwap.vue'
 
 export const diagrams: Partial<Record<string, Component>> = {
   DiagramAiPipeline,
   DiagramCmsPages,
+  DiagramCssCut,
   DiagramFeatureFlag,
   DiagramMultiCurrency,
   DiagramRoomsByUrl,
   DiagramTaskRunner,
+  DiagramUiSwap,
 }

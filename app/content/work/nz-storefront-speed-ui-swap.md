@@ -21,12 +21,12 @@ metrics:
     label: "Typical Docker deploy"
 quote: null
 media:
-  - type: image
-    alt: "Room home page with the hero image"
-    caption: "TODO: screenshot from staging, company name and prices blurred"
-  - type: image
-    alt: "UI kit gallery after the library swap"
-    caption: "TODO: screenshot from staging"
+  - type: diagram
+    src: DiagramCssCut
+    alt: "UI library CSS cut from 419,729 to 145,215 bytes (−65%) by loading only the 20 UI components the site uses"
+  - type: diagram
+    src: DiagramUiSwap
+    alt: "Pages use our own component layer, and behind it old library components are swapped for new ones one at a time, in about 60 small pull requests checked against screenshots"
 ---
 
 ## The problem
