@@ -6,5 +6,6 @@ link: null
 order: 4
 # Show app screens only. Never show download, indexer or source parts.
 media:
-  type: image
-  alt: "TODO: screenshot of the TV home screen"
+  type: diagram
+  src: DiagramHomereel
+  alt: "The home server sends movies and shows to the Homereel app on Google TV and on an Android phone."

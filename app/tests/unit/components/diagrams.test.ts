@@ -22,7 +22,7 @@ const words = (text: string) => text.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [
 describe('diagrams', () => {
   it('has a component for every diagram named in content, and none more', () => {
     expect([...namedIn.keys()].sort()).toEqual(Object.keys(diagrams).sort())
-    expect(namedIn.size).toBe(8)
+    expect(namedIn.size).toBe(11)
   })
 
   it.each(Object.keys(diagrams))('%s is an SVG image with the title it is given', (name) => {

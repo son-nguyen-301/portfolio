@@ -7,6 +7,9 @@ import DiagramAiPipeline from '../components/DiagramAiPipeline.vue'
 import DiagramCmsPages from '../components/DiagramCmsPages.vue'
 import DiagramCssCut from '../components/DiagramCssCut.vue'
 import DiagramFeatureFlag from '../components/DiagramFeatureFlag.vue'
+import DiagramHomereel from '../components/DiagramHomereel.vue'
+import DiagramHydraClaude from '../components/DiagramHydraClaude.vue'
+import DiagramLooper from '../components/DiagramLooper.vue'
 import DiagramMultiCurrency from '../components/DiagramMultiCurrency.vue'
 import DiagramRoomsByUrl from '../components/DiagramRoomsByUrl.vue'
 import DiagramTaskRunner from '../components/DiagramTaskRunner.vue'
@@ -17,6 +20,9 @@ export const diagrams: Partial<Record<string, Component>> = {
   DiagramCmsPages,
   DiagramCssCut,
   DiagramFeatureFlag,
+  DiagramHomereel,
+  DiagramHydraClaude,
+  DiagramLooper,
   DiagramMultiCurrency,
   DiagramRoomsByUrl,
   DiagramTaskRunner,
