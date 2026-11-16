@@ -31,7 +31,7 @@ export async function textOutside(page: Page, selector: string) {
 }
 
 // Every <text> that sits on a <rect> of its diagram but runs past that box's
-// edges, so a word too long for its box shows up. A text counts as on a box
+// left or right side, so a word too long for its box shows up. A text counts as on a box
 // when its middle point is inside it.
 export async function textOutOfBox(page: Page, selector: string) {
   await page.evaluate(() => document.fonts.ready)

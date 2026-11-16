@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-// The diagrams (PF-014, PF-059). Each one is named in content, has a <title> for
+// The diagrams (PF-014, PF-059, PF-060). Each one is named in content, has a <title> for
 // screen readers, and draws only words that are in the content file that
 // names it (CLAUDE.md hard rule 2).
 import { readdirSync, readFileSync } from 'node:fs'

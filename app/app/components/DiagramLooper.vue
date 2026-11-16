@@ -15,7 +15,9 @@ const build = steps.indexOf('Build')
 const watch = steps.indexOf('Watch')
 const last = steps.length - 1
 // The column beside the steps: who builds, and what decides what it may do.
+// A line on its right joins Risk levels to Claude Code.
 const side = { x: 176, width: 136 }
+const join = side.x + side.width - 14
 </script>
 
 <template>
@@ -85,6 +87,10 @@ const side = { x: 176, width: 136 }
       :y="top(build) + box.height + 14"
       dy="0.35em"
     >does the building</text>
+    <path
+      class="diagram__line"
+      :d="`M${join} ${top(build) + box.height + 3}V${top(watch) - 3}`"
+    />
     <rect
       class="diagram__box"
       :x="side.x"
