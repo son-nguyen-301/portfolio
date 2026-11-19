@@ -18,10 +18,9 @@ No screenshots. Son decided on 2026-11-15 that case studies and Lab projects use
 
 ## Hosting
 
-- [ ] Connect the repo in Cloudflare Workers Builds (root `app`, build `pnpm install --frozen-lockfile && pnpm generate`, deploy `npx wrangler deploy`).
-- [ ] Add the Worker custom domain `me.haisonnguyen.dev` (the old CloudFront record is already gone).
+Workers Builds deploys `main`, and the site is live at https://me.haisonnguyen.dev (Son checked on 2026-11-19).
+
 - [ ] Turn on Cloudflare Web Analytics for the site. If Cloudflare does not add the beacon itself, set the public site token as `NUXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` in the Workers Builds build variables (D-025).
-- [ ] "Workers Builds: portfolio" fails before any build command runs. Read its log in the Cloudflare dashboard and check the build settings above.
 - [ ] Optional: delete the AWS leftovers by hand (see "AWS leftovers" in `docs/architecture.md`). Also delete the `CLOUDFLARE_API_TOKEN` GitHub secret if nothing else uses it.
 
 ## Left in content
